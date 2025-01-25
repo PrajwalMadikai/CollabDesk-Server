@@ -7,12 +7,12 @@ export class LoginController{
     async registerUser(req:Request,res:Response)
     {
         try {
-            const { email, password, fullname, workSpaces, paymentDetail } = req.body;
+            const { email, password, fullName, workSpaces, paymentDetail } = req.body;
 
             const result = await this.userUsecase.registerUser(
                 email,
                 password,
-                fullname,
+                fullName,
                 workSpaces,
                 paymentDetail
             );
@@ -20,17 +20,29 @@ export class LoginController{
             res.status(201).json(result);
 
         } catch (error:any) {
+            console.log(error.message);
+            
             res.status(400).json({ message: error.message });
             
         }
     }
     async verifyEmail(req: Request, res: Response) {
         try {
-            const { email, token } = req.query;
-            const result = await this.userUsecase.verifyEmail(email as string, token as string);
-            res.status(200).json(result);
+          
+          const { email, token } = req.body
+      
+          console.log('INSIDE OF VERIFY EMAIL', email, token);  
+      
+          if (!email || !token) {
+            throw new Error('Missing email or token');
+          }
+      
+          const result = await this.userUsecase.verifyEmail(email as string, token as string);
+          res.status(200).json(result);
         } catch (error: any) {
-            res.status(400).json({ message: error.message });
+          console.log('verify', error.message);
+          res.status(400).json({ message: error.message });
         }
-    }
+      }
+      
 }

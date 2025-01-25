@@ -28,6 +28,8 @@ import { TokenService } from "../services/TokenService";
                 const hashtoken=crypto.randomBytes(32).toString('hex')
                 const expiresAt = new Date(Date.now() + 3600000);
 
+               
+
                 await this.emailVerification.createTempUser({
                     email,
                     password: hashedPassword,
@@ -62,12 +64,13 @@ import { TokenService } from "../services/TokenService";
                 tempUser.paymentDetail || { paymentType: "", startDate: new Date(), endDate: new Date() } 
                 );
             
-                await this.emailVerification.deleteTempUser(email);
                 
                 if('error' in user)
-                    {
-                        throw new Error(user.error)
-                    }
+                {
+                    throw new Error(user.error)
+                }
+
+               await this.emailVerification.deleteTempUser(email);
 
                     const token=await this.tokenService.generateToken({userId:user.id,userEmail:user.email})
                     return {user,token}

@@ -1,7 +1,7 @@
 export class UserEntity {
     id: string;
     email: string;
-    password: string;
+    password?: string;
     fullname: string;
     paymentDetail?: {
         paymentType: string;
@@ -11,6 +11,7 @@ export class UserEntity {
     workSpaces?: { workspaceId: string; workspaceName: string }[];
     googleId?: string|null;
     avatar?:string|null;
+    githubId?:string
 
     constructor(
         id: string,
@@ -24,7 +25,8 @@ export class UserEntity {
         },
         workSpaces: { workspaceId: string; workspaceName: string }[],
         avatar:string,
-        googleId:string
+        googleId:string,
+        githubId:string
     ) {
         this.id = id;
         this.fullname = fullname;
@@ -34,5 +36,6 @@ export class UserEntity {
         this.workSpaces = workSpaces;
         this.googleId=googleId
         this.avatar=avatar
+        this.githubId=githubId
     }
 }

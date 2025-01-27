@@ -14,7 +14,8 @@ export class UserRepository implements UserInterface {
             endDate: Date;
         },
         avatar: string | null,
-        googleId: string | null
+        googleId: string | null,
+        githubId:string|null
     ): Promise<UserEntity | { error: string }> {
 
         const oldUser = await UserModal.findOne({ email });
@@ -31,6 +32,7 @@ export class UserRepository implements UserInterface {
             paymentDetail,
             avatar,
             googleId,
+            githubId
         });
 
         return new UserEntity(
@@ -41,7 +43,8 @@ export class UserRepository implements UserInterface {
             user.paymentDetail,
             user.workspace,
             user.googleId,
-            user.avatar
+            user.avatar,
+            user.githubId
         );
     }
 
@@ -51,7 +54,6 @@ export class UserRepository implements UserInterface {
         googleId: string|undefined,
         avatar: string|undefined 
     ): Promise<UserEntity> {
-        console.log('full name:',fullname);
         
         const user = await UserModal.create({
             fullname,
@@ -68,7 +70,8 @@ export class UserRepository implements UserInterface {
             user.paymentDetail,
             user.workspace,
             user.googleId,
-            user.avatar
+            user.avatar,
+            user.githubId
         );
     }
 
@@ -86,7 +89,30 @@ export class UserRepository implements UserInterface {
             user.paymentDetail,
             user.workspace,
             user.googleId,
-            user.avatar
+            user.avatar,
+            user.githubId
+        );
+    }
+    async createGithubUser(githubId:string,data:UserEntity): Promise<UserEntity> {
+        const user=await UserModal.create({
+            fullname: data.fullname,
+            email: data.email,
+            workSpaces: data.workSpaces,
+            paymentDetail: data.paymentDetail,
+            avatar: data.avatar,
+            githubId: githubId,
+        })
+
+        return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workspace,
+            user.googleId,
+            user.avatar,
+            user.githubId
         );
     }
 }

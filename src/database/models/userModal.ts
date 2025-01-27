@@ -12,7 +12,8 @@ export interface IUser extends Document{
         endDate:Date
     },
     googleId:string,
-    avatar:string
+    avatar:string,
+    githubId:string
 }
 
 const UserSchema:Schema=new Schema({
@@ -41,6 +42,9 @@ const UserSchema:Schema=new Schema({
     },
     avatar:{
         type:String,
+    },
+    githubId:{
+        type:String
     }
 })
 

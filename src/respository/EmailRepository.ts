@@ -10,7 +10,8 @@ interface TempUser {
     workSpaces?: { workspaceId: string; workspaceName: string }[];
     paymentDetail?: { paymentType: string; startDate: Date; endDate: Date } | null;
     googleId:string|null,
-    avatar:string|null
+    avatar:string|null,
+    githubId:string|null
 }
 
 export class EmailRepository implements EmailRepositoryInterface {
@@ -72,7 +73,8 @@ export class EmailRepository implements EmailRepositoryInterface {
                 })) : [],
                 paymentDetail: paymentDetail,
                 googleId:null,
-                avatar:null
+                avatar:null,
+                githubId:null
             };
     
             return tempUser;

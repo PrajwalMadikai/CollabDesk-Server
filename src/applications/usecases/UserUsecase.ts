@@ -41,7 +41,8 @@ import { TokenService } from "../services/TokenService";
                     workSpaces,
                     paymentDetail,
                     googleId:null,
-                    avatar:null
+                    avatar:null,
+                    githubId:null
                 })
 
                 await this.sendMail.sendVerificationEmail(email, fullname, hashtoken);
@@ -67,7 +68,8 @@ import { TokenService } from "../services/TokenService";
                 tempUser.workSpaces || [], 
                 tempUser.paymentDetail || { paymentType: "", startDate: new Date(), endDate: new Date() },
                 tempUser.googleId,
-                tempUser.avatar
+                tempUser.avatar,
+                tempUser.githubId
                 );
             
                 

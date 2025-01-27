@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express";
+import { GithubUsecase } from "../../applications/usecases/GithubUsecase";
 import { GoogleAuthUsecase } from "../../applications/usecases/GoogleUsecase";
 import { UserUsecase } from "../../applications/usecases/UserUsecase";
 
 export class LoginController{
     constructor(
         private userUsecase:UserUsecase,
-        private googleUseCase:GoogleAuthUsecase     
+        private googleUseCase:GoogleAuthUsecase,     
+        private githubUsecase:GithubUsecase
             ){}
 
     async registerUser(req:Request,res:Response,next:NextFunction)
@@ -64,6 +66,26 @@ export class LoginController{
             console.error(error.message);
             res.status(500).json({ message: "Google sign-up failed", error: error.message });
             next(error);
+        }
+    }
+    async gitHubAuth(req:Request,res:Response,next:NextFunction)
+    {
+        try{
+
+            const { code } = req.query;
+
+            if (!code || typeof code !== "string") {
+                return res.status(400).json({ error: "Invalid or missing code." });
+              }
+              
+            const user = await this.githubUsecase.handlegithubAuth(code)
+
+            return res.status(201).json({ message: "Google user created", user });
+
+        }catch(error:any){
+            console.error(error.message);
+            res.status(500).json({ message: "Github sign-up failed", error: error.message });
+            next(error)
         }
     }
     

@@ -10,14 +10,16 @@ export interface IUser extends Document{
         paymentType: string;
         startDate:Date;
         endDate:Date
-    }
+    },
+    googleId:string,
+    avatar:string
 }
 
 const UserSchema:Schema=new Schema({
     email:{
         type:String
     },
-    fullName:{
+    fullname:{
         type:String
     },
     password:{
@@ -34,7 +36,12 @@ const UserSchema:Schema=new Schema({
             workspaceName: String,
         },
     ],
-
+    googleId:{
+        type:String
+    },
+    avatar:{
+        type:String,
+    }
 })
 
 export const UserModal=mongoose.model<IUser>('User',UserSchema)

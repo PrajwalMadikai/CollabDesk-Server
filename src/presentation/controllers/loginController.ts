@@ -1,20 +1,28 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import { GoogleAuthUsecase } from "../../applications/usecases/GoogleUsecase";
 import { UserUsecase } from "../../applications/usecases/UserUsecase";
 
 export class LoginController{
-    constructor(private userUsecase:UserUsecase){}
+    constructor(
+        private userUsecase:UserUsecase,
+        private googleUseCase:GoogleAuthUsecase     
+            ){}
 
-    async registerUser(req:Request,res:Response)
+    async registerUser(req:Request,res:Response,next:NextFunction)
     {
         try {
             const { email, password, fullName, workSpaces, paymentDetail } = req.body;
 
+            let googleId=undefined
+            let avatar=undefined
             const result = await this.userUsecase.registerUser(
                 email,
                 password,
                 fullName,
                 workSpaces,
-                paymentDetail
+                paymentDetail,
+                googleId,
+                avatar
             );
 
             res.status(201).json(result);
@@ -23,15 +31,14 @@ export class LoginController{
             console.log(error.message);
             
             res.status(400).json({ message: error.message });
-            
+            next(error)
         }
     }
-    async verifyEmail(req: Request, res: Response) {
+    async verifyEmail(req: Request, res: Response,next:NextFunction) {
         try {
           
           const { email, token } = req.body
       
-          console.log('INSIDE OF VERIFY EMAIL', email, token);  
       
           if (!email || !token) {
             throw new Error('Missing email or token');
@@ -42,7 +49,22 @@ export class LoginController{
         } catch (error: any) {
           console.log('verify', error.message);
           res.status(400).json({ message: error.message });
+          next(error)
         }
       }
-      
+      async googleSignUp(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { idToken } = req.body;
+            if (!idToken) {
+                return res.status(400).json({ message: "Google ID token is required" });
+            }
+            const user = await this.googleUseCase.execute(idToken);
+            return res.status(201).json({ message: "Google user created", user });
+        } catch (error: any) {
+            console.error(error.message);
+            res.status(500).json({ message: "Google sign-up failed", error: error.message });
+            next(error);
+        }
+    }
+    
 }

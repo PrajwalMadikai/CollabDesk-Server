@@ -3,12 +3,14 @@ export class UserEntity {
     email: string;
     password: string;
     fullname: string;
-    paymentDetail: {
+    paymentDetail?: {
         paymentType: string;
         startDate: Date;
         endDate: Date;
     };
-    workSpaces: { workspaceId: string; workspaceName: string }[];
+    workSpaces?: { workspaceId: string; workspaceName: string }[];
+    googleId?: string|null;
+    avatar?:string|null;
 
     constructor(
         id: string,
@@ -20,7 +22,9 @@ export class UserEntity {
             startDate: Date;
             endDate: Date;
         },
-        workSpaces: { workspaceId: string; workspaceName: string }[]
+        workSpaces: { workspaceId: string; workspaceName: string }[],
+        avatar:string,
+        googleId:string
     ) {
         this.id = id;
         this.fullname = fullname;
@@ -28,5 +32,7 @@ export class UserEntity {
         this.password = password;
         this.paymentDetail = paymentDetail; 
         this.workSpaces = workSpaces;
+        this.googleId=googleId
+        this.avatar=avatar
     }
 }

@@ -9,6 +9,8 @@ interface TempUser {
     expiresAt: Date; 
     workSpaces?: { workspaceId: string; workspaceName: string }[];
     paymentDetail?: { paymentType: string; startDate: Date; endDate: Date } | null;
+    googleId:string|null,
+    avatar:string|null
 }
 
 export class EmailRepository implements EmailRepositoryInterface {
@@ -34,7 +36,7 @@ export class EmailRepository implements EmailRepositoryInterface {
             }
     
             const result = await TokenModal.create(formattedData);
-            console.log("Temp User created successfully:", result);
+
         } catch (error) {
             console.error("Error creating Temp User:", error);
             throw error;  
@@ -69,6 +71,8 @@ export class EmailRepository implements EmailRepositoryInterface {
                     workspaceName: workspace.workspaceName ?? ""
                 })) : [],
                 paymentDetail: paymentDetail,
+                googleId:null,
+                avatar:null
             };
     
             return tempUser;

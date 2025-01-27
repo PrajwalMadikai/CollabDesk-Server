@@ -21,7 +21,9 @@ import { TokenService } from "../services/TokenService";
                 password: string,
                 fullname: string,
                 workSpaces: { workspaceId: string; workspaceName: string }[]=[],
-                paymentDetail: { paymentType: string; startDate: Date; endDate: Date }
+                paymentDetail: { paymentType: string; startDate: Date; endDate: Date },
+                googleId?:string,
+                avatar?:string
             ){
                 const hashedPassword=await this.bcryptService.hashPassword(password)
 
@@ -38,6 +40,8 @@ import { TokenService } from "../services/TokenService";
                     expiresAt,
                     workSpaces,
                     paymentDetail,
+                    googleId:null,
+                    avatar:null
                 })
 
                 await this.sendMail.sendVerificationEmail(email, fullname, hashtoken);
@@ -61,7 +65,9 @@ import { TokenService } from "../services/TokenService";
                 tempUser.password,
                 tempUser.fullname,
                 tempUser.workSpaces || [], 
-                tempUser.paymentDetail || { paymentType: "", startDate: new Date(), endDate: new Date() } 
+                tempUser.paymentDetail || { paymentType: "", startDate: new Date(), endDate: new Date() },
+                tempUser.googleId,
+                tempUser.avatar
                 );
             
                 
@@ -75,4 +81,6 @@ import { TokenService } from "../services/TokenService";
                     const token=await this.tokenService.generateToken({userId:user.id,userEmail:user.email})
                     return {user,token}
             }
+
+             
     }

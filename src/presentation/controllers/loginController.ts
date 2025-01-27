@@ -68,23 +68,34 @@ export class LoginController{
             next(error);
         }
     }
-    async gitHubAuth(req:Request,res:Response,next:NextFunction)
-    {
-        try{
-
+    async gitHubAuth(req: Request, res: Response, next: NextFunction) {
+        try {
+            if (!req.query.code) {
+                const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+                const redirectUri = `http://localhost:5713/auth/github/callback`;
+                return res.redirect(
+                    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${redirectUri}&scope=user:email`
+                );
+            }
+    
             const { code } = req.query;
-
-            if (!code || typeof code !== "string") {
-                return res.status(400).json({ error: "Invalid or missing code." });
-              }
-              
-            const user = await this.githubUsecase.handlegithubAuth(code)
-
-            return res.status(201).json({ message: "Google user created", user });
-
-        }catch(error:any){
-            console.error(error.message);
-            res.status(500).json({ message: "Github sign-up failed", error: error.message });
+    
+            if (typeof code !== "string") {
+                return res.status(400).json({ error: "Invalid code format." });
+            }
+    
+            const user = await this.githubUsecase.handlegithubAuth(code);
+    
+            // Redirect to frontend with encoded user data
+            const FRONTEND_URL = 'http://localhost:3000'; // Update this to match your Next.js frontend URL
+            return res.redirect(
+                `${FRONTEND_URL}/auth/github/callback?data=${encodeURIComponent(
+                    JSON.stringify(user)
+                )}`
+            );
+    
+        } catch (error: any) {
+            console.error("GitHub Auth Error:", error.message);
             next(error)
         }
     }

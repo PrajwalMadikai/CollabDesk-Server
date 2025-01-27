@@ -24,6 +24,7 @@ export class GithubUsecase{
             githubId: profile.id,
             
           };
+          
           const user = await this.userRepository.createGithubUser(profile.id, userData);
           return user  
     }

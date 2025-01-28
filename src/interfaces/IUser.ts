@@ -13,5 +13,6 @@ export interface UserInterface{
     findByGoogleId(googleId: string): Promise<UserEntity | null>
 
     createGithubUser(githubId: string, userData: UserEntity):Promise<UserEntity>
+    loginUser(email:string):Promise<UserEntity|null>
                 
 }

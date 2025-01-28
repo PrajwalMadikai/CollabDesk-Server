@@ -115,4 +115,22 @@ export class UserRepository implements UserInterface {
             user.githubId
         );
     }
+    async loginUser(email: string): Promise<UserEntity | null> {
+        const user=await UserModal.findOne({email})
+        if(!user)
+        {
+             return null
+        }
+        return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workspace,
+            user.googleId,
+            user.avatar,
+            user.githubId
+        );
+    }
 }

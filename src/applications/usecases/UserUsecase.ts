@@ -84,5 +84,27 @@ import { TokenService } from "../services/TokenService";
                     return {user,token}
             }
 
-             
+            async findUser(email: string, password: string) {
+                try {
+                    const user = await this.userRepository.loginUser(email);
+                    if (!user) {
+                        return { status: 404, message: "No User Found!" }; 
+                    }
+            
+                    if (!user?.password) {
+                        return { status: 404, message: "No password Found!" };  
+                    }
+            
+                    const compare = await this.bcryptService.comparePassword(password, user.password);
+                    if (!compare) {
+                        return { status: 401, message: 'Incorrect password!' }; 
+                    }
+            
+                    return { status: 200, user };  
+                } catch (error) {
+                    console.error(error);
+                    return { status: 500, message: 'An error occurred during login.' }; 
+                }
+            }
+            
     }

@@ -99,5 +99,32 @@ export class LoginController{
             next(error)
         }
     }
+
+     async LoginUser(req:Request,res:Response,next:NextFunction)
+     {
+        try {
+              const {email,password}=req.body
+
+              if (!email) {
+                return res.status(400).json({ message: "Email is Missing" });
+            }
+              if (!password) {
+                return res.status(400).json({ message: "Password is Missing" });
+            }
+
+            const user=await this.userUsecase.findUser(email,password)
+
+            if (!user) {
+                return res.status(404).json({ message: "No User Found!" });  
+            }
+            
+            return res.status(200).json({ message: "Login Successfully", user:user.user });
+
+        } catch (error) {
+            console.error('Error during login:', error);
+            next(error)
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
+     }
     
 }

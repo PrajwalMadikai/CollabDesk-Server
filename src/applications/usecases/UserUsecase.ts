@@ -80,8 +80,8 @@ import { TokenService } from "../services/TokenService";
 
                await this.emailVerification.deleteTempUser(email);
 
-                    const token=await this.tokenService.generateToken({userId:user.id,userEmail:user.email})
-                    return {user,token}
+                    
+               return {user}
             }
 
             async findUser(email: string, password: string) {
@@ -99,8 +99,11 @@ import { TokenService } from "../services/TokenService";
                     if (!compare) {
                         return { status: 401, message: 'Incorrect password!' }; 
                     }
+
+                    const accessToken=await this.tokenService.generateToken({userId:user.id,userEmail:user.email})
+                    const refreshToken=await this.tokenService.generateRefreshToken({userId:user.id,userEmail:user.email})
             
-                    return { status: 200, user };  
+                    return { status: 200, user,accessToken,refreshToken };  
                 } catch (error) {
                     console.error(error);
                     return { status: 500, message: 'An error occurred during login.' }; 

@@ -10,9 +10,14 @@ const PORT= process.env.PORT || 5713
 
 connectDB();
 app.use(cors({
-    origin: 'http://localhost:3000',
-    credentials: true
-  }))
+  origin: 'http://localhost:3000',  
+  methods: 'GET, POST,PUT,PATCH,DELETE',
+  credentials: true,
+}));
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');   
+  next();
+});
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 

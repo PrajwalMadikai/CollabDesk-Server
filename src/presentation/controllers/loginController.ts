@@ -112,13 +112,24 @@ export class LoginController{
                 return res.status(400).json({ message: "Password is Missing" });
             }
 
-            const user=await this.userUsecase.findUser(email,password)
+            const result=await this.userUsecase.findUser(email,password)
 
-            if (!user) {
-                return res.status(404).json({ message: "No User Found!" });  
+            const {user,accessToken,refreshToken}=result
+
+            if (result.status !== 200) {
+                return res.status(result.status).json({ message: result.message });
             }
-            
-            return res.status(200).json({ message: "Login Successfully", user:user.user });
+            if(!user)
+            {
+                return res.status(404).json({ message: "No User Found" });
+            }
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,  // Makes it inaccessible to JavaScript
+                secure: process.env.NODE_ENV === "production",  // Set to true in production (HTTPS)
+                maxAge: 30 * 24 * 60 * 60 * 1000,  
+                sameSite: "strict",   
+            });
+            return res.status(200).json({ message: "Login Successfully", user:user,accessToken });
 
         } catch (error) {
             console.error('Error during login:', error);

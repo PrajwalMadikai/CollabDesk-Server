@@ -8,7 +8,7 @@ export class UserEntity {
         startDate: Date;
         endDate: Date;
     };
-    workSpaces?: { workspaceId: string; workspaceName: string }[];
+    workSpaces: { workspaceId: string; workspaceName: string }[];
     googleId?: string|null;
     avatar?:string|null;
     githubId?:string

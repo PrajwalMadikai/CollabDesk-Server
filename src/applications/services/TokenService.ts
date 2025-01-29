@@ -1,5 +1,7 @@
+import dotenv from 'dotenv';
 import { Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+dotenv.config()
 
 export class TokenService {
 
@@ -8,14 +10,16 @@ export class TokenService {
         if (!secretKey) {
             return { status: 404, message: 'No Secret key!' }; 
         }
-        return jwt.sign(payload, secretKey, { expiresIn: "1h" });
+        const token= jwt.sign(payload, secretKey, { expiresIn: "1h" });
+        return token
     }
     generateRefreshToken(payload: object): string | { status: number, message: string } {
-        const secretKey = process.env.JWT_REFRESH_SECRET;
+        const secretKey = process.env.REFRESH_TOKEN_SECRET;
         if (!secretKey) {
             return { status: 404, message: 'No Secret key in refresh token creation!' };
         }
-        return jwt.sign(payload, secretKey, { expiresIn: "7d" });
+        const token= jwt.sign(payload, secretKey, { expiresIn: "7d" });
+        return token
     }
 
     verifyToken(token: string,res:Response): JwtPayload | null|{ status: number, message: string }  {
@@ -41,6 +45,7 @@ export class TokenService {
         verifyRefreshToken(token: string): JwtPayload | null | { status: number, message: string } {
             try {
                 const secretKey = process.env.JWT_REFRESH_SECRET;
+                console.log("REFRESH_TOKEN_SECRET:", process.env.REFRESH_TOKEN_SECRET);
                 if (!secretKey) {
                     return { status: 404, message: 'No Secret key in Verify Refresh Token!' };
                 }

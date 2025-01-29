@@ -23,7 +23,7 @@ const googleService=new GoogleAuthService()
 const githubService=new GithubService()
 
 const userUsecase=new UserUsecase(userRepository,hashService,tokenService,emailRepository,emailService)
-const googleUsecase=new GoogleAuthUsecase(userRepository,googleService)
+const googleUsecase=new GoogleAuthUsecase(userRepository,googleService,tokenService)
 const githubUsecase=new GithubUsecase(userRepository,githubService)
 
 const loginController=new LoginController(userUsecase,googleUsecase,githubUsecase)

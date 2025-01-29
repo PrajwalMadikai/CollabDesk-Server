@@ -5,7 +5,7 @@ export interface IUser extends Document{
     fullname:string,
     email:string,
     password:string,
-    workspace:{ workspaceId: string, workspaceName: string }[];
+    workSpaces:{ workspaceId: string, workspaceName: string }[];
     paymentDetail:{
         paymentType: string;
         startDate:Date;

@@ -14,7 +14,11 @@ export class GithubUsecase{
         
         const profile = await this.githubService.fetchUserProfile(accessToken);
 
-        
+        const existingUser = await this.userRepository.getUserByGithubId(profile.id);
+
+        if (existingUser) {
+            return existingUser;
+        }
 
         const userData: UserEntity = {
             id: profile.id,
@@ -22,6 +26,7 @@ export class GithubUsecase{
             fullname: profile.name,
             avatar: profile.avatar_url,
             githubId: profile.id,
+            workSpaces:[]
             
           };
           

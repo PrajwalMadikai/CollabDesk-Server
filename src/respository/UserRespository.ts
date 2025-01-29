@@ -41,7 +41,7 @@ export class UserRepository implements UserInterface {
             user.email,
             user.password,
             user.paymentDetail,
-            user.workspace,
+            user.workSpaces,
             user.googleId,
             user.avatar,
             user.githubId
@@ -52,7 +52,8 @@ export class UserRepository implements UserInterface {
         email: string,
         fullname: string,
         googleId: string|undefined,
-        avatar: string|undefined 
+        avatar: string|undefined ,
+       
     ): Promise<UserEntity> {
         
         const user = await UserModal.create({
@@ -60,6 +61,7 @@ export class UserRepository implements UserInterface {
             email,
             avatar,
             googleId,
+            workSpaces:[]
         });
 
         return new UserEntity(
@@ -68,7 +70,7 @@ export class UserRepository implements UserInterface {
             user.email,
             user.password,
             user.paymentDetail,
-            user.workspace,
+            user.workSpaces,
             user.googleId,
             user.avatar,
             user.githubId
@@ -87,7 +89,7 @@ export class UserRepository implements UserInterface {
             user.email,
             user.password,
             user.paymentDetail,
-            user.workspace,
+            user.workSpaces,
             user.googleId,
             user.avatar,
             user.githubId
@@ -109,12 +111,30 @@ export class UserRepository implements UserInterface {
             user.email,
             user.password,
             user.paymentDetail,
-            user.workspace,
+            user.workSpaces,
             user.googleId,
             user.avatar,
             user.githubId
         );
     }
+
+    async getUserByGithubId(githubId: string): Promise<UserEntity | null> {
+        const user = await UserModal.findOne({ githubId });
+        if (!user) return null;
+
+        return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workSpaces,
+            user.googleId,
+            user.avatar,
+            user.githubId
+        );
+    }
+
     async loginUser(email: string): Promise<UserEntity | null> {
         const user=await UserModal.findOne({email})
         if(!user)
@@ -127,7 +147,7 @@ export class UserRepository implements UserInterface {
             user.email,
             user.password,
             user.paymentDetail,
-            user.workspace,
+            user.workSpaces,
             user.googleId,
             user.avatar,
             user.githubId

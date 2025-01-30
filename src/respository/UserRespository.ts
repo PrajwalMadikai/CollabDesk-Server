@@ -1,6 +1,6 @@
 import { UserModal } from "../database/models/userModal";
 import { UserEntity } from "../entities/userEntity";
-import { UserInterface } from "../interfaces/IUser";
+import { UserInterface } from "../Repository-Interfaces/IUser";
 
 export class UserRepository implements UserInterface {
     async createUser(

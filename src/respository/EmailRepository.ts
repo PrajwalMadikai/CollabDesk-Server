@@ -1,6 +1,6 @@
 import { TokenModal } from "../database/models/tokenModal";
 import { UserModal } from "../database/models/userModal";
-import { EmailRepositoryInterface } from "../interfaces/IVerifyEmail";
+import { EmailRepositoryInterface } from "../Repository-Interfaces/IVerifyEmail";
 interface TempUser {
     email: string;
     password: string;

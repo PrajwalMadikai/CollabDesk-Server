@@ -1,0 +1,27 @@
+export class workspaceEnity{
+    name:string;
+    ownerId:string;
+    directories:{Did:string,Dname:string}[];
+    userDetails:{uId:string,email:string}[];
+    meetingRoom:string;
+    type:string;
+    trashId:string|null
+    constructor(
+        name:string,
+        ownerId:string,
+        directories:{Did:string,Dname:string}[],
+        userDetails:{uId:string,email:string}[],
+        meetingRoom:string,
+        type:string,
+        trashId:string|null,
+    )
+    {
+       this.name=name;
+       this.ownerId=ownerId;
+       this.directories=directories;
+       this.userDetails=userDetails;
+       this.meetingRoom=meetingRoom;
+       this.type=type;
+       this.trashId=trashId;
+    }
+}

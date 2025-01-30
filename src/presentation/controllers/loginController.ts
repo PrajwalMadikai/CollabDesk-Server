@@ -7,24 +7,22 @@ export class LoginController{
     constructor(
         private userUsecase:UserUsecase,
         private googleUseCase:GoogleAuthUsecase,     
-        private githubUsecase:GithubUsecase
+        private githubUsecase:GithubUsecase,
+        
             ){}
 
     async registerUser(req:Request,res:Response,next:NextFunction)
     {
         try {
-            const { email, password, fullName, workSpaces, paymentDetail } = req.body;
+            const { email, password, fullName, workSpaces, paymentDetail,isAdmin } = req.body;
 
-            let googleId=undefined
-            let avatar=undefined
             const result = await this.userUsecase.registerUser(
                 email,
                 password,
                 fullName,
                 workSpaces,
                 paymentDetail,
-                googleId,
-                avatar
+                isAdmin
             );
 
             res.status(201).json(result);
@@ -63,8 +61,6 @@ export class LoginController{
     
             const result = await this.googleUseCase.execute(idToken);
     
-           console.log('result:',result);
-           
                 const { user, googleUser, accessToken, refreshToken, message } = result;
     
                 const responseMessage = typeof message === 'string' ? message : "User created successfully.";
@@ -141,12 +137,12 @@ export class LoginController{
 
             const {user,accessToken,refreshToken}=result
 
-            if (result.status !== 200) {
-                return res.status(result.status).json({ message: result.message });
-            }
             if(!user)
             {
                 return res.status(404).json({ message: "No User Found" });
+            }
+            if (result.status !== 200) {
+                return res.status(result.status).json({ message: result.message });
             }
             res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,  // Makes it inaccessible to JavaScript
@@ -161,6 +157,24 @@ export class LoginController{
             next(error)
             return res.status(500).json({ message: 'Internal Server Error' });
         }
+     }
+     async requestAccessToken(req:Request,res:Response,next:NextFunction){
+        try {
+            const refreshToken=req.cookies.refreshToken;
+    
+            if(!refreshToken)
+            {
+                return res.status(403).json({message:"Refresh token is required"})
+            }
+    
+            const newAccesstoken=await this.userUsecase.makeNewAccessToken(refreshToken)
+            return res.status(200).json({message:"New access token created!",accessToken:newAccesstoken})
+        } catch (error) {
+            console.error('Error during new access token creation:', error);
+            next(error)
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
+
      }
     
 }

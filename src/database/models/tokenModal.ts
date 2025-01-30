@@ -16,6 +16,10 @@ const TokenSchema = new Schema({
     startDate: { type: Date, default: Date.now },
     endDate: { type: Date, default: Date.now },
   },
+  isAdmin:{
+    type:Boolean,
+    default:false
+  },
   token: { type: String, required: true },
   expiresAt: { type: Date, required: true },
 });

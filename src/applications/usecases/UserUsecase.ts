@@ -1,11 +1,12 @@
-    import crypto from "crypto";
+import crypto from "crypto";
+import { JwtPayload } from "jsonwebtoken";
 import { EmailRepository } from "../../respository/EmailRepository";
 import { UserRepository } from "../../respository/UserRespository";
 import { BcryptService } from "../services/bcryptService";
 import { EmailService } from "../services/EmailService";
 import { TokenService } from "../services/TokenService";
 
-    export class UserUsecase{
+export class UserUsecase{
         
 
         constructor( 
@@ -22,8 +23,7 @@ import { TokenService } from "../services/TokenService";
                 fullname: string,
                 workSpaces: { workspaceId: string; workspaceName: string }[]=[],
                 paymentDetail: { paymentType: string; startDate: Date; endDate: Date },
-                googleId?:string,
-                avatar?:string
+                isAdmin:boolean
             ){
                 const hashedPassword=await this.bcryptService.hashPassword(password)
 
@@ -40,9 +40,8 @@ import { TokenService } from "../services/TokenService";
                     expiresAt,
                     workSpaces,
                     paymentDetail,
-                    googleId:null,
                     avatar:null,
-                    githubId:null
+                    isAdmin:isAdmin
                 })
 
                 await this.sendMail.sendVerificationEmail(email, fullname, hashtoken);
@@ -66,10 +65,9 @@ import { TokenService } from "../services/TokenService";
                 tempUser.password,
                 tempUser.fullname,
                 tempUser.workSpaces || [], 
-                tempUser.paymentDetail || { paymentType: "", startDate: new Date(), endDate: new Date() },
-                tempUser.googleId,
+                tempUser.paymentDetail || { paymentType: "Non", startDate: new Date(), endDate: new Date() },
                 tempUser.avatar,
-                tempUser.githubId
+                tempUser.isAdmin
                 );
             
                 
@@ -87,7 +85,7 @@ import { TokenService } from "../services/TokenService";
             async findUser(email: string, password: string) {
                 try {
                     const user = await this.userRepository.loginUser(email);
-                    if (!user) {
+                    if (user==null) {
                         return { status: 404, message: "No User Found!" }; 
                     }
             
@@ -109,5 +107,25 @@ import { TokenService } from "../services/TokenService";
                     return { status: 500, message: 'An error occurred during login.' }; 
                 }
             }
-            
+            async makeNewAccessToken(token:string){
+                try {
+
+                    const decoded=await this.tokenService.verifyRefreshToken(token)
+                    if(!decoded)
+                    {
+                    return {status:404,message:"Refresh token verification failed!"}
+                    }
+                    const { userId, email } = decoded as JwtPayload;
+                    const makeNewAccessToken=this.tokenService.generateToken({ userId: userId, email: email })
+                    if(!makeNewAccessToken)
+                    {
+                        return {status:404,message:"Error in new access token creation"}
+                    }
+                    return { status: 200, accessToken: makeNewAccessToken };
+
+                } catch (error) {
+                    console.log(error);
+                    return { status: 500, message: 'An error occurred during refresh token verification.' }; 
+                }
+            }
     }

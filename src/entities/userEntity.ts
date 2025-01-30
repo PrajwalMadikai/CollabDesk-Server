@@ -11,7 +11,8 @@ export class UserEntity {
     workSpaces: { workspaceId: string; workspaceName: string }[];
     googleId?: string|null;
     avatar?:string|null;
-    githubId?:string
+    githubId?:string;
+    isAdmin:boolean
 
     constructor(
         id: string,
@@ -26,7 +27,8 @@ export class UserEntity {
         workSpaces: { workspaceId: string; workspaceName: string }[],
         avatar:string,
         googleId:string,
-        githubId:string
+        githubId:string,
+        isAdmin:boolean
     ) {
         this.id = id;
         this.fullname = fullname;
@@ -36,6 +38,7 @@ export class UserEntity {
         this.workSpaces = workSpaces;
         this.googleId=googleId
         this.avatar=avatar
-        this.githubId=githubId
+        this.githubId=githubId;
+        this.isAdmin=isAdmin
     }
 }

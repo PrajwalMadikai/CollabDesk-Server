@@ -13,7 +13,8 @@ export interface IUser extends Document{
     },
     googleId:string,
     avatar:string,
-    githubId:string
+    githubId:string,
+    isAdmin:boolean
 }
 
 const UserSchema:Schema=new Schema({
@@ -45,6 +46,10 @@ const UserSchema:Schema=new Schema({
     },
     githubId:{
         type:String
+    },
+    isAdmin:{
+        type:Boolean,
+        default:false
     }
 })
 

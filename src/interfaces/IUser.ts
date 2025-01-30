@@ -4,7 +4,7 @@ export interface UserInterface{
     createUser(email:string,password:string,fullname:string,
                workSpaces:{ workspaceId: string; workspaceName: string }[]
                ,paymentDetail: { paymentType: string; startDate: Date; endDate: Date },
-               googleId:string|null,avatar:string|null,githubId: string|null
+               avatar:string|null,isAdmin:boolean
               ):Promise<UserEntity | { error: string }>
 
     createGoogleUser(email:string,fullName:string,

@@ -38,14 +38,13 @@ export class TokenService {
             return null;  
         } catch (error:any) {
             console.error("Error verifying token:", error.message);
-            return res.status(401).json({ message: "Token expired or invalid" });
+            return null;
         }
     }
         // Verify Refresh Token
         verifyRefreshToken(token: string): JwtPayload | null | { status: number, message: string } {
             try {
                 const secretKey = process.env.JWT_REFRESH_SECRET;
-                console.log("REFRESH_TOKEN_SECRET:", process.env.REFRESH_TOKEN_SECRET);
                 if (!secretKey) {
                     return { status: 404, message: 'No Secret key in Verify Refresh Token!' };
                 }

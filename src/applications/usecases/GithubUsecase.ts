@@ -26,7 +26,8 @@ export class GithubUsecase{
             fullname: profile.name,
             avatar: profile.avatar_url,
             githubId: profile.id,
-            workSpaces:[]
+            workSpaces:[],
+            isAdmin:false
             
           };
           

@@ -14,8 +14,8 @@ export class UserRepository implements UserInterface {
             endDate: Date;
         },
         avatar: string | null,
-        googleId: string | null,
-        githubId:string|null
+        isAdmin:boolean
+        
     ): Promise<UserEntity | { error: string }> {
 
         const oldUser = await UserModal.findOne({ email });
@@ -31,8 +31,7 @@ export class UserRepository implements UserInterface {
             workSpaces,
             paymentDetail,
             avatar,
-            googleId,
-            githubId
+            isAdmin:false
         });
 
         return new UserEntity(
@@ -44,7 +43,8 @@ export class UserRepository implements UserInterface {
             user.workSpaces,
             user.googleId,
             user.avatar,
-            user.githubId
+            user.githubId,
+            user.isAdmin
         );
     }
 
@@ -73,7 +73,8 @@ export class UserRepository implements UserInterface {
             user.workSpaces,
             user.googleId,
             user.avatar,
-            user.githubId
+            user.githubId,
+            user.isAdmin
         );
     }
 
@@ -92,7 +93,8 @@ export class UserRepository implements UserInterface {
             user.workSpaces,
             user.googleId,
             user.avatar,
-            user.githubId
+            user.githubId,
+            user.isAdmin
         );
     }
     async createGithubUser(githubId:string,data:UserEntity): Promise<UserEntity> {
@@ -114,7 +116,8 @@ export class UserRepository implements UserInterface {
             user.workSpaces,
             user.googleId,
             user.avatar,
-            user.githubId
+            user.githubId,
+            user.isAdmin
         );
     }
 
@@ -131,7 +134,8 @@ export class UserRepository implements UserInterface {
             user.workSpaces,
             user.googleId,
             user.avatar,
-            user.githubId
+            user.githubId,
+            user.isAdmin
         );
     }
 
@@ -150,7 +154,8 @@ export class UserRepository implements UserInterface {
             user.workSpaces,
             user.googleId,
             user.avatar,
-            user.githubId
+            user.githubId,
+            user.isAdmin
         );
     }
 }

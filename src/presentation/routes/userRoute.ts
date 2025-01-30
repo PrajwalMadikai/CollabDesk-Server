@@ -39,4 +39,6 @@ router.post('/google-signup',asyncHandler(loginController.googleSignUp.bind(logi
 router.get('/auth/github', asyncHandler(loginController.gitHubAuth.bind(loginController)));
 router.get('/auth/github/callback', asyncHandler(loginController.gitHubAuth.bind(loginController)));
 
+router.post('/refreshtoken',asyncHandler(loginController.requestAccessToken.bind(loginController)))
+
 export default router

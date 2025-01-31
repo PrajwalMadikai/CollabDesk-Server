@@ -1,4 +1,5 @@
 import { UserModal } from "../database/models/userModal";
+import { AdminEntity } from "../entities/adminEntity";
 import { UserEntity } from "../entities/userEntity";
 import { UserInterface } from "../Repository-Interfaces/IUser";
 
@@ -157,5 +158,19 @@ export class UserRepository implements UserInterface {
             user.githubId,
             user.isAdmin
         );
+    }
+    async loginAdmin(email: string): Promise<AdminEntity|null> {
+        const admin=await UserModal.findOne({email,isAdmin:true})
+        if(!admin)
+        {
+            return null
+        }
+        return new AdminEntity(
+            admin.id,
+            admin.email,
+            admin.password,
+            admin.isAdmin,
+            admin.fullname
+        )
     }
 }

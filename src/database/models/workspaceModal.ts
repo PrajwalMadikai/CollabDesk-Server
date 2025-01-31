@@ -17,14 +17,16 @@ const workspaceSchema:Schema=new Schema({
         default: []
     },    
     meetingRoom:{
-        type:String
+        type:String,
+        default: null 
     },
     type:{
         type:String,
         default:"Private"
     },
     trashId:{
-        type:String
+        type:String,
+        default: null 
     }
 })
 

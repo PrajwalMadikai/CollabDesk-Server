@@ -9,12 +9,11 @@ export class WorkspaceController{
     {
          try {
                const{spaceName,userId}=req.body
-               console.log('controller:',spaceName);
                
                const space=await this.workspaceUsecase.createSpace(spaceName,userId)
 
                if (!space) {
-                return res.status(404).json({ message: "Workspace name already exists" });
+                return res.status(409).json({ message: "Workspace name already exists" });
                }
    
                res.status(201).json(space);

@@ -1,63 +1,71 @@
-import dotenv from 'dotenv';
-import { Response } from "express";
+import dotenv from "dotenv";
 import jwt, { JwtPayload } from "jsonwebtoken";
-dotenv.config()
+
+dotenv.config();
 
 export class TokenService {
-
-    generateToken(payload: object): string | { status: number, message: string }  {
-        const secretKey = process.env.JWT_SECRET ;
+    
+    generateToken(payload: object): string | { status: number; message: string } {
+        const secretKey = process.env.JWT_SECRET;
         if (!secretKey) {
-            return { status: 404, message: 'No Secret key!' }; 
+            return { status: 500, message: "JWT Secret key is missing!" };
         }
-        const token= jwt.sign(payload, secretKey, { expiresIn: "1h" });
-        return token
+
+        try {
+            const token = jwt.sign(payload, secretKey, {
+                expiresIn:  "1h",
+            });
+            return token;
+        } catch (error: any) {
+            console.error("Error generating access token:", error.message);
+            return { status: 500, message: "Failed to generate access token" };
+        }
     }
-    generateRefreshToken(payload: object): string | { status: number, message: string } {
+
+    generateRefreshToken(payload: object): string | { status: number; message: string } {
         const secretKey = process.env.REFRESH_TOKEN_SECRET;
         if (!secretKey) {
-            return { status: 404, message: 'No Secret key in refresh token creation!' };
+            return { status: 500, message: "Refresh Token secret key is missing!" };
         }
-        const token= jwt.sign(payload, secretKey, { expiresIn: "7d" });
-        return token
-    }
 
-    verifyToken(token: string,res:Response): JwtPayload | null|{ status: number, message: string }  {
         try {
-            const secretKey = process.env.JWT_SECRET;
-            if (!secretKey) {
-                return { status: 404, message: 'No Secret key in Verify Access Token!' };
-            }
-
-            const decoded = jwt.verify(token, secretKey);
-
-        
-            if (typeof decoded === "object" && decoded !== null) {
-                return decoded as JwtPayload;  
-            }
-            return null;  
-        } catch (error:any) {
-            console.error("Error verifying token:", error.message);
-            return null;
+            const token = jwt.sign(payload, secretKey, {
+                expiresIn:  "7d",
+            });
+            return token;
+        } catch (error: any) {
+            console.error("Error generating refresh token:", error.message);
+            return { status: 500, message: "Failed to generate refresh token" };
         }
     }
-        // Verify Refresh Token
-        verifyRefreshToken(token: string): JwtPayload | null | { status: number, message: string } {
-            try {
-                const secretKey = process.env.JWT_REFRESH_SECRET;
-                if (!secretKey) {
-                    return { status: 404, message: 'No Secret key in Verify Refresh Token!' };
-                }
 
-                const decoded = jwt.verify(token, secretKey);
-                if (typeof decoded === "object" && decoded !== null) {
-                    return decoded as JwtPayload;
-                }
-                return null;
-            } catch (error: any) {
-                console.error("Error verifying refresh token:", error.message);
-                return null;
-            }
+    verifyToken(token: string): JwtPayload | { status: number; message: string } {
+        const secretKey = process.env.JWT_SECRET;
+        if (!secretKey) {
+            return { status: 500, message: "JWT Secret key is missing for verification!" };
         }
-    
+
+        try {
+            const decoded = jwt.verify(token, secretKey);
+            return decoded as JwtPayload;
+        } catch (error: any) {
+            console.error("Error verifying access token:", error.message);
+            return { status: 401, message: "Invalid or expired access token" };
+        }
+    }
+
+    verifyRefreshToken(token: string): JwtPayload | { status: number; message: string } {
+        const secretKey = process.env.REFRESH_TOKEN_SECRET;
+        if (!secretKey) {
+            return { status: 500, message: "Refresh Token secret key is missing for verification!" };
+        }
+
+        try {
+            const decoded = jwt.verify(token, secretKey);
+            return decoded as JwtPayload;
+        } catch (error: any) {
+            console.error("Error verifying refresh token:", error.message);
+            return { status: 401, message: "Invalid or expired refresh token" };
+        }
+    }
 }

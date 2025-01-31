@@ -53,7 +53,7 @@ export class UserUsecase{
             }       
 
             async verifyEmail(email: string, emailToken: string) {
-
+                try{
                 const tempUser = await this.emailVerification.findTempUser(email, emailToken);
             
                 if (!tempUser || tempUser.expiresAt < new Date()) {
@@ -80,6 +80,10 @@ export class UserUsecase{
 
                     
                return {user}
+              }catch(error){
+                console.error(error);
+                return { status: 500, message: 'An error occurred during verifying email.' }; 
+              } 
             }
 
             async findUser(email: string, password: string) {

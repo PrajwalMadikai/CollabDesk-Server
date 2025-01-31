@@ -8,14 +8,14 @@ const workspaceSchema:Schema=new Schema({
     ownerId:{
         type: mongoose.Schema.Types.ObjectId, ref: "User"
     },
-    userDetails:[{
-        userId:{type:mongoose.Schema.Types.ObjectId,ref:"User"},
-        userName:{type:String}
-    }],
-    directories:[{
-        dirId:{type:String},
-        dirName:{type:String}
-    }],
+    userDetails: {
+        type: [{ userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, userName: { type: String } }],
+        default: []
+    },
+    directories: {
+        type: [{ dirId: { type: String }, dirName: { type: String } }],
+        default: []
+    },    
     meetingRoom:{
         type:String
     },

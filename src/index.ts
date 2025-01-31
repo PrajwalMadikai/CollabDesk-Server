@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import express from 'express'
 import { connectDB } from './database/connection'
 import userRoute from './presentation/routes/userRoute'
+import workspaceRoute from './presentation/routes/workspaceRoute'
 dotenv.config() 
 
 const app=express()
@@ -22,6 +23,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
 app.use('/',userRoute)
+app.use('/workspace',workspaceRoute)
 
 
 app.listen(PORT,()=>console.log(`Running on http://localhost:${PORT}`))

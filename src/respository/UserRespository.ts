@@ -173,4 +173,23 @@ export class UserRepository implements UserInterface {
             admin.fullname
         )
     }
+   async findAllUsers(): Promise<UserEntity[]|null> {
+        const users=await UserModal.find({isAdmin:false})
+        if(!users || users.length==0)
+        {
+            return null
+        }
+        return users.map((users)=>new UserEntity(
+            users.id,
+            users.fullname,
+            users.email,
+            users.password,
+            users.paymentDetail,
+            users.workSpaces,
+            users.googleId,
+            users.avatar,
+            users.githubId,
+            users.isAdmin
+        ))
+    }
 }

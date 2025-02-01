@@ -42,4 +42,20 @@ export class AdminUsecase{
         }
     }
 
+    async findAllUsers(){
+        try {
+
+            const users=await this.userRepository.findAllUsers()
+            if(!users)
+            {
+                return  null
+
+            }
+            return {status:200,messages:"users fetched successfully",users}
+        } catch (error) {
+            console.log("error in verify Email",error);
+            return { status: 500, message: 'An error occurred during admin login.' }; 
+        }
+    }
+
 }

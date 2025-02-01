@@ -16,5 +16,5 @@ export interface UserInterface{
     createGithubUser(githubId: string, userData: UserEntity):Promise<UserEntity>
     loginUser(email:string):Promise<UserEntity|null>
     loginAdmin(email:string,password:string,isAdmin:boolean):Promise<AdminEntity|null>
-                
+    findAllUsers():Promise<UserEntity[]|null>
 }

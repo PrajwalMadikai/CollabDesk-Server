@@ -90,7 +90,7 @@ export class UserUsecase{
                 try {
                     const user = await this.userRepository.loginUser(email);
                     if (user==null) {
-                        return { status: 404, message: "No User Found!" }; 
+                        return { status: 404, message: "User not found!" }; 
                     }
             
                     if (!user?.password) {

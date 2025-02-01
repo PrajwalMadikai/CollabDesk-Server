@@ -26,6 +26,7 @@ export class AdminUsecase{
                 return {status:404,message:"Incorrect password"}
                }
                const accessToken=await this.tokenService.generateToken({userId:admin.id,userEmail:admin.email})
+               
                if(!accessToken)
                {
                 return {status:404,message:"Error in JWT token creation"}

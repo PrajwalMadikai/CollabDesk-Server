@@ -141,7 +141,7 @@ export class UserRepository implements UserInterface {
     }
 
     async loginUser(email: string): Promise<UserEntity | null> {
-        const user=await UserModal.findOne({email})
+        const user=await UserModal.findOne({email,isAdmin:false})
         if(!user)
         {
              return null

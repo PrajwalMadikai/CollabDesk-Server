@@ -92,35 +92,47 @@ export class LoginController{
     async gitHubAuth(req: Request, res: Response, next: NextFunction) {
         try {
             if (!req.query.code) {
+                const state = req.query.state ? JSON.parse(decodeURIComponent(req.query.state as string)) : {};
+                const mode = state.mode || 'login';
+                
                 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
                 const redirectUri = `http://localhost:5713/auth/github/callback`;
+                const stateParam = encodeURIComponent(JSON.stringify({ mode }));
+                
                 return res.redirect(
-                    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${redirectUri}&scope=user:email`
+                    `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${redirectUri}&scope=user:email&state=${stateParam}`
                 );
             }
     
-            const { code } = req.query;
+            const { code, state } = req.query;
+            const { mode } = JSON.parse(decodeURIComponent(state as string));
     
             if (typeof code !== "string") {
                 return res.status(400).json({ error: "Invalid code format." });
             }
     
-            const user = await this.githubUsecase.handlegithubAuth(code);
+            const FRONTEND_URL = 'http://localhost:3000';
     
-            // Redirect to frontend with encoded user data
-            const FRONTEND_URL = 'http://localhost:3000'; // Update this to match your Next.js frontend URL
-            return res.redirect(
-                `${FRONTEND_URL}/auth/github/callback?data=${encodeURIComponent(
-                    JSON.stringify(user)
-                )}`
-            );
-    
+            try {
+                const { user, isRegistered } = await this.githubUsecase.handleGithubAuth(code, mode);
+                
+                return res.redirect(
+                    `${FRONTEND_URL}/auth/github/callback?data=${encodeURIComponent(
+                        JSON.stringify({ ...user, isRegistered })
+                    )}&mode=${mode}`
+                );
+            } catch (error: any) {
+                // Handle the error by redirecting with error message
+                return res.redirect(
+                    `${FRONTEND_URL}/auth/github/callback?error=${encodeURIComponent(error.message)}&mode=${mode}`
+                );
+            }
         } catch (error: any) {
             console.error("GitHub Auth Error:", error.message);
-            next(error)
+            next(error);
         }
     }
-
+    
      async LoginUser(req:Request,res:Response,next:NextFunction)
      {
         try {

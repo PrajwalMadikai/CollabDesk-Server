@@ -41,4 +41,6 @@ router.get('/auth/github/callback', asyncHandler(loginController.gitHubAuth.bind
 
 router.post('/refreshtoken',asyncHandler(loginController.requestAccessToken.bind(loginController)))
 
+router.post('/logout',asyncHandler(loginController.logoutUser.bind(loginController)))
+
 export default router

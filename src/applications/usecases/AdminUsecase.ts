@@ -13,7 +13,6 @@ export class AdminUsecase{
     {
         try {
                const admin=await this.userRepository.loginAdmin(email)
-               console.log('admin usecase:',admin);
 
                if(!admin){
                 return  {status:404,message:"Couldn't find Admin"}
@@ -26,12 +25,15 @@ export class AdminUsecase{
                 return {status:404,message:"Incorrect password"}
                }
                const accessToken=await this.tokenService.generateToken({userId:admin.id,userEmail:admin.email})
+               const refreshToken=await this.tokenService.generateRefreshToken({userId:admin.id,userEmail:admin.email})
                
                if(!accessToken)
                {
                 return {status:404,message:"Error in JWT token creation"}
                }
-               return {status:200,message:'Admin data is present',admin,accessToken}
+
+               
+               return {status:200,message:'Admin data is present',admin,accessToken,refreshToken}
               
             
         } catch (error) {

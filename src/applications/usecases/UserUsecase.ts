@@ -117,7 +117,7 @@ export class UserUsecase{
                     const decoded=await this.tokenService.verifyRefreshToken(token)
                     if(!decoded)
                     {
-                    return {status:404,message:"Refresh token verification failed!"}
+                        return { status: 403, message: "Refresh token verification failed!" }
                     }
                     const { userId, email } = decoded as JwtPayload;
                     const makeNewAccessToken=this.tokenService.generateToken({ userId: userId, email: email })
@@ -132,4 +132,6 @@ export class UserUsecase{
                     return { status: 500, message: 'An error occurred during refresh token verification.' }; 
                 }
             }
+
+
     }

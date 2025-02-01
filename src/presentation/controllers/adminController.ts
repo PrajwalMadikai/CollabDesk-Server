@@ -9,7 +9,15 @@ export class AdminController{
     try {
            const {email,password}=req.body
            const admin=await this.adminUsecase.verfyAdmin(email,password)
-
+           
+           res.cookie('adminRefreshToken',admin.refreshToken,
+            {
+                httpOnly:true,
+                secure:process.env.NODE_ENV==="production",
+                maxAge:30 * 24 * 60 * 60 * 1000,  
+                st
+            }
+           )
            return res.status(admin.status).json({
             message: admin.message,
             admin: admin.admin,

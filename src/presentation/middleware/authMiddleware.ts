@@ -14,7 +14,7 @@ export const authenticateToken = (req: AuthenticatedRequest, res: Response, next
     return;
   }
 
-  const verified = tokenService.verifyToken(token);
+  const verified =tokenService.verifyToken(token);
 
   if ("status" in verified) {
     res.status(verified.status).json({ message: verified.message });

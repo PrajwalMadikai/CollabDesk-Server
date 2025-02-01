@@ -61,7 +61,7 @@ export class LoginController{
     
             const result = await this.googleUseCase.execute(idToken);
     
-                const { user, googleUser, accessToken, refreshToken, message } = result;
+                const { user, googleUser, refreshToken, message } = result;
     
                 const responseMessage = typeof message === 'string' ? message : "User created successfully.";
     
@@ -122,7 +122,6 @@ export class LoginController{
                     )}&mode=${mode}`
                 );
             } catch (error: any) {
-                // Handle the error by redirecting with error message
                 return res.redirect(
                     `${FRONTEND_URL}/auth/github/callback?error=${encodeURIComponent(error.message)}&mode=${mode}`
                 );
@@ -188,5 +187,20 @@ export class LoginController{
         }
 
      }
+
+     async logoutUser(req: Request, res: Response, next: NextFunction) {
+        try {
+          res.clearCookie('refreshToken', {
+            httpOnly: true, // Secure cookie
+            secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
+            sameSite: 'strict', // Prevent CSRF attacks
+          });
+      
+          return res.status(200).json({ message: 'Logged out successfully' });
+        } catch (error) {
+          next(error);
+        }
+      }
+      
     
 }

@@ -54,7 +54,7 @@ export class AdminUsecase{
             return {status:200,messages:"users fetched successfully",users}
         } catch (error) {
             console.log("error in verify Email",error);
-            return { status: 500, message: 'An error occurred during admin login.' }; 
+            return { status: 500, message: 'An error occurred during fetching users.' }; 
         }
     }
 

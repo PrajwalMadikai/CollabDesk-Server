@@ -52,12 +52,13 @@ export class AdminController{
 
         let users=await this.adminUsecase.findAllUsers()
 
-        if(!users)
-        {
-           return res.json(404).json({message:"Couldn't fetch users"})
-        }
+         
+        if(!users) {
+            return res.status(404).json({message:"Couldn't fetch users"})
+         }
+         
 
-        return res.status(200).json({message:"User fetchedsuccessfully",users})
+        return res.status(200).json(users)
         
      } catch (error) {
         next(error)

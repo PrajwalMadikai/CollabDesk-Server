@@ -33,7 +33,7 @@ export class AdminUsecase{
                }
 
                
-               return {status:200,message:'Admin data is present',admin,accessToken,refreshToken}
+               return {status:200,message:'Admin is present',admin,accessToken,refreshToken}
               
             
         } catch (error) {

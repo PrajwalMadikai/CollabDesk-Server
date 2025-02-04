@@ -19,7 +19,7 @@ export class WorkspaceController{
                res.status(201).json(space);
 
          } catch (error:any) {
-        
+            next(error)
             console.log(error.message);
             res.status(500).json({ message: error.message });
          }

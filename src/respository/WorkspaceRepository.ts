@@ -15,10 +15,14 @@ export class WorkspaceRepository implements workspaceInterface{
             const space=await WorkspaceModal.create({name,ownerId,directories,userDetails,meetingRoom,type,trashId})
 
             return new workspaceEnity(
-                space.name,space.ownerId,
-                space.directories,space.userDetails,
+                space.id,
+                space.name,
+                space.ownerId,
+                space.directories,
+                space.userDetails,
                 space.meetingRoom,
-                space.type,space.trashId
+                space.type,
+                space.trashId
             )
         }
 }

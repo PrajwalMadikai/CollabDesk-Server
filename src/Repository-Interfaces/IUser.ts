@@ -17,4 +17,5 @@ export interface UserInterface{
     loginUser(email:string):Promise<UserEntity|null>
     loginAdmin(email:string,password:string,isAdmin:boolean):Promise<AdminEntity|null>
     findAllUsers():Promise<UserEntity[]|null>
+    insertWorkspace(ownerId:string,name:string,wid:string):Promise<UserEntity|null>
 }

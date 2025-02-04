@@ -1,4 +1,5 @@
 export class workspaceEnity{
+    id:string;
     name:string;
     ownerId:string;
     directories:{Did:string,Dname:string}[];
@@ -7,6 +8,7 @@ export class workspaceEnity{
     type:string;
     trashId:string|null
     constructor(
+        id:string,
         name:string,
         ownerId:string,
         directories:{Did:string,Dname:string}[],
@@ -16,6 +18,8 @@ export class workspaceEnity{
         trashId:string|null,
     )
     {
+       
+       this.id=id;
        this.name=name;
        this.ownerId=ownerId;
        this.directories=directories;

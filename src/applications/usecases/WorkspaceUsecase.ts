@@ -1,18 +1,23 @@
+import { UserRepository } from "../../respository/UserRespository";
 import { WorkspaceRepository } from "../../respository/WorkspaceRepository";
 
 export class WorkspaceUsecase{
     constructor(
-        private workspaceRepo:WorkspaceRepository
+        private workspaceRepo:WorkspaceRepository,
+        private userRepository:UserRepository
     ){}
 
     async createSpace(
         name: string, ownerId: string,
     ){
         const space= await this.workspaceRepo.registeringSpace(name,ownerId)
-        console.log('usecase:',space);
         if (!space) {
             return null;   
         }
+       let user=await this.userRepository.insertWorkspace(space.ownerId,space.name,space.id)
+       console.log('user in workspace:',user);
+       
+        console.log('usecase:',space);
         return space
     }
 

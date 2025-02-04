@@ -14,8 +14,7 @@ export class WorkspaceUsecase{
         if (!space) {
             return null;   
         }
-       let user=await this.userRepository.insertWorkspace(space.ownerId,space.name,space.id)
-       console.log('user in workspace:',user);
+       await this.userRepository.insertWorkspace(space.ownerId,space.name,space.id)
        
         console.log('usecase:',space);
         return space

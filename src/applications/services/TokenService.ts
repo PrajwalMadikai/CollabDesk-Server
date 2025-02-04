@@ -13,7 +13,7 @@ export class TokenService {
 
         try {
             const token = jwt.sign(payload, secretKey, {
-                expiresIn:  "1m",
+                expiresIn:  "1h",
             });
             return token;
         } catch (error: any) {

@@ -5,14 +5,17 @@ import { UserRepository } from "../../respository/UserRespository";
 import { TokenService } from '../services/TokenService';
 dotenv.config()
 
-interface AuthResponse {
-    status: number;
-    googleUser?: UserEntity;
-    user?: UserEntity;
-    accessToken: string;
-    refreshToken: string;
-    message: string;
-}
+type AuthResponse =
+  | {
+      status: number;
+      user?: any;   
+      googleUser?: any;   
+      accessToken?: string;  
+      refreshToken?: string; 
+      message: string;
+    };
+
+
 
 export class GoogleAuthUsecase {
     constructor(
@@ -38,7 +41,6 @@ export class GoogleAuthUsecase {
         }
 
         const { sub: googleId, email, name: fullName, picture: avatar } = payload;
-        console.log("Google user payload:", { googleId, email, fullName, avatar });
 
         if (!googleId || !email || !fullName) {
             throw new Error("Missing Google user information.");
@@ -55,7 +57,6 @@ export class GoogleAuthUsecase {
             googleUser = await this.userRepository.createGoogleUser(email, fullName, googleId, avatar);
             accessToken = await this.tokenService.generateToken({ userId: googleUser.id, userEmail: googleUser.email });
             refreshToken = await this.tokenService.generateRefreshToken({ userId: googleUser.id, userEmail: googleUser.email });
-            console.log("Created new Google user:", googleUser);
 
         } else {
             accessToken = await this.tokenService.generateToken({ userId: user.id, userEmail: user.email });
@@ -88,4 +89,50 @@ export class GoogleAuthUsecase {
             message: user ? 'User authenticated successfully.' : 'User created successfully.'
         };
     }
+
+    async executeLogin(idToken: string): Promise<AuthResponse> {
+        if (!process.env.GOOGLE_CLIENT_ID) {
+            return { status: 500, message: "Google ID can't be accessed" };
+        }
+    
+        const oauth2Client = this.googleService.getClient(process.env.GOOGLE_CLIENT_ID);
+    
+        const ticket = await oauth2Client.verifyIdToken({
+            idToken,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+    
+        const payload = ticket.getPayload();
+        if (!payload) {
+            return { status: 401, message: "Invalid Google token." };
+        }
+    
+        const { sub: googleId, email, name: fullName, picture: avatar } = payload;
+        console.log("Google user payload:", { googleId, email, fullName, avatar });
+    
+        if (!googleId || !email || !fullName) {
+            return { status: 400, message: "Missing Google user information." };
+        }
+    
+        let user = await this.userRepository.findByGoogleId(googleId);
+        if (!user) {
+            return { status: 404, message: "Invalid user! Please register." };
+        }
+    
+        let accessToken = await this.tokenService.generateToken({ userId: user.id, userEmail: user.email });
+        let refreshToken = await this.tokenService.generateRefreshToken({ userId: user.id, userEmail: user.email });
+    
+        if (typeof accessToken !== "string" || typeof refreshToken !== "string") {
+            return { status: 500, message: "Failed to generate tokens." };
+        }
+    
+        return {
+            status: 200,
+            user: user,  
+            accessToken,
+            refreshToken,
+            message: "User authenticated successfully.",
+        };
+    }
+    
 }

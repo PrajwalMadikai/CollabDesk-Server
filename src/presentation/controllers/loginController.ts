@@ -59,7 +59,7 @@ export class LoginController{
                 return res.status(400).json({ message: "Google ID token is required" });
             }
     
-            const result = await this.googleUseCase.execute(idToken);
+                const result = await this.googleUseCase.execute(idToken);
     
                 const { user, googleUser, refreshToken, message } = result;
     
@@ -87,6 +87,42 @@ export class LoginController{
         }
     }
     
+    async googleLogin(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const { idToken } = req.body;
+            if (!idToken) {
+                return res.status(400).json({ message: "Google ID token is required" });
+            }
+
+            const result = await this.googleUseCase.executeLogin(idToken);
+
+            if (result.status !== 200) {
+                return res.status(result.status).json({ message: result.message });
+            }
+            
+            const {user,accessToken,refreshToken,message}=result
+
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,  
+                secure: process.env.NODE_ENV === 'production',   
+                maxAge: 30 * 24 * 60 * 60 * 1000,   
+                sameSite: 'strict',   
+            });
+
+            return res.status(201).json({
+                message: message,
+                user,
+                accessToken:accessToken,
+            });
+            
+        } catch (error:any) {
+            next(error)
+            console.error(error.message);
+            res.status(500).json({ message: "Google login failed", error: error.message });
+        }
+    }
+
     
     
     async gitHubAuth(req: Request, res: Response, next: NextFunction) {

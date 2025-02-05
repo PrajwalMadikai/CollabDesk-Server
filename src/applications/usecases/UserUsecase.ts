@@ -28,10 +28,9 @@ export class UserUsecase{
                 const hashedPassword=await this.bcryptService.hashPassword(password)
 
                 const hashtoken=crypto.randomBytes(32).toString('hex')
+
                 const expiresAt = new Date(Date.now() + 3600000);
-
                
-
                 await this.emailVerification.createTempUser({
                     email,
                     password: hashedPassword,
@@ -133,5 +132,55 @@ export class UserUsecase{
                 }
             }
 
+            async resetPassword(email:string,password:string)
+            {
+                try {
+                      
+                    const hash=await this.bcryptService.hashPassword(password)
+                    const updatedUser=await this.userRepository.updateUser(email,hash)
+                    if(!updatedUser)
+                    {
+                        return null
+                    }
+                    
+                    return {status:200,user:updatedUser}
+
+                    
+                } catch (error) {
+                    console.log(error);
+                    return { status: 500, message: 'An error occurred during refresh token verification.' }; 
+                }
+            }
+
+            async sendEmail(email:string){
+                try {
+
+                    const hashtoken=crypto.randomBytes(32).toString('hex')
+
+                  let verify= await this.sendMail.sendResetVerification(email,hashtoken);
+                   await this.emailVerification.createEmailSpace(email,hashtoken)
+                
+                   return {status:200,verify}
+                    
+                } catch (error) {
+                    console.log(error);
+                    return { status: 500, message: 'An error occurred during email send.' }; 
+                }
+            }
+            async findResetUser(email:string,token:string)
+            {
+                try {
+                   let res=await this.emailVerification.findVerifiedUser(email,token)
+                   if(!res)
+                   {
+                    return null
+                   }
+                   return {status:200,res}
+                    
+                } catch (error) {
+                    console.log(error);
+                    return { status: 500, message: 'An error occurred during finding reset password user' }; 
+                }
+            }
 
     }

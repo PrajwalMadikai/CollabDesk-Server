@@ -1,9 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 
 const TokenSchema = new Schema({
-  email: { type: String, required: true },  
-  password: { type: String, required: true },  
-  fullname: { type: String, required: true },  
+  email: { type: String ,require:true},  
+  password: { type: String },  
+  fullname: { type: String  },  
   workSpaces: { 
     type: [{
       workspaceId: String,
@@ -20,7 +20,7 @@ const TokenSchema = new Schema({
     type:Boolean,
     default:false
   },
-  token: { type: String, required: true },
-  expiresAt: { type: Date, required: true },
+  token: { type: String  },
+  expiresAt: { type: Date  },
 });
 export const TokenModal = mongoose.model("Token", TokenSchema);

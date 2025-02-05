@@ -40,6 +40,11 @@ router.get('/auth/github', asyncHandler(loginController.gitHubAuth.bind(loginCon
 router.get('/auth/github/callback', asyncHandler(loginController.gitHubAuth.bind(loginController)));
 
 router.post('/refreshtoken',asyncHandler(loginController.requestAccessToken.bind(loginController)))
+// reset password email verification
+router.post('/send-mail',asyncHandler(loginController.sendVerification.bind(loginController)))
+router.post('/email-check',asyncHandler(loginController.verifyemailResetPassword.bind(loginController)))
+
+router.post('/reset-password',asyncHandler(loginController.resetPassword.bind(loginController)))
 
 router.post('/logout',asyncHandler(loginController.logoutUser.bind(loginController)))
 

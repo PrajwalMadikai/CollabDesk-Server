@@ -1,5 +1,6 @@
 import { TokenModal } from "../database/models/tokenModal";
 import { UserModal } from "../database/models/userModal";
+import { emailCheck } from "../interface/emailverify";
 import { EmailRepositoryInterface } from "../Repository-Interfaces/IVerifyEmail";
 interface TempUser {
     email: string;
@@ -86,4 +87,33 @@ export class EmailRepository implements EmailRepositoryInterface {
     async deleteTempUser(email: string): Promise<void> {
         await TokenModal.deleteOne({ email });
     }
+   
+    async createEmailSpace(email: string, token: string): Promise<void> {
+        try {
+            const temp=await TokenModal.create({email,token,expiresAt:new Date(Date.now() + 3600000)})
+
+        } catch (error) {
+            console.error("Error creating Temp User:", error);
+            throw error
+        }
+        
+    }
+
+    async findVerifiedUser(email: string, token: string): Promise<emailCheck|null> {
+        try {
+
+            let user=await TokenModal.findOne({email,token})
+            if(!user) return null
+            
+            return {
+                email: user.email || "",  
+                token: user.token || "", 
+            };
+            
+        } catch (error) {
+            console.error("Error creating Temp User:", error);
+            throw error
+        }
+    }
+
 }

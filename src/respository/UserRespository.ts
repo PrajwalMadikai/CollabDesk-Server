@@ -219,5 +219,29 @@ export class UserRepository implements UserInterface {
           ); 
  
       }
-      
+    async updateUser(email: string, password: string): Promise<UserEntity|null> {
+
+        const updatedUser=await UserModal.findOneAndUpdate(
+            { email },  
+            { $set: { password } },
+        );
+        if(!updatedUser)
+            {
+              return null
+            }
+        
+            return new UserEntity(
+              updatedUser.id,
+              updatedUser.fullname,
+              updatedUser.email,
+              updatedUser.password,
+              updatedUser.paymentDetail,
+              updatedUser.workSpaces,
+              updatedUser.googleId,
+              updatedUser.avatar,
+              updatedUser.githubId,
+              updatedUser.isAdmin
+            );
+        
+    }
 }

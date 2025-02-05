@@ -203,5 +203,69 @@ export class LoginController{
         }
       }
       
-    
+      async resetPassword(req:Request,res:Response,next:NextFunction)
+      {
+        try{
+          const {email,password}=req.body
+          console.log('pass change:',password);
+          
+          if(!password)
+            {
+                return res.status(404).json({message:"Password is missing!"})
+            }
+            const newpassword=await this.userUsecase.resetPassword(email,password)
+            if(!newpassword)
+            {
+                return res.status(404).json({message:"couldn't find user!"})
+            }
+
+            return res.status(200).json({ message: 'password reseted successfully' });
+
+        }catch(error)
+        {
+            next(error)
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
+      }
+     async sendVerification(req:Request,res:Response,next:NextFunction)
+     {
+        try{
+              const {email}=req.body
+
+              const emailCheck=await this.userUsecase.sendEmail(email)
+              if(!emailCheck)
+              {
+                return res.status(404).json({ message: "Couldn't send email verification " });
+              }
+              return res.status(200).json({ message: 'email verification has send' });
+            
+        } catch (error) {
+            next(error)
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
+     }
+
+     async verifyemailResetPassword(req:Request,res:Response,next:NextFunction)
+     {
+        try {
+
+            const { email, token } = req.body
+
+            if (!email || !token) {
+                throw new Error('Missing email or token');
+              }
+
+              const result=await this.userUsecase.findResetUser(email,token)
+              if(!result)
+              {
+                return res.status(404).json({message:"couldn't find the user data"})
+              }
+
+              return res.status(200).json({message:'email verification successfull',userEmail:email})
+            
+        } catch (error) {
+            next(error)
+            return res.status(500).json({message:"Internal server error"})
+        }
+     }
 }

@@ -45,7 +45,7 @@ export class UserUsecase{
 
                 await this.sendMail.sendVerificationEmail(email, fullname, hashtoken);
 
-                return { message: "Verification email sent. Please check your inbox." };
+                return {status:200, message: "Verification email sent. Please check your inbox." };
 
                 
                 
@@ -69,13 +69,13 @@ export class UserUsecase{
                 tempUser.isAdmin
                 );
             
+                await this.emailVerification.deleteTempUser(email);
                 
                 if('error' in user)
                 {
                     throw new Error(user.error)
                 }
 
-               await this.emailVerification.deleteTempUser(email);
 
                     
                return {user}
@@ -142,6 +142,7 @@ export class UserUsecase{
                     {
                         return null
                     }
+                    await this.emailVerification.deleteTempUser(email)
                     
                     return {status:200,user:updatedUser}
 

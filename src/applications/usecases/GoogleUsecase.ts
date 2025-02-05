@@ -24,7 +24,7 @@ export class GoogleAuthUsecase {
         private tokenService: TokenService
     ) {}
 
-    async execute(idToken: string): Promise<AuthResponse> {  
+    async execute(idToken: string): Promise<AuthResponse > {  
         if (!process.env.GOOGLE_CLIENT_ID) {
             throw new Error('Google ID can\'t be accessed');
         }
@@ -51,10 +51,14 @@ export class GoogleAuthUsecase {
 
         let accessToken: string | { status: number, message: string };
         let refreshToken: string | { status: number, message: string };
-        let googleUser: UserEntity | undefined;
+        let googleUser: UserEntity | undefined|null;
 
         if (!user) {
             googleUser = await this.userRepository.createGoogleUser(email, fullName, googleId, avatar);
+            if(googleUser==null)
+            {
+                return { status: 404, message: "User already exist" };
+            }
             accessToken = await this.tokenService.generateToken({ userId: googleUser.id, userEmail: googleUser.email });
             refreshToken = await this.tokenService.generateRefreshToken({ userId: googleUser.id, userEmail: googleUser.email });
 

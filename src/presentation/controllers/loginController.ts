@@ -59,33 +59,34 @@ export class LoginController{
                 return res.status(400).json({ message: "Google ID token is required" });
             }
     
-                const result = await this.googleUseCase.execute(idToken);
+            const result = await this.googleUseCase.execute(idToken);
+            
+            if (result.status === 404) {
+                return res.status(404).json({ message: "Account already exists" });
+            }
     
-                const { user, googleUser, refreshToken, message } = result;
+            const { user, googleUser, refreshToken } = result;
+            const responseUser = user || googleUser;
     
-                const responseMessage = typeof message === 'string' ? message : "User created successfully.";
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+                sameSite: 'strict',
+            });
     
-                const responseUser = user || googleUser;
-    
-                res.cookie('refreshToken', refreshToken, {
-                    httpOnly: true,  
-                    secure: process.env.NODE_ENV === 'production',   
-                    maxAge: 30 * 24 * 60 * 60 * 1000,   
-                    sameSite: 'strict',   
-                });
-    
-                return res.status(201).json({
-                    message: responseMessage,
-                    user: responseUser,
-                    accessToken:result.accessToken,
-                });
-           
+            return res.status(201).json({
+                message: result.message,
+                user: responseUser,
+                accessToken: result.accessToken,
+            });
         } catch (error: any) {
             console.error(error.message);
             res.status(500).json({ message: "Google sign-up failed", error: error.message });
             next(error);
         }
     }
+    
     
     async googleLogin(req:Request,res:Response,next:NextFunction)
     {

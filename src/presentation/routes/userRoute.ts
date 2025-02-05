@@ -34,8 +34,8 @@ router.post('/login',asyncHandler(loginController.LoginUser.bind(loginController
 router.post('/verify-email', loginController.verifyEmail.bind(loginController));
 
 // OAuth 2.0 Authorization Grant Flow
-router.post('/google-login',asyncHandler(loginController.googleLogin.bind(loginController)));
 router.post('/google-signup',asyncHandler(loginController.googleSignUp.bind(loginController)));
+router.post('/google-login',asyncHandler(loginController.googleLogin.bind(loginController)));
 
 router.get('/auth/github', asyncHandler(loginController.gitHubAuth.bind(loginController)));
 router.get('/auth/github/callback', asyncHandler(loginController.gitHubAuth.bind(loginController)));

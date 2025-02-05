@@ -10,13 +10,18 @@ export interface UserInterface{
 
     createGoogleUser(email:string,fullName:string,
                     googleId:string,avatar:string
-                    ):Promise<UserEntity>
+                    ):Promise<UserEntity|null>
     findByGoogleId(googleId: string): Promise<UserEntity | null>
 
     createGithubUser(githubId: string, userData: UserEntity):Promise<UserEntity>
+
     loginUser(email:string):Promise<UserEntity|null>
+
     loginAdmin(email:string,password:string,isAdmin:boolean):Promise<AdminEntity|null>
+
     findAllUsers():Promise<UserEntity[]|null>
+
     insertWorkspace(ownerId:string,name:string,wid:string):Promise<UserEntity|null>
+
     updateUser(userId:string,password:string):Promise<UserEntity|null>
 }

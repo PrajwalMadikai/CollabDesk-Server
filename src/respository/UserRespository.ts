@@ -55,9 +55,16 @@ export class UserRepository implements UserInterface {
         googleId: string|undefined,
         avatar: string|undefined ,
        
-    ): Promise<UserEntity> {
+    ): Promise<UserEntity|null> {
+        let user=await UserModal.findOne({ email })
         
-        const user = await UserModal.create({
+        if(user)
+        {
+            return null
+        }
+         
+        
+         user = await UserModal.create({
             fullname,
             email,
             avatar,
@@ -80,10 +87,11 @@ export class UserRepository implements UserInterface {
     }
 
     async findByGoogleId(googleId: string): Promise<UserEntity | null> {
-        const user = await UserModal.findOne({googleId});
+        let user = await UserModal.findOne({googleId});
         if (!user) {
-            return null;
+            return null
         }
+        
 
         return new UserEntity(
             user.id,

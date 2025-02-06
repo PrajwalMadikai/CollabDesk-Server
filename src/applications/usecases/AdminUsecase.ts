@@ -1,3 +1,4 @@
+import { UserRole } from "../../interface/roles";
 import { UserRepository } from "../../respository/UserRespository";
 import { BcryptService } from "../services/bcryptService";
 import { TokenService } from "../services/TokenService";
@@ -24,8 +25,8 @@ export class AdminUsecase{
                {
                 return {status:404,message:"Incorrect password"}
                }
-               const accessToken=await this.tokenService.generateToken({userId:admin.id,userEmail:admin.email})
-               const refreshToken=await this.tokenService.generateRefreshToken({userId:admin.id,userEmail:admin.email})
+               const accessToken=await this.tokenService.generateToken({userId:admin.id,userEmail:admin.email,role:UserRole.ADMIN})
+               const refreshToken=await this.tokenService.generateRefreshToken({userId:admin.id,userEmail:admin.email,role:UserRole.ADMIN})
                
                if(!accessToken)
                {

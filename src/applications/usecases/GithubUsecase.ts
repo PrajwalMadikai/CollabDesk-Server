@@ -40,6 +40,7 @@ export class GithubUsecase{
                 avatar: profile.avatar_url,
                 githubId: profile.id,
                 workSpaces: [],
+                role:'User',
                 isAdmin: false
             });
     

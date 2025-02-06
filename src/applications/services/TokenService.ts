@@ -1,71 +1,84 @@
 import dotenv from "dotenv";
 import jwt, { JwtPayload } from "jsonwebtoken";
-
+import { UserRole } from "../../interface/roles";
 dotenv.config();
 
+type TokenResponse = string | TokenError;
+type TokenError = { status: number; message: string };
+
+export interface TokenPayload extends JwtPayload {
+    userId: string;
+    userEmail: string;
+    role?: UserRole| string;
+}
+
 export class TokenService {
-    
-    generateToken(payload: object): string | { status: number; message: string } {
-        const secretKey = process.env.JWT_SECRET;
-        if (!secretKey) {
-            return { status: 500, message: "JWT Secret key is missing!" };
+    private readonly accessTokenSecret: string;
+    private readonly refreshTokenSecret: string;
+
+    constructor() {
+        const accessSecret = process.env.JWT_SECRET;
+        const refreshSecret = process.env.REFRESH_TOKEN_SECRET;
+
+        if (!accessSecret || !refreshSecret) {
+            throw new Error("JWT secrets not configured properly");
         }
 
+        this.accessTokenSecret = accessSecret;
+        this.refreshTokenSecret = refreshSecret;
+    }
+
+    generateToken(payload: Partial<TokenPayload>): TokenResponse {
         try {
-            const token = jwt.sign(payload, secretKey, {
-                expiresIn:  "1h",
+            return jwt.sign(payload, this.accessTokenSecret, {
+                expiresIn: "1h",
             });
-            return token;
-        } catch (error: any) {
-            console.error("Error generating access token:", error.message);
+        } catch (error) {
+            console.error("Error generating access token:", error instanceof Error ? error.message : "Unknown error");
             return { status: 500, message: "Failed to generate access token" };
         }
     }
 
-    generateRefreshToken(payload: object): string | { status: number; message: string } {
-        const secretKey = process.env.REFRESH_TOKEN_SECRET;
-        if (!secretKey) {
-            return { status: 500, message: "Refresh Token secret key is missing!" };
-        }
-
+    generateRefreshToken(payload: Partial<TokenPayload>): TokenResponse {
         try {
-            const token = jwt.sign(payload, secretKey, {
-                expiresIn:  "7d",
+            return jwt.sign(payload, this.refreshTokenSecret, {
+                expiresIn: "30d",
             });
-            return token;
-        } catch (error: any) {
-            console.error("Error generating refresh token:", error.message);
+        } catch (error) {
+            console.error("Error generating refresh token:", error instanceof Error ? error.message : "Unknown error");
             return { status: 500, message: "Failed to generate refresh token" };
         }
     }
 
-    verifyToken(token: string): JwtPayload | { status: number; message: string } {
-        const secretKey = process.env.JWT_SECRET;
-        if (!secretKey) {
-            return { status: 500, message: "JWT Secret key is missing for verification!" };
-        }
-
+    verifyToken(token: string): TokenPayload | TokenError {
         try {
-            const decoded = jwt.verify(token, secretKey);
-            return decoded as JwtPayload;
-        } catch (error: any) {
-            console.error("Error verifying access token:", error.message);
+            const decoded = jwt.verify(token, this.accessTokenSecret) as TokenPayload;
+            
+            if (!decoded.id || !decoded.email || !decoded.role) {
+                return { status: 401, message: "Invalid token structure" };
+            }
+
+            return decoded;
+        } catch (error) {
+            console.error("Error verifying access token:", error instanceof Error ? error.message : "Unknown error");
             return { status: 401, message: "Invalid or expired access token" };
         }
     }
 
-    verifyRefreshToken(token: string): JwtPayload | { status: number; message: string } {
-        const secretKey = process.env.REFRESH_TOKEN_SECRET;
-        if (!secretKey) {
-            return { status: 500, message: "Refresh Token secret key is missing for verification!" };
-        }
-
+    verifyRefreshToken(token: string): TokenPayload | TokenError {
         try {
-            const decoded = jwt.verify(token, secretKey);
-            return decoded as JwtPayload;
-        } catch (error: any) {
-            console.error("Error verifying refresh token:", error.message);
+            const decoded = jwt.verify(token, this.refreshTokenSecret) as TokenPayload;
+            
+            if (!decoded.id || !decoded.email || !decoded.role) {
+                return { status: 401, message: "Invalid token structure" };
+            }
+
+            return decoded;
+        } catch (error) {
+            console.error("Error verifying refresh token:", error instanceof Error ? error.message : "Unknown error");
             return { status: 401, message: "Invalid or expired refresh token" };
         }
     }
+
+    
 }

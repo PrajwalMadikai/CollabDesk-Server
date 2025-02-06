@@ -101,8 +101,8 @@ export class UserUsecase{
                         return { status: 401, message: 'Incorrect password!' }; 
                     }
 
-                    const accessToken=await this.tokenService.generateToken({userId:user.id,userEmail:user.email})
-                    const refreshToken=await this.tokenService.generateRefreshToken({userId:user.id,userEmail:user.email})
+                    const accessToken=await this.tokenService.generateToken({userId:user.id,userEmail:user.email,role:user.role})
+                    const refreshToken=await this.tokenService.generateRefreshToken({userId:user.id,userEmail:user.email,role:user.role})
             
                     return { status: 200, user,accessToken,refreshToken };  
                 } catch (error) {
@@ -118,8 +118,8 @@ export class UserUsecase{
                     {
                         return { status: 403, message: "Refresh token verification failed!" }
                     }
-                    const { userId, email } = decoded as JwtPayload;
-                    const makeNewAccessToken=this.tokenService.generateToken({ userId: userId, email: email })
+                    const { userId, email ,role} = decoded as JwtPayload;
+                    const makeNewAccessToken=this.tokenService.generateToken({ userId: userId, email: email ,role})
                     if(!makeNewAccessToken)
                     {
                         return {status:404,message:"Error in new access token creation"}

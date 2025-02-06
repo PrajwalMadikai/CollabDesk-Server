@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-
+import { UserRole } from "./roles";
 
 export interface IUser extends Document{
     fullname:string,
@@ -13,6 +13,8 @@ export interface IUser extends Document{
     },
     googleId:string,
     avatar:string,
+    role:UserRole,
     githubId:string,
-    isAdmin:boolean
+    isAdmin:boolean,
+    isBlock:boolean
 }

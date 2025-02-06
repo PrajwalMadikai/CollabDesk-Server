@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IUser } from "../../interface/User";
+import { UserRole } from "../../interface/roles";
 
 const UserSchema:Schema=new Schema({
     email:{
@@ -31,7 +32,16 @@ const UserSchema:Schema=new Schema({
     githubId:{
         type:String
     },
+    role:{
+        type:String,
+        enum:Object.values(UserRole),
+        default:UserRole.USER
+    },
     isAdmin:{
+        type:Boolean,
+        default:false
+    },
+    isBlock:{
         type:Boolean,
         default:false
     }

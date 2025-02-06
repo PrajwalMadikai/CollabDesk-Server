@@ -29,7 +29,7 @@ export class AdminController{
         return res.status(500).json({ message: 'Internal Server Error' });
     }
    }
-   async logoutAdmin(req:Request,res:Response,next:NextFunction){
+   async logoutAdmin(req:Request,res:Response,next:NextFunction):Promise<void>{
     try {
         res.clearCookie('adminRefreshToken', {
             httpOnly: true,  
@@ -37,12 +37,14 @@ export class AdminController{
             sameSite: 'strict', 
           });
 
-          return res.status(200).json({ message: 'Logged out successfully' });
+            res.status(200).json({ message: 'Logged out successfully' });
+            return
         
     } catch (error) {
         next(error)
         console.log(error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+          res.status(500).json({ message: 'Internal Server Error' });
+          return
     }
    }
 
@@ -65,5 +67,16 @@ export class AdminController{
         console.log(error);
         return res.status(500).json({ message: 'Internal Server Error' });
      }
+   }
+   async blockUser(req:Request,res:Response,next:NextFunction)
+   {
+      try {
+        
+        
+      } catch (error) {
+        next(error)
+        console.log(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+      }
    }
 }

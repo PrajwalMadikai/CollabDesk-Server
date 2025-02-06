@@ -59,12 +59,12 @@ export class GoogleAuthUsecase {
             {
                 return { status: 404, message: "User already exist" };
             }
-            accessToken = await this.tokenService.generateToken({ userId: googleUser.id, userEmail: googleUser.email });
-            refreshToken = await this.tokenService.generateRefreshToken({ userId: googleUser.id, userEmail: googleUser.email });
+            accessToken =await this.tokenService.generateToken({ userId: googleUser.id, userEmail: googleUser.email, role: googleUser.role  });
+            refreshToken =await this.tokenService.generateRefreshToken({ userId: googleUser.id, userEmail: googleUser.email, role: googleUser.role });
 
         } else {
-            accessToken = await this.tokenService.generateToken({ userId: user.id, userEmail: user.email });
-            refreshToken = await this.tokenService.generateRefreshToken({ userId: user.id, userEmail: user.email });
+            accessToken =await this.tokenService.generateToken({ userId: user.id, userEmail: user.email, role: user.role });
+            refreshToken =await this.tokenService.generateRefreshToken({ userId: user.id, userEmail: user.email, role: user.role });
         }
 
         if (typeof accessToken === 'object' && 'status' in accessToken) {
@@ -123,8 +123,8 @@ export class GoogleAuthUsecase {
             return { status: 404, message: "Invalid user! Please register." };
         }
     
-        let accessToken = await this.tokenService.generateToken({ userId: user.id, userEmail: user.email });
-        let refreshToken = await this.tokenService.generateRefreshToken({ userId: user.id, userEmail: user.email });
+        let accessToken = this.tokenService.generateToken({ userId: user.id, userEmail: user.email, role: user.role });
+        let refreshToken = this.tokenService.generateRefreshToken({ userId: user.id, userEmail: user.email, role: user.role });
     
         if (typeof accessToken !== "string" || typeof refreshToken !== "string") {
             return { status: 500, message: "Failed to generate tokens." };

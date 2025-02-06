@@ -45,6 +45,7 @@ export class UserRepository implements UserInterface {
             user.googleId,
             user.avatar,
             user.githubId,
+            user.role,
             user.isAdmin
         );
     }
@@ -82,6 +83,7 @@ export class UserRepository implements UserInterface {
             user.googleId,
             user.avatar,
             user.githubId,
+            user.role,
             user.isAdmin
         );
     }
@@ -103,6 +105,7 @@ export class UserRepository implements UserInterface {
             user.googleId,
             user.avatar,
             user.githubId,
+            user.role,
             user.isAdmin
         );
     }
@@ -114,6 +117,7 @@ export class UserRepository implements UserInterface {
             paymentDetail: data.paymentDetail,
             avatar: data.avatar,
             githubId: githubId,
+            role:data.role
         })
 
         return new UserEntity(
@@ -126,6 +130,7 @@ export class UserRepository implements UserInterface {
             user.googleId,
             user.avatar,
             user.githubId,
+            user.role,
             user.isAdmin
         );
     }
@@ -144,6 +149,7 @@ export class UserRepository implements UserInterface {
             user.googleId,
             user.avatar,
             user.githubId,
+            user.role,
             user.isAdmin
         );
     }
@@ -164,6 +170,7 @@ export class UserRepository implements UserInterface {
             user.googleId,
             user.avatar,
             user.githubId,
+            user.role,
             user.isAdmin
         );
     }
@@ -197,6 +204,7 @@ export class UserRepository implements UserInterface {
             users.googleId,
             users.avatar,
             users.githubId,
+            users.role,
             users.isAdmin
         ))
     }
@@ -223,6 +231,7 @@ export class UserRepository implements UserInterface {
             updatedUser.googleId,
             updatedUser.avatar,
             updatedUser.githubId,
+            updatedUser.role,
             updatedUser.isAdmin
           ); 
  
@@ -248,6 +257,7 @@ export class UserRepository implements UserInterface {
               updatedUser.googleId,
               updatedUser.avatar,
               updatedUser.githubId,
+              updatedUser.role,
               updatedUser.isAdmin
             );
         

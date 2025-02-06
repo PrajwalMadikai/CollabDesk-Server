@@ -5,6 +5,7 @@ import { UserRepository } from '../../respository/UserRespository'
 import { WorkspaceRepository } from '../../respository/WorkspaceRepository'
 import { WorkspaceController } from '../controllers/workspaceController'
 import { authenticateToken, authorizeRoles } from '../middleware/authMiddleware'
+import { checkUserBlockStatus } from '../middleware/checkUserBlock'
 
 const router=express.Router()
 
@@ -15,7 +16,7 @@ const workspaceUsecase=new WorkspaceUsecase(workspaceRepository,userRepository)
 const workspaceController=new WorkspaceController(workspaceUsecase)
 
 
-router.post('/create',authenticateToken,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.newWorkspace(req, res, next)})
+router.post('/create',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.newWorkspace(req, res, next)})
 
 
 export default router

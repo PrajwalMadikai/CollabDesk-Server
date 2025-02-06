@@ -19,7 +19,9 @@ const adminUsecase=new AdminUsecase(userRepository,bcryptService,tokenService)
 const adminController=new AdminController(adminUsecase)
 
 router.post('/login',(req:Request,res:Response,next:NextFunction)=>{ adminController.findAdmin(req,res,next)})
-router.post('/logout',authenticateToken,authorizeRoles(UserRole.ADMIN),(req:Request,res:Response,next:NextFunction)=>{ adminController.logoutAdmin(req,res,next)})
+router.post('/logout',(req:Request,res:Response,next:NextFunction)=>{ adminController.logoutAdmin(req,res,next)})
+
+router.post('/refreshtoken',(req:Request,res:Response,next:NextFunction)=>{ adminController.adminRefreshToken(req,res,next)})
 
 router.get('/users',authenticateToken,authorizeRoles(UserRole.ADMIN),(req:Request,res:Response,next:NextFunction)=>{ adminController.getUsers(req,res,next)})
 

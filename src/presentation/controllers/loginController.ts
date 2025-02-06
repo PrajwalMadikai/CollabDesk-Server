@@ -217,6 +217,7 @@ export class LoginController{
     
             const newAccesstoken=await this.userUsecase.makeNewAccessToken(refreshToken)
             return res.status(200).json({message:"New access token created!",accessToken:newAccesstoken})
+
         } catch (error) {
             console.error('Error during new access token creation:', error);
             next(error)

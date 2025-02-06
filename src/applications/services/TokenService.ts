@@ -54,7 +54,7 @@ export class TokenService {
         try {
             const decoded = jwt.verify(token, this.accessTokenSecret) as TokenPayload;
             
-            if (!decoded.id || !decoded.email || !decoded.role) {
+            if (!decoded.userId || !decoded.userEmail || !decoded.role) {
                 return { status: 401, message: "Invalid token structure" };
             }
 

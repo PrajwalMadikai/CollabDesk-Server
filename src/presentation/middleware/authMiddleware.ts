@@ -1,12 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { TokenPayload, TokenService } from "../../applications/services/TokenService";
 import { UserRole } from "../../interface/roles";
+
 const tokenService = new TokenService();  
 
- 
-
-
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
   user?: TokenPayload;
 }
 

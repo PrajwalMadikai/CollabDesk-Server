@@ -15,10 +15,14 @@ const PORT= process.env.PORT || 5713
 connectDB();
 
 app.use(cors({
-  origin: 'http://localhost:3000',  
-  methods: 'GET, POST,PUT,PATCH,DELETE',
+  origin: 'http://localhost:3000', 
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Set-Cookie']
 }));
+
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');   
@@ -29,7 +33,7 @@ app.use(errorHandler)
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-app.use(cookieParser())
+
 
 app.use('/',userRoute)
 app.use('/workspace',workspaceRoute)

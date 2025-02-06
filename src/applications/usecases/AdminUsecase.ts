@@ -59,4 +59,46 @@ export class AdminUsecase{
         }
     }
 
+    async block(userId:string)
+    {
+        try {
+
+            let blocked=await this.userRepository.blockUser(userId)
+            if(!blocked)
+            {
+                return null
+            }
+
+            return blocked
+            
+        } catch (error) {
+            console.log("error in blocking user",error);
+            return { status: 500, message: 'An error occurred during blocking users.' }; 
+        }
+    }
+
+    async makeAdminrefreshToken(token: string) {
+        try {
+            const decoded = await this.tokenService.verifyRefreshToken(token);
+            if (!decoded || "status" in decoded) {
+                return null;
+            }
+            
+            const makeNewAccessToken = this.tokenService.generateToken({
+                userId: decoded.userId,  
+                userEmail: decoded.userEmail,  
+                role: decoded.role
+            });
+    
+            if (typeof makeNewAccessToken === 'string') {
+                return makeNewAccessToken;
+            }
+            
+            return null;
+        } catch (error) {
+            console.log("error in making new admin access token", error);
+            return null;
+        }
+    }
+
 }

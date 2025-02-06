@@ -40,7 +40,8 @@ export class UserUsecase{
                     workSpaces,
                     paymentDetail,
                     avatar:null,
-                    isAdmin:isAdmin
+                    isAdmin:isAdmin,
+                    isBlock:false
                 })
 
                 await this.sendMail.sendVerificationEmail(email, fullname, hashtoken);
@@ -66,7 +67,6 @@ export class UserUsecase{
                 tempUser.workSpaces || [], 
                 tempUser.paymentDetail || { paymentType: "Non", startDate: new Date(), endDate: new Date() },
                 tempUser.avatar,
-                tempUser.isAdmin
                 );
             
                 await this.emailVerification.deleteTempUser(email);
@@ -119,7 +119,7 @@ export class UserUsecase{
                         return { status: 403, message: "Refresh token verification failed!" }
                     }
                     const { userId, email ,role} = decoded as JwtPayload;
-                    const makeNewAccessToken=this.tokenService.generateToken({ userId: userId, email: email ,role})
+                    const makeNewAccessToken=this.tokenService.generateToken({ userId: userId, userEmail: email, role })
                     if(!makeNewAccessToken)
                     {
                         return {status:404,message:"Error in new access token creation"}

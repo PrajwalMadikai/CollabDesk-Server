@@ -13,7 +13,8 @@ export class UserEntity {
     avatar?:string|null;
     githubId?:string;
     role:string;
-    isAdmin:boolean
+    isAdmin:boolean;
+    isBlock:boolean
 
     constructor(
         id: string,
@@ -31,7 +32,7 @@ export class UserEntity {
         githubId:string,
         role:string,
         isAdmin:boolean,
-        
+        isBlock:boolean
     ) {
         this.id = id;
         this.fullname = fullname;
@@ -44,5 +45,6 @@ export class UserEntity {
         this.githubId=githubId;
         this.role=role
         this.isAdmin=isAdmin
+        this.isBlock=isBlock
     }
 }

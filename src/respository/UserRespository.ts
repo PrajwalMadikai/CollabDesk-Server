@@ -15,7 +15,6 @@ export class UserRepository implements UserInterface {
             endDate: Date;
         },
         avatar: string | null,
-        isAdmin:boolean
         
     ): Promise<UserEntity | { error: string }> {
 
@@ -32,7 +31,8 @@ export class UserRepository implements UserInterface {
             workSpaces,
             paymentDetail,
             avatar,
-            isAdmin:false
+            isAdmin:false,
+            isBlock:false
         });
 
         return new UserEntity(
@@ -46,7 +46,8 @@ export class UserRepository implements UserInterface {
             user.avatar,
             user.githubId,
             user.role,
-            user.isAdmin
+            user.isAdmin,
+            user.isBlock
         );
     }
 
@@ -70,7 +71,8 @@ export class UserRepository implements UserInterface {
             email,
             avatar,
             googleId,
-            workSpaces:[]
+            workSpaces:[],
+            isBlock:false
         });
 
         return new UserEntity(
@@ -84,7 +86,8 @@ export class UserRepository implements UserInterface {
             user.avatar,
             user.githubId,
             user.role,
-            user.isAdmin
+            user.isAdmin,
+            user.isBlock
         );
     }
 
@@ -106,7 +109,8 @@ export class UserRepository implements UserInterface {
             user.avatar,
             user.githubId,
             user.role,
-            user.isAdmin
+            user.isAdmin,
+            user.isBlock
         );
     }
     async createGithubUser(githubId:string,data:UserEntity): Promise<UserEntity> {
@@ -117,7 +121,8 @@ export class UserRepository implements UserInterface {
             paymentDetail: data.paymentDetail,
             avatar: data.avatar,
             githubId: githubId,
-            role:data.role
+            role:data.role,
+            isBlock:data.isBlock
         })
 
         return new UserEntity(
@@ -131,7 +136,8 @@ export class UserRepository implements UserInterface {
             user.avatar,
             user.githubId,
             user.role,
-            user.isAdmin
+            user.isAdmin,
+            user.isBlock
         );
     }
 
@@ -150,7 +156,8 @@ export class UserRepository implements UserInterface {
             user.avatar,
             user.githubId,
             user.role,
-            user.isAdmin
+            user.isAdmin,
+            user.isBlock
         );
     }
 
@@ -171,7 +178,8 @@ export class UserRepository implements UserInterface {
             user.avatar,
             user.githubId,
             user.role,
-            user.isAdmin
+            user.isAdmin,
+            user.isBlock
         );
     }
     async loginAdmin(email: string): Promise<AdminEntity|null> {
@@ -205,7 +213,8 @@ export class UserRepository implements UserInterface {
             users.avatar,
             users.githubId,
             users.role,
-            users.isAdmin
+            users.isAdmin,
+            users.isBlock
         ))
     }
     async insertWorkspace(ownerId: string, name: string, wid: string): Promise<UserEntity | null> {
@@ -232,7 +241,8 @@ export class UserRepository implements UserInterface {
             updatedUser.avatar,
             updatedUser.githubId,
             updatedUser.role,
-            updatedUser.isAdmin
+            updatedUser.isAdmin,
+            updatedUser.isBlock
           ); 
  
       }
@@ -258,8 +268,34 @@ export class UserRepository implements UserInterface {
               updatedUser.avatar,
               updatedUser.githubId,
               updatedUser.role,
-              updatedUser.isAdmin
+              updatedUser.isAdmin,
+              updatedUser.isBlock
             );
         
+    }
+    async blockUser(userId: string): Promise<UserEntity | null> {
+          const user=await UserModal.findByIdAndUpdate({_id:userId},{
+            $set:{isBlock:true}
+          })
+          if(!user)
+          {
+            return null
+          }
+
+          return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workSpaces,
+            user.googleId,
+            user.avatar,
+            user.githubId,
+            user.role,
+            user.isAdmin,
+            user.isBlock
+        );
+
     }
 }

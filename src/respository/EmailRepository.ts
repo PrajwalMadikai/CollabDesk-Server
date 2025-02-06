@@ -11,7 +11,8 @@ interface TempUser {
     workSpaces?: { workspaceId: string; workspaceName: string }[];
     paymentDetail?: { paymentType: string; startDate: Date; endDate: Date } | null;
     avatar:string|null,
-    isAdmin:boolean
+    isAdmin:boolean,
+    isBlock:boolean
 }
 
 export class EmailRepository implements EmailRepositoryInterface {
@@ -27,7 +28,8 @@ export class EmailRepository implements EmailRepositoryInterface {
                     endDate: new Date(),
                 },
                 avatar:null,
-                isAdmin:data.isAdmin
+                isAdmin:data.isAdmin,
+                isBlock:data.isBlock
             };
     
             const oldUser = await UserModal.findOne({ email: formattedData.email });
@@ -75,7 +77,8 @@ export class EmailRepository implements EmailRepositoryInterface {
                 })) : [],
                 paymentDetail: paymentDetail,
                avatar:null,
-               isAdmin:false
+               isAdmin:false,
+               isBlock:false
             };
     
             return tempUser;

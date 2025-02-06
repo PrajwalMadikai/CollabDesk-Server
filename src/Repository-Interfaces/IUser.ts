@@ -5,7 +5,7 @@ export interface UserInterface{
     createUser(email:string,password:string,fullname:string,
                workSpaces:{ workspaceId: string; workspaceName: string }[]
                ,paymentDetail: { paymentType: string; startDate: Date; endDate: Date },
-               avatar:string|null,isAdmin:boolean
+               avatar:string|null,
               ):Promise<UserEntity | { error: string }>
 
     createGoogleUser(email:string,fullName:string,
@@ -24,4 +24,6 @@ export interface UserInterface{
     insertWorkspace(ownerId:string,name:string,wid:string):Promise<UserEntity|null>
 
     updateUser(userId:string,password:string):Promise<UserEntity|null>
+
+    blockUser(userId:string,):Promise<UserEntity|null>
 }

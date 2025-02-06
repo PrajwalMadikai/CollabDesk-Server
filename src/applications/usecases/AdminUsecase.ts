@@ -76,6 +76,23 @@ export class AdminUsecase{
             return { status: 500, message: 'An error occurred during blocking users.' }; 
         }
     }
+    async unBlock(userId:string)
+    {
+        try {
+
+            let unblocked=await this.userRepository.unblockUser(userId)
+            if(!unblocked)
+            {
+                return null
+            }
+
+            return unblocked
+            
+        } catch (error) {
+            console.log("error in blocking user",error);
+            return { status: 500, message: 'An error occurred during blocking users.' }; 
+        }
+    }
 
     async makeAdminrefreshToken(token: string) {
         try {

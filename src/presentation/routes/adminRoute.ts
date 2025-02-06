@@ -25,8 +25,8 @@ router.post('/refreshtoken',(req:Request,res:Response,next:NextFunction)=>{ admi
 
 router.get('/users',authenticateToken,authorizeRoles(UserRole.ADMIN),(req:Request,res:Response,next:NextFunction)=>{ adminController.getUsers(req,res,next)})
 
-router.get('/block',authenticateToken,authorizeRoles(UserRole.ADMIN),(req:Request,res:Response,next:NextFunction)=>{ adminController.blockUser(req,res,next)})
-router.get('/unblock',authenticateToken,authorizeRoles(UserRole.ADMIN),(req:Request,res:Response,next:NextFunction)=>{ adminController.getUsers(req,res,next)})
+router.post('/block',authenticateToken,authorizeRoles(UserRole.ADMIN),(req:Request,res:Response,next:NextFunction)=>{ adminController.blockUser(req,res,next)})
+router.post('/unblock',authenticateToken,authorizeRoles(UserRole.ADMIN),(req:Request,res:Response,next:NextFunction)=>{ adminController.unBlockUser(req,res,next)})
 
 
 export default router

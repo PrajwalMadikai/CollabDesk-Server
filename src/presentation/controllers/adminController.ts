@@ -77,7 +77,24 @@ export class AdminController{
             {
                 return res.status(404).json({message:"couldn't find the user"})
             }
-            return res.status(200).json({message:"user blocked",user})
+            return res.status(200).json(user)
+        
+      } catch (error) {
+        next(error)
+        console.log(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+      }
+   }
+   async unBlockUser(req:Request,res:Response,next:NextFunction)
+   {
+      try {
+            const {userId}=req.body
+            let user=await this.adminUsecase.unBlock(userId)
+            if(!user)
+            {
+                return res.status(404).json({message:"couldn't find the user"})
+            }
+            return res.status(200).json(user)
         
       } catch (error) {
         next(error)

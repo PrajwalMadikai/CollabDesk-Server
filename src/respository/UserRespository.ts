@@ -298,4 +298,29 @@ export class UserRepository implements UserInterface {
         );
 
     }
+    async unblockUser(userId: string): Promise<UserEntity | null> {
+          const user=await UserModal.findByIdAndUpdate({_id:userId},{
+            $set:{isBlock:false}
+          })
+          if(!user)
+          {
+            return null
+          }
+
+          return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workSpaces,
+            user.googleId,
+            user.avatar,
+            user.githubId,
+            user.role,
+            user.isAdmin,
+            user.isBlock
+        );
+
+    }
 }

@@ -28,7 +28,6 @@ export class WorkspaceUsecase{
     {
         try{
         let result=await this.workspaceRepo.userWorkspace(userId)
-        console.log('user data:',result);
         if(!result)
         {
             return null

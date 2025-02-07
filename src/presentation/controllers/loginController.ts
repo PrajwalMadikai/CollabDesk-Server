@@ -30,7 +30,7 @@ export class LoginController{
         } catch (error:any) {
             console.log(error.message);
             
-            res.status(400).json({ message: error.message });
+            res.status(500).json({ message: error.message });
             next(error)
         }
     }

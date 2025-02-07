@@ -5,7 +5,7 @@ import express from 'express';
 import { connectDB } from './database/connection';
 import { errorHandler } from './presentation/middleware/errorHandler';
 import adminRoute from './presentation/routes/adminRoute';
-import folderRoute from './presentation/routes/folderRoute';
+import folderRoute from './presentation/routes/directoryRoute';
 import userRoute from './presentation/routes/userRoute';
 import workspaceRoute from './presentation/routes/workspaceRoute';
 dotenv.config() 
@@ -22,6 +22,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Set-Cookie']
 }));
+
 
 app.use(cookieParser());
 

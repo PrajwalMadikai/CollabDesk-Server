@@ -31,7 +31,6 @@ export class WorkspaceController{
            
             
             let result=await this.workspaceUsecase.fetchWorkspace(userId)
-            console.log('user id:',result);
             if(!result)
             {
                 return res.status(404).json({message:"couldn't find user"})

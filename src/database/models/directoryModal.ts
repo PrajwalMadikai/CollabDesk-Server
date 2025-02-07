@@ -9,12 +9,14 @@ const directorySchema:Schema=new Schema({
          type: mongoose.Schema.Types.ObjectId,
           ref: "Workspace"
     },
-    files:[
-        {
+    files:{
+      type:[ {
             fileId:String,
             fileName:String
-        }
-    ],
+        }],
+        default:[]
+
+    },
     inTrash:{
         type:Boolean,
         default:false

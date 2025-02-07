@@ -10,6 +10,7 @@ export class WorkspaceUsecase{
     async createSpace(
         name: string, ownerId: string,
     ){
+        try{
         const space= await this.workspaceRepo.registeringSpace(name,ownerId)
         if (!space) {
             return null;   
@@ -18,6 +19,26 @@ export class WorkspaceUsecase{
        
         console.log('usecase:',space);
         return space
+       }catch(error)
+       {
+        return {status:500,message:"An error occurred during creating workspace"}
+       }
+    }
+    async fetchWorkspace(userId:string)
+    {
+        try{
+        let result=await this.workspaceRepo.userWorkspace(userId)
+        console.log('user data:',result);
+        if(!result)
+        {
+            return null
+        }
+        return result.workSpaces
+       }catch(error)
+       {
+        console.log(error);
+        return { status: 500, message: 'An error occurred during fetching user workspace.' }; 
+       } 
     }
 
 }

@@ -21,7 +21,26 @@ export class WorkspaceController{
          } catch (error:any) {
             next(error)
             console.log(error.message);
-            res.status(500).json({ message: error.message });
+            return res.status(500).json({ message: error.message });
          }
+    }
+    async getUserWorkspace(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const {userId}=req.body
+           
+            
+            let result=await this.workspaceUsecase.fetchWorkspace(userId)
+            console.log('user id:',result);
+            if(!result)
+            {
+                return res.status(404).json({message:"couldn't find user"})
+            }
+            return res.status(200).json({message:'user workspace fetched',workspace:result})
+            
+        } catch (error:any) {
+            next(error)
+            return res.status(500).json({ message: error.message });
+        }
     }
 }

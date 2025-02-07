@@ -17,6 +17,7 @@ const workspaceController=new WorkspaceController(workspaceUsecase)
 
 
 router.post('/create',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.newWorkspace(req, res, next)})
+router.post('/fetch',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.getUserWorkspace(req, res, next)})
 
 
 export default router

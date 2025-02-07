@@ -5,13 +5,14 @@ import { AuthenticatedRequest } from './authMiddleware';
 export const checkUserBlockStatus=async(req:AuthenticatedRequest,res:Response,next:NextFunction):Promise<void>=>{
   try {
     const userId = req.user?.userId;  
+    
 
     if (!userId) {
        res.status(401).json({ message: "User ID not found, authentication failed" });
        return
     }
 
-    const user = await UserModal.findById(userId);
+    const user = await UserModal.findById({_id:userId});
 
     if (!user) {
          res.status(404).json({ message: "User not found" });

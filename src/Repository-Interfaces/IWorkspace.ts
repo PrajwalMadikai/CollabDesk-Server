@@ -1,3 +1,4 @@
+import { UserEntity } from "../entities/userEntity";
 import { workspaceEnity } from "../entities/workspaceEntity";
 
 export interface workspaceInterface{
@@ -9,4 +10,6 @@ export interface workspaceInterface{
         type:string,
         trashId:string|null,
     ):Promise<workspaceEnity|null>
+
+    userWorkspace(email:string):Promise<UserEntity|null>
 }

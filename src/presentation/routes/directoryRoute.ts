@@ -17,5 +17,6 @@ const directoryUsecase=new DirectoryUsecase(directoryRepository)
 const directoryController=new DirectoryController(directoryUsecase)
 
 router.post('/create',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>directoryController.createFolder(req,res,next))
+router.put('/update/:folderId',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>directoryController.updateFolder(req,res,next))
 
 export default router

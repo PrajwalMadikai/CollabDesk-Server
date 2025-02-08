@@ -31,7 +31,7 @@ export class TokenService {
     generateToken(payload: Partial<TokenPayload>): TokenResponse {
         try {
             return jwt.sign(payload, this.accessTokenSecret, {
-                expiresIn: "1h",
+                expiresIn: "2h",
             });
         } catch (error) {
             console.error("Error generating access token:", error instanceof Error ? error.message : "Unknown error");
@@ -67,18 +67,20 @@ export class TokenService {
 
     verifyRefreshToken(token: string): TokenPayload | TokenError {
         try {
+            console.log('Verifying refresh token');
             const decoded = jwt.verify(token, this.refreshTokenSecret) as TokenPayload;
+            console.log('Decoded refresh token:', decoded);
             
-            if (!decoded.id || !decoded.email || !decoded.role) {
+            if (!decoded.userId || !decoded.userEmail || !decoded.role) {
+                console.log('Invalid token structure:', decoded);
                 return { status: 401, message: "Invalid token structure" };
             }
-
+    
             return decoded;
         } catch (error) {
-            console.error("Error verifying refresh token:", error instanceof Error ? error.message : "Unknown error");
+            console.error("Error verifying refresh token:", error);
             return { status: 401, message: "Invalid or expired refresh token" };
         }
     }
-
     
 }

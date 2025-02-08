@@ -21,4 +21,21 @@ export class DirectoryUsecase{
             return { status: 500, message: 'An error occurred during creating directory.' }; 
         }
     }
+
+    async updateFoldername(folderId:string,newName:string){
+        try {
+
+            let updatedFolder=await this.directoryRepository.updateName(folderId,newName)
+            if(!updatedFolder)
+            {
+                return null
+            }
+
+            return updatedFolder
+            
+        } catch (error) {
+            console.log("error in create directory",error);
+            return { status: 500, message: 'An error occurred during updating directory.' }; 
+        }
+    }
 }

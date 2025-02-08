@@ -68,11 +68,12 @@ export class LoginController{
             const { user, googleUser, refreshToken } = result;
             const responseUser = user || googleUser;
     
-            res.cookie('refreshToken', refreshToken, {
+            res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: 30 * 24 * 60 * 60 * 1000,
-                sameSite: 'strict',
+                secure:false, 
+                sameSite: "lax",
+                path: "/",
+                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
             });
     
             return res.status(201).json({
@@ -103,15 +104,19 @@ export class LoginController{
             }
             
             const {user,accessToken,refreshToken,message}=result
-
-            res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,  
-                secure: process.env.NODE_ENV === 'production',   
-                maxAge: 30 * 24 * 60 * 60 * 1000,   
-                sameSite: 'strict',   
+           
+            console.log('refresh google login:',refreshToken);
+            
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure:false, 
+                sameSite: "lax",
+                path: "/",
+                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
             });
+            
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: message,
                 user,
                 accessToken:accessToken,
@@ -183,22 +188,27 @@ export class LoginController{
 
             const result=await this.userUsecase.findUser(email,password)
 
-            const {user,accessToken,refreshToken}=result
 
-            if(!user)
+            if(!result.user)
             {
                 return res.status(404).json({ message: "No User Found" });
             }
             if (result.status !== 200) {
                 return res.status(result.status).json({ message: result.message });
+
             }
-            res.cookie("refreshToken", refreshToken, {
-                httpOnly: true,  // Makes it inaccessible to JavaScript
-                secure: process.env.NODE_ENV === "production",  // Set to true in production (HTTPS)
-                maxAge: 30 * 24 * 60 * 60 * 1000,  
-                sameSite: "strict",   
-            });
-            return res.status(200).json({ message: "Login Successfully", user:user,accessToken });
+            if(result.refreshToken)
+            {
+                console.log('inside of login refresh',result.refreshToken);
+                
+                res.cookie("refreshToken", result.refreshToken, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",  // Make this dynamic like admin
+                    maxAge: 30 * 24 * 60 * 60 * 1000,   
+                    sameSite: process.env.NODE_ENV === "production" ? 'strict' : 'lax'  // Make this dynamic like admin
+                });
+           }
+            return res.status(200).json({ message: "Login Successfully", user:result.user,accessToken:result.accessToken,refreshToken:result.refreshToken });
 
         } catch (error) {
             console.error('Error during login:', error);
@@ -206,32 +216,43 @@ export class LoginController{
             return res.status(500).json({ message: 'Internal Server Error' });
         }
      }
-     async requestAccessToken(req:Request,res:Response,next:NextFunction){
+     async requestAccessToken(req: Request, res: Response, next: NextFunction) {
         try {
-            const refreshToken=req.cookies.refreshToken;
+            let  refreshToken = req.cookies?.refreshToken;
+           console.log('rsf:',refreshToken);
+           
+            
     
-            if(!refreshToken)
-            {
-                return res.status(403).json({message:"Refresh token is required"})
+            if (!refreshToken) {
+                console.log('no refresh token');
+                
+                return res.status(403).json({ message: "Refresh token is required" });
             }
     
-            const newAccesstoken=await this.userUsecase.makeNewAccessToken(refreshToken)
-            return res.status(200).json({message:"New access token created!",accessToken:newAccesstoken})
-
+            const result = await this.userUsecase.makeNewAccessToken(refreshToken);
+            
+            if (result.status !== 200) {
+                return res.status(result.status).json({ message: result.message });
+            }
+    
+            return res.status(200).json({
+                message: "New access token created!",
+                accessToken: result.accessToken
+            });
+    
         } catch (error) {
             console.error('Error during new access token creation:', error);
-            next(error)
+            next(error);
             return res.status(500).json({ message: 'Internal Server Error' });
         }
-
-     }
+    }
 
      async logoutUser(req: Request, res: Response, next: NextFunction) {
         try {
           res.clearCookie('refreshToken', {
-            httpOnly: true, // Secure cookie
+            httpOnly: true,  
             secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
-            sameSite: 'strict', // Prevent CSRF attacks
+            sameSite: 'lax',  
           });
       
           return res.status(200).json({ message: 'Logged out successfully' });

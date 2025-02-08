@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { JwtPayload } from "jsonwebtoken";
+import { UserRole } from "../../interface/roles";
 import { EmailRepository } from "../../respository/EmailRepository";
 import { UserRepository } from "../../respository/UserRespository";
 import { BcryptService } from "../services/bcryptService";
@@ -101,8 +101,8 @@ export class UserUsecase{
                         return { status: 401, message: 'Incorrect password!' }; 
                     }
 
-                    const accessToken=await this.tokenService.generateToken({userId:user.id,userEmail:user.email,role:user.role})
-                    const refreshToken=await this.tokenService.generateRefreshToken({userId:user.id,userEmail:user.email,role:user.role})
+                    const accessToken=await this.tokenService.generateToken({userId:user.id,userEmail:user.email,role:UserRole.USER})
+                    const refreshToken=await this.tokenService.generateRefreshToken({userId:user.id,userEmail:user.email,role:UserRole.USER})
             
                     return { status: 200, user,accessToken,refreshToken };  
                 } catch (error) {
@@ -110,22 +110,25 @@ export class UserUsecase{
                     return { status: 500, message: 'An error occurred during login.' }; 
                 }
             }
-            async makeNewAccessToken(token:string){
+            async makeNewAccessToken(token: string) {
                 try {
-
-                    const decoded=await this.tokenService.verifyRefreshToken(token)
-                    if(!decoded)
-                    {
-                        return { status: 403, message: "Refresh token verification failed!" }
+                    const decoded = await this.tokenService.verifyRefreshToken(token);
+                    
+                    if ('status' in decoded) {  
+                        return { status: 403, message: "Refresh token verification failed!" };
                     }
-                    const { userId, email ,role} = decoded as JwtPayload;
-                    const makeNewAccessToken=this.tokenService.generateToken({ userId: userId, userEmail: email, role })
-                    if(!makeNewAccessToken)
-                    {
-                        return {status:404,message:"Error in new access token creation"}
+            
+                    const makeNewAccessToken = this.tokenService.generateToken({ 
+                        userId: decoded.userId, 
+                        userEmail: decoded.userEmail, 
+                        role: decoded.role 
+                    });
+            
+                    if (typeof makeNewAccessToken === 'string') {
+                        return { status: 200, accessToken: makeNewAccessToken };
                     }
-                    return { status: 200, accessToken: makeNewAccessToken };
-
+                    
+                    return { status: 404, message: "Error in new access token creation" };
                 } catch (error) {
                     console.log(error);
                     return { status: 500, message: 'An error occurred during refresh token verification.' }; 

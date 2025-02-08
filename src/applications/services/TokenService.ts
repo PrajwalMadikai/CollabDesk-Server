@@ -31,7 +31,7 @@ export class TokenService {
     generateToken(payload: Partial<TokenPayload>): TokenResponse {
         try {
             return jwt.sign(payload, this.accessTokenSecret, {
-                expiresIn: "2h",
+                expiresIn: "10m",
             });
         } catch (error) {
             console.error("Error generating access token:", error instanceof Error ? error.message : "Unknown error");

@@ -38,4 +38,19 @@ export class DirectoryUsecase{
             return { status: 500, message: 'An error occurred during updating directory.' }; 
         }
     }
+    async fetchFolders(workspaceId:string)
+    {
+        try {
+              let result=await this.directoryRepository.fetchFolders(workspaceId)
+              if(!result)
+              {
+                   return null
+              }
+              return result
+            
+        } catch (error) {
+            console.log("error in fetching directory",error);
+            return { status: 500, message: 'An error occurred during fetchin directory.' }; 
+        }
+    }
 }

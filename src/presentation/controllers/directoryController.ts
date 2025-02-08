@@ -38,6 +38,10 @@ export class DirectoryController{
             const { folderId } = req.params;
             const {newName}=req.body
 
+            console.log(newName);
+            console.log(folderId);
+            
+
         if (!newName) {
             res.status(400).json({ message: "Folder name is required" });
             return;
@@ -59,6 +63,35 @@ export class DirectoryController{
             next(error)
             res.status(500).json({message:"Internal server error"})
            return
+        }
+    }
+
+    async fetchFolder(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const {workspaceId}=req.body
+
+            if(!workspaceId)
+            {
+                 res.status(404).json({message:"workspace id is missing"})
+                 return
+            }
+
+            let folders=await this.directoryUsecase.fetchFolders(workspaceId)
+
+            if(!folders)
+            {
+                res.status(404).json({message:"Unable to fetch directories"})
+                return
+            }
+
+            res.status(202).json({message:"Folder fetched successfully",folders})
+            return
+            
+        } catch (error) {
+            next(error)
+            res.status(500).json({message:"Internal server error"})
+            return
         }
     }
 

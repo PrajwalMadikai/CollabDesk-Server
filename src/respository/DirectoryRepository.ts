@@ -5,7 +5,7 @@ import { DirectoryEntity } from "../entities/directoryEntity";
 import { DirectoryInterface } from "../Repository-Interfaces/IDirectory";
 
 export class DirectoryRepository implements DirectoryInterface{
-   
+
       async createFolder(name:string,workspaceId:string):Promise<DirectoryEntity|null>{
 
          const workspaceObjectId = new mongoose.Types.ObjectId(workspaceId);
@@ -30,6 +30,13 @@ export class DirectoryRepository implements DirectoryInterface{
       async updateName(folderId: string, newName: string): Promise<DirectoryEntity | null> {
          const folderObjectId = new mongoose.Types.ObjectId(folderId);
          let folder=await FolderModal.findByIdAndUpdate(folderObjectId,{$set:{name:newName}},{ new: true })
+         if (folder) {
+            await WorkspaceModal.findOneAndUpdate(
+                { "directories.dirId": folderObjectId }, 
+                { $set: { "directories.$.dirName": newName } },  
+                { new: true } 
+            );
+        }
          if(!folder)
          {
             return null
@@ -42,5 +49,20 @@ export class DirectoryRepository implements DirectoryInterface{
             folder.files,
             folder.inTrash
          )
+      }
+
+      async fetchFolders(workspaceId: string): Promise<DirectoryEntity[]| null> {
+        
+         const folder=await  FolderModal.find({workspaceId,inTrash:false})
+         
+         if(!folder)return null
+
+         return folder.map((folder)=> new DirectoryEntity(
+            folder.id,
+            folder.name,
+            folder.workspaceId,
+            folder.files,
+            folder.inTrash
+        ))
       }
 }

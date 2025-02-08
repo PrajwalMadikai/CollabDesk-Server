@@ -65,15 +65,14 @@ export class LoginController{
                 return res.status(404).json({ message: "Account already exists" });
             }
     
-            const { user, googleUser, refreshToken } = result;
+            const { user, googleUser } = result;
             const responseUser = user || googleUser;
     
-            res.cookie("refreshToken", refreshToken, {
+            res.cookie("refreshToken", result.refreshToken, {
                 httpOnly: true,
-                secure:false, 
-                sameSite: "lax",
-                path: "/",
-                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+                secure: process.env.NODE_ENV === "production",  // Make this dynamic like admin
+                maxAge: 30 * 24 * 60 * 60 * 1000,   
+                sameSite: process.env.NODE_ENV === "production" ? 'strict' : 'lax'  // Make this dynamic like admin
             });
     
             return res.status(201).json({
@@ -107,12 +106,11 @@ export class LoginController{
            
             console.log('refresh google login:',refreshToken);
             
-            res.cookie("refreshToken", refreshToken, {
+            res.cookie("refreshToken", result.refreshToken, {
                 httpOnly: true,
-                secure:false, 
-                sameSite: "lax",
-                path: "/",
-                maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+                secure: process.env.NODE_ENV === "production",  // Make this dynamic like admin
+                maxAge: 30 * 24 * 60 * 60 * 1000,   
+                sameSite: process.env.NODE_ENV === "production" ? 'strict' : 'lax'  // Make this dynamic like admin
             });
             
 
@@ -203,9 +201,9 @@ export class LoginController{
                 
                 res.cookie("refreshToken", result.refreshToken, {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === "production",  // Make this dynamic like admin
+                    secure: process.env.NODE_ENV === "production",  
                     maxAge: 30 * 24 * 60 * 60 * 1000,   
-                    sameSite: process.env.NODE_ENV === "production" ? 'strict' : 'lax'  // Make this dynamic like admin
+                    sameSite: process.env.NODE_ENV === "production" ? 'strict' : 'lax' 
                 });
            }
             return res.status(200).json({ message: "Login Successfully", user:result.user,accessToken:result.accessToken,refreshToken:result.refreshToken });
@@ -219,7 +217,6 @@ export class LoginController{
      async requestAccessToken(req: Request, res: Response, next: NextFunction) {
         try {
             let  refreshToken = req.cookies?.refreshToken;
-           console.log('rsf:',refreshToken);
            
             
     

@@ -22,4 +22,6 @@ router.put('/update/:folderId',authenticateToken,checkUserBlockStatus,authorizeR
 
 router.post('/fetch',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>directoryController.fetchFolder(req,res,next))
 
+router.post('/delete/:folderId',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>directoryController.folderDelete(req,res,next))
+
 export default router

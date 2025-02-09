@@ -66,5 +66,22 @@ export class DirectoryRepository implements DirectoryInterface{
            ));
            
      }
+
+     async deleteFolder(folderId: string): Promise<DirectoryEntity | null> {
+      
+      let folder=await FolderModal.findByIdAndDelete(folderId)
+      if(!folder)
+      {
+         return null
+      }
+
+      return  new DirectoryEntity(
+         folder.id,
+         folder.name,
+         folder.workspaceId,
+         folder.files,
+         folder.inTrash
+      )
+     }
      
 }

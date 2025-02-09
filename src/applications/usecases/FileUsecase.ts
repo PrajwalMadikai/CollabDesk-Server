@@ -19,4 +19,21 @@ export class FileUsecase{
         }
     }
 
+    async deleteFile(fileId:string,folderId:string)
+    {
+        try {
+              const result=await this.fileRepository.deleteFile(fileId,folderId)
+              if(!result)
+              {
+                  return null
+              }
+
+              return result
+
+        } catch (error) {
+            console.log("error in file deletion",error);
+            return { status: 500, message: 'An error occurred during file deletion.' }; 
+        }
+    }
+ 
 }

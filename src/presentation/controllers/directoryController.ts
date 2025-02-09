@@ -88,5 +88,28 @@ export class DirectoryController{
             next(error)
         }
     }
+    async folderDelete(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+               const {folderId}=req.params
+               if(!folderId)
+               {
+                 res.status(400).json({message:"Folder id is missing"})
+                 return
+               }
+               let result=await this.directoryUsecase.deleteFolder(folderId)
+
+               if(!result)
+               {
+                res.status(404).json({message:"Unable to delete folder"})
+                return
+               }
+
+               res.json(200).json({message:"folder deleted successfully"})
+               return
+        } catch (error) {
+            next(error)
+        }
+    }
 
 }

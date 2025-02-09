@@ -26,4 +26,27 @@ export class FileController{
             next(error)
         }
     }
+    async deleteFile(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+              const {fileId}=req.params
+              const {folderId} = req.body
+              if(!folderId)
+              {
+                return res.status(400).json({message:"Folder id is missing"})
+              }
+              let result=await this.fileUsecase.deleteFile(fileId,folderId)
+
+              if(!result)
+              {
+                return res.status(400).json({message:"Unable to delete the file"})
+              }
+
+              return res.status(200).json({message:"File deleted successfully"})
+
+            
+        } catch (error) {
+           return next(error)
+        }
+    }
 }

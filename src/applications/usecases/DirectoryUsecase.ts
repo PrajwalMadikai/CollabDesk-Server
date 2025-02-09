@@ -53,4 +53,19 @@ export class DirectoryUsecase{
             return { status: 500, message: 'An error occurred during fetchin directory.' }; 
         }
     }
+    async deleteFolder(folderId:string)
+    {
+        try {
+             
+            let deleted=await this.directoryRepository.deleteFolder(folderId)
+            if(!deleted){
+                return null
+            }
+            return deleted
+            
+        } catch (error) {
+            console.log("error in deleting directory",error);
+            return { status: 500, message: 'An error occurred during deleting directory.' }; 
+        }
+    }
 }

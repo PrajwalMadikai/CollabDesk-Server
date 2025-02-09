@@ -15,6 +15,7 @@ const fileUsecase=new FileUsecase(fileRepository)
 const fileController=new FileController(fileUsecase)
 
 router.post('/create',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{fileController.createFiles(req, res, next)})
+router.post('/delete/:fileId',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{fileController.deleteFile(req, res, next)})
 
 
 export default router

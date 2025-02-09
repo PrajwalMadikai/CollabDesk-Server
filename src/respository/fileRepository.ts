@@ -28,4 +28,34 @@ export class FileRepository implements FileInterface{
             updatedFolder.inTrash
          )
     }
+
+    async deleteFile(fileId: string, folderId: string): Promise<DirectoryEntity | null> {
+
+        let file = await FileModal.deleteOne({_id:fileId});
+        
+        if(!file)
+        {
+            return null
+        }
+        let updatedFolder = await FolderModal.findByIdAndUpdate(
+            folderId,
+            { $pull: { files: { fileId: fileId } } }, 
+            { new: true }
+        );
+        
+
+        if(!updatedFolder)
+        {
+            return null
+        }
+
+
+        return  new DirectoryEntity(
+            updatedFolder.id,
+            updatedFolder.name,
+            updatedFolder.workspaceId,
+            updatedFolder.files,
+            updatedFolder.inTrash
+         )
+    }
 }

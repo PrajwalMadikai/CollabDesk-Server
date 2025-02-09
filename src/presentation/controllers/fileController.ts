@@ -9,11 +9,11 @@ export class FileController{
     {
         try {
 
-            const {folderId,name}=req.body
-            if (!folderId||!name) {
-                return res.status(400).json({ message: "Folder id or File name is missing!" });
+            const {folderId}=req.body
+            if (!folderId) {
+                return res.status(400).json({ message: "Folder id is missing!" });
             }
-            let file=await this.fileUsecase.createFile(folderId,name)
+            let file=await this.fileUsecase.createFile(folderId)
             
             if(!file)
             {

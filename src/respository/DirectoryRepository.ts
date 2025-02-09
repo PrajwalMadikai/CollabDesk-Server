@@ -53,21 +53,18 @@ export class DirectoryRepository implements DirectoryInterface{
 
       async fetchFolders(workspaceId: string): Promise<DirectoryEntity[] | null> {
              const folders = await FolderModal.find({ workspaceId, inTrash: false })
-                 .populate("files.fileId") // Populate file details
-                 .exec();
+                  
      
              if (!folders) return null;
      
              return folders.map((folder) => new DirectoryEntity(
-                 folder.id,
-                 folder.name,
-                 folder.workspaceId,
-                 folder.files.map((file: any) => ({
-                     fileId: file.fileId._id, 
-                     fileName: file.fileId.name  
-                 })),
-                 folder.inTrash
-             ));
+               folder.id,
+               folder.name,
+               folder.workspaceId,
+               folder.files,
+               folder.inTrash
+           ));
+           
      }
      
 }

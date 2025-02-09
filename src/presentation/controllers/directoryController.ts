@@ -23,7 +23,7 @@ export class DirectoryController{
                  res.status(404).json({message:"Unable to find workspace for creating Folder!"})
                  return
              }
-              res.status(200).json({message:"Folder created successfully",result})
+              res.status(200).json({message:"Folder created successfully",folder:result})
              return
         } catch (error) {
             next(error)

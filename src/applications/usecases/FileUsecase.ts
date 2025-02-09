@@ -5,12 +5,12 @@ export class FileUsecase{
         private fileRepository:FileRepository
     ){}
 
-    async createFile(folderId:string,name:string){
+    async createFile(folderId:string){
         try {
 
-            let result=await this.fileRepository.createFile(folderId,name)
+            let result=await this.fileRepository.createFile(folderId)
             if(!result) return null 
-            
+
             return result
 
         } catch (error) {

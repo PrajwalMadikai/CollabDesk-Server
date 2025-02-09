@@ -5,17 +5,18 @@ import { DirectoryEntity } from "../entities/directoryEntity";
 import { FileInterface } from "../Repository-Interfaces/IFile";
 
 export class FileRepository implements FileInterface{
-   async createFile(folderId: string, name: string): Promise<DirectoryEntity | null> {
+   async createFile(folderId: string): Promise<DirectoryEntity | null> {
          
-         let file = await FileModal.create({ name, directoryId: new mongoose.Types.ObjectId(folderId) });
+         let file = await FileModal.create({ name:"Untitled", directoryId: new mongoose.Types.ObjectId(folderId) });
 
         if (!file) return null;
 
         let updatedFolder = await FolderModal.findByIdAndUpdate(
             folderId,
-            { $push: { files: { fileId: file._id, fileName: name } } },
+            { $push: { files: { fileId: file._id, fileName: file.name } } },  
             { new: true }
-        ).populate("files.fileId");  
+        ).populate("files.fileId", "name");  
+        
 
         if(!updatedFolder) return null
 

@@ -21,7 +21,6 @@ export class WorkspaceController{
          } catch (error:any) {
             next(error)
             console.log(error.message);
-            return res.status(500).json({ message: error.message });
          }
     }
     async getUserWorkspace(req:Request,res:Response,next:NextFunction)
@@ -39,7 +38,6 @@ export class WorkspaceController{
             
         } catch (error:any) {
             next(error)
-            return res.status(500).json({ message: error.message });
         }
     }
 }

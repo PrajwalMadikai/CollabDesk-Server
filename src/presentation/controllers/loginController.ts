@@ -41,7 +41,7 @@ export class LoginController{
       
       
           if (!email || !token) {
-            throw new Error('Missing email or token');
+            return res.status(400).json({ message: "Email or Token is required" });
           }
       
           const result = await this.userUsecase.verifyEmail(email as string, token as string);

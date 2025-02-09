@@ -27,8 +27,6 @@ export class DirectoryController{
              return
         } catch (error) {
             next(error)
-             res.status(500).json({message:"Internal server error"})
-            return
         }
     }
 
@@ -61,8 +59,6 @@ export class DirectoryController{
         catch(error)
         {
             next(error)
-            res.status(500).json({message:"Internal server error"})
-           return
         }
     }
 
@@ -73,7 +69,7 @@ export class DirectoryController{
 
             if(!workspaceId)
             {
-                 res.status(404).json({message:"workspace id is missing"})
+                 res.status(400).json({message:"workspace id is missing"})
                  return
             }
 
@@ -90,8 +86,6 @@ export class DirectoryController{
             
         } catch (error) {
             next(error)
-            res.status(500).json({message:"Internal server error"})
-            return
         }
     }
 

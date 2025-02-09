@@ -31,7 +31,7 @@ const loginController=new LoginController(userUsecase,googleUsecase,githubUsecas
 router.post('/signup', loginController.registerUser.bind(loginController));
 router.post('/login',asyncHandler(loginController.LoginUser.bind(loginController)))
 
-router.post('/verify-email', loginController.verifyEmail.bind(loginController));
+router.post('/verify-email', asyncHandler(loginController.verifyEmail.bind(loginController)));
 
 // OAuth 2.0 Authorization Grant Flow
 router.post('/google-signup',asyncHandler(loginController.googleSignUp.bind(loginController)));

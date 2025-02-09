@@ -6,6 +6,7 @@ import { connectDB } from "./database/connection";
 import { errorHandler } from "./presentation/middleware/errorHandler";
 import adminRoute from "./presentation/routes/adminRoute";
 import folderRoute from "./presentation/routes/directoryRoute";
+import fileRoute from './presentation/routes/fileRoute';
 import userRoute from "./presentation/routes/userRoute";
 import workspaceRoute from "./presentation/routes/workspaceRoute";
 
@@ -25,6 +26,8 @@ app.use("/", userRoute);
 app.use("/workspace", workspaceRoute);
 app.use("/admin", adminRoute);
 app.use("/folder", folderRoute);
+app.use('/file',fileRoute)
+
 app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Running on http://localhost:${PORT}`));

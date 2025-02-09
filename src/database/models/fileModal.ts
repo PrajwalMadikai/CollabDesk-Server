@@ -10,16 +10,20 @@ const fileSchema:Schema=new Schema({
         ref:'Directory'
     },
     published:{
-        type:Boolean
+        type:Boolean,
+        default:false
     },
     url:{
-        type:String
+        type:String,
+        default:null
     },
     content:{
-        type:String
+        type:String,
+        default:null
     },
     coverImage:{
-        type:String
+        type:String,
+        default:null
     },
     inTrash:{
         type:Boolean,

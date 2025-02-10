@@ -35,5 +35,20 @@ export class FileUsecase{
             return { status: 500, message: 'An error occurred during file deletion.' }; 
         }
     }
+
+    async fetchContent(fileId:string)
+    {
+        try {
+
+            let result=await this.fileRepository.fetchFileContent(fileId)
+            if(!result) return null
+
+            return result.content
+            
+        } catch (error) {
+            console.log("error in file content fetching",error);
+            return { status: 500, message: 'An error occurred during file content fetching.' }; 
+        }
+    }
  
 }

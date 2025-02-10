@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { FolderModal } from "../database/models/directoryModal";
 import { FileModal } from "../database/models/fileModal";
 import { DirectoryEntity } from "../entities/directoryEntity";
+import { FileEntity } from "../entities/fileEntity";
 import { FileInterface } from "../Repository-Interfaces/IFile";
 
 export class FileRepository implements FileInterface{
@@ -57,5 +58,22 @@ export class FileRepository implements FileInterface{
             updatedFolder.files,
             updatedFolder.inTrash
          )
+    }
+    async fetchFileContent(fileId: string): Promise<FileEntity | null> {
+        let file =await FileModal.findById(fileId)
+        console.log('file content fetch:',file)
+        if(!file) return null
+
+        return new FileEntity(
+            file.id,
+            file.name,
+            file.directoryId,
+            file.published,
+            file.url,
+            file.content,
+            file.coverImage,
+            file.inTrash
+        )
+        
     }
 }

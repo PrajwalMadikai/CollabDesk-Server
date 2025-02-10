@@ -49,4 +49,27 @@ export class FileController{
            return next(error)
         }
     }
+
+    async contentFetch(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const {fileId}=req.body
+
+            if(!fileId)
+            {
+                return res.status(400).json({message:"FileId is missing"})
+            }
+
+            let file=await this.fileUsecase.fetchContent(fileId)
+            if(!file)
+            {
+                return res.status(404).json({message:'Unable to find the file'})
+            }
+
+            return res.status(200).json({message:"File content fetched successfully",content:file})
+            
+        } catch (error) {
+            next(error)
+        }
+    }
 }

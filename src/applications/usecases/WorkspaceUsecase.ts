@@ -32,7 +32,10 @@ export class WorkspaceUsecase{
         {
             return null
         }
-        return result.workSpaces
+        return result.workSpaces.map(workspace => ({
+            workspaceId: workspace.workspaceId, 
+            workspaceName: workspace.workspaceName
+          }));
        }catch(error)
        {
         console.log(error);

@@ -41,9 +41,29 @@ export class FileUsecase{
         try {
 
             let result=await this.fileRepository.fetchFileContent(fileId)
-            if(!result) return null
+            if(!result)
+            {
+                 return null
+            }
+           console.log('file content:',result.content);
+           
+            return result
+            
+        } catch (error) {
+            console.log("error in file content fetching",error);
+            return { status: 500, message: 'An error occurred during file content fetching.' }; 
+        }
+    }
 
-            return result.content
+    async fetchFile(folderId:string)
+    {
+        try {
+
+            let result=await this.fileRepository.fetchFile(folderId)
+            if(!result) return null
+         console.log('resukt:',result.files);
+         
+            return result.files
             
         } catch (error) {
             console.log("error in file content fetching",error);

@@ -324,4 +324,31 @@ export class LoginController{
             return res.status(500).json({message:"Internal server error"})
         }
      }
+
+     async verifyUserLiveblocks(req: Request, res: Response, next: NextFunction) {
+        try {
+            const token = req.headers.authorization?.split(" ")[1];
+            if (!token) {
+                console.log('token is missing')
+                return res.status(401).json({ message: "Unauthorized: No token provided" }); 
+            }
+           
+            let user = await this.userUsecase.verifyUser(token);
+            if (!user) {
+                return res.status(404).json({ message: "User couldn't be found" });
+            }
+           console.log('verifying user :',user);
+           
+            return res.status(200).json({
+                id: user.id?.toString() ,   
+                name: user.fullname,
+                email: user.email,
+                profileImage: user.avatar ,
+            });
+        } catch (error) {
+            next(error);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    }
+    
 }

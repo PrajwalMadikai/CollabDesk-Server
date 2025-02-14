@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { UserModal } from "../database/models/userModal";
 import { WorkspaceModal } from "../database/models/workspaceModal";
 import { UserEntity } from "../entities/userEntity";
@@ -49,5 +50,52 @@ export class WorkspaceRepository implements workspaceInterface{
             user.isAdmin,
             user.isBlock
         )
-    }    
+    } 
+    
+    async addCollaborator(email: string, workspaceId: string): Promise<workspaceEnity | null> {
+        
+        const workspaceObjectId = new mongoose.Types.ObjectId(workspaceId);
+
+        const user=await UserModal.findOne({email})
+         if(!user)
+         {
+            return null
+         }
+
+         const alreadyExist=await WorkspaceModal.findOne({_id:workspaceObjectId,
+                                                     userDetails:{$elemMatch:{userEmail:email}}})
+         if(alreadyExist)
+         {
+            console.log('user is at the workspace');
+            
+            return null
+         }
+       
+
+        let space=await WorkspaceModal.findByIdAndUpdate(workspaceObjectId,
+                    {$push:{userDetails:{userId:user.id,userEmail:email}}
+                    },{new:true})
+        if(!space)
+        {
+          return null
+        }
+
+      let upuser=  await UserModal.updateOne({email},{
+            $push:{workSpaces:{workspaceId:space.id,workspaceName:space.name}}
+        },{new:true})
+        console.log('user in add collab:',upuser);
+        
+        
+
+        return new workspaceEnity(
+            space.id,
+            space.name,
+            space.ownerId,
+            space.directories,
+            space.userDetails,
+            space.meetingRoom,
+            space.type,
+            space.trashId
+        )
+    }
 }

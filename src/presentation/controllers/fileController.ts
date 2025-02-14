@@ -53,8 +53,9 @@ export class FileController{
     async contentFetch(req:Request,res:Response,next:NextFunction)
     {
         try {
-            const {fileId}=req.body
-
+            const {fileId}=req.params
+          console.log('file fetch',fileId);
+          
             if(!fileId)
             {
                 return res.status(400).json({message:"FileId is missing"})
@@ -67,6 +68,28 @@ export class FileController{
             }
 
             return res.status(200).json({message:"File content fetched successfully",content:file})
+            
+        } catch (error) {
+            next(error)
+        }
+    }
+    async fetchFile(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            const {folderId}=req.body
+             console.log('file create ',folderId);
+             
+            if(!folderId)
+            {
+                return res.status(400).json({message:"Missing folder id"})
+            }
+            const file=await this.fileUsecase.fetchFile(folderId)
+            if(!file)
+            {
+                return res.status(404).json({message:"Unable to find files"})
+            }
+            return res.status(200).json({message:"Files fetched successfully",file})
             
         } catch (error) {
             next(error)

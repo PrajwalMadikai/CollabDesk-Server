@@ -323,4 +323,27 @@ export class UserRepository implements UserInterface {
         );
 
     }
+
+    async verifyUser(userId:string):Promise<UserEntity|null>
+    {
+        const user=await UserModal.findById(userId)
+        if(!user)
+        {
+            return null
+        }
+        return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workSpaces,
+            user.googleId,
+            user.avatar,
+            user.githubId,
+            user.role,
+            user.isAdmin,
+            user.isBlock
+        );
+    }
 }

@@ -49,4 +49,6 @@ router.post('/reset-password',asyncHandler(loginController.resetPassword.bind(lo
 
 router.post('/logout',asyncHandler(loginController.logoutUser.bind(loginController)))
 
+router.post('/verify-user',asyncHandler(loginController.verifyUserLiveblocks.bind(loginController)))
+
 export default router

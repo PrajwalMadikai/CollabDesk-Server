@@ -7,9 +7,7 @@ export class WorkspaceUsecase{
         private userRepository:UserRepository
     ){}
 
-    async createSpace(
-        name: string, ownerId: string,
-    ){
+    async createSpace(name: string, ownerId: string,){
         try{
         const space= await this.workspaceRepo.registeringSpace(name,ownerId)
         if (!space) {
@@ -17,7 +15,6 @@ export class WorkspaceUsecase{
         }
        await this.userRepository.insertWorkspace(space.ownerId,space.name,space.id)
        
-        console.log('usecase:',space);
         return space
        }catch(error)
        {
@@ -41,6 +38,23 @@ export class WorkspaceUsecase{
         console.log(error);
         return { status: 500, message: 'An error occurred during fetching user workspace.' }; 
        } 
+    }
+
+    async addUsertoWorkspace(email:string,workspaceId:string )
+    {
+        try {
+              
+            let user=await this.workspaceRepo.addCollaborator(email,workspaceId)
+            if(!user)
+            {
+                return null
+            }
+            return user
+            
+        } catch (error) {
+            console.log(error);
+            return { status: 500, message: 'An error occurred during adding collaborator to workspace.' }; 
+        }
     }
 
 }

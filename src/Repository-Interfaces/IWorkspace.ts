@@ -12,4 +12,6 @@ export interface workspaceInterface{
     ):Promise<workspaceEnity|null>
 
     userWorkspace(email:string):Promise<UserEntity|null>
+
+    addCollaborator(email:string,workspaceId:string):Promise<workspaceEnity|null>
 }

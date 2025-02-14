@@ -26,4 +26,6 @@ export interface UserInterface{
     updateUser(userId:string,password:string):Promise<UserEntity|null>
 
     blockUser(userId:string,):Promise<UserEntity|null>
+
+    verifyUser(userId:string):Promise<UserEntity|null>
 }

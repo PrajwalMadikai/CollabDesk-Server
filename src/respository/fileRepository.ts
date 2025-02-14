@@ -76,4 +76,20 @@ export class FileRepository implements FileInterface{
         )
         
     }
+    async fetchFile(folderId:string):Promise<DirectoryEntity|null>
+    {
+        const files=await FolderModal.findById(folderId)
+        if(!files) return null
+        console.log(
+            'file:',files
+        );
+        
+        return  new DirectoryEntity(
+            files.id,
+            files.name,
+            files.workspaceId,
+            files.files,
+            files.inTrash
+         )
+    }
 }

@@ -7,4 +7,6 @@ export interface FileInterface{
     deleteFile(fileId:string,folderId:string):Promise<DirectoryEntity|null>
 
     fetchFileContent(fileId:string):Promise<FileEntity|null>
+
+    fetchFile(directoryId:string):Promise<DirectoryEntity|null>
 }

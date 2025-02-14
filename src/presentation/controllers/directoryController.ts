@@ -62,30 +62,27 @@ export class DirectoryController{
         }
     }
 
-    async fetchFolder(req:Request,res:Response,next:NextFunction)
-    {
+    async fetchFolder(req: Request, res: Response, next: NextFunction) {
         try {
-            const {workspaceId}=req.body
-
-            if(!workspaceId)
-            {
-                 res.status(400).json({message:"workspace id is missing"})
-                 return
+            const { workspaceId } = req.body;
+    
+            if (!workspaceId) {
+                res.status(400).json({ message: "workspace id is missing" });
+                return;
             }
-
-            let folders=await this.directoryUsecase.fetchFolders(workspaceId)
-
-            if(!folders)
-            {
-                res.status(404).json({message:"Unable to fetch directories"})
-                return
+    
+            let folders = await this.directoryUsecase.fetchFolders(workspaceId);
+    
+            if (!folders) {
+                res.status(404).json({ message: "Unable to fetch directories" });
+                return;
             }
-
-            res.status(202).json({message:"Folder fetched successfully",folders})
-            return
-            
+    
+            res.status(200).json({ message: "Folders fetched successfully", folders });
+            return;
+    
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
     async folderDelete(req:Request,res:Response,next:NextFunction)

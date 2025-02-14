@@ -186,5 +186,21 @@ export class UserUsecase{
                     return { status: 500, message: 'An error occurred during finding reset password user' }; 
                 }
             }
-
+            async verifyUser(token: string) {
+                try {
+                    let decoded = await this.tokenService.verifyToken(token);
+                    
+                    if (!decoded || "status" in decoded) {  
+                        return null;  
+                    }
+            
+                    const user = await this.userRepository.verifyUser(decoded.userId);
+                    if(!user) return null
+                    return user  
+                } catch (error) {
+                    console.error("Error verifying user:", error);
+                    return null;  
+                }
+            }
+            
     }

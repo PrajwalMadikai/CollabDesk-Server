@@ -9,7 +9,7 @@ const workspaceSchema:Schema=new Schema({
         type: mongoose.Schema.Types.ObjectId, ref: "User"
     },
     userDetails: {
-        type: [{ userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, userName: { type: String } }],
+        type: [{ userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, userEmail: { type: String } }],
         default: []
     },
     directories: {

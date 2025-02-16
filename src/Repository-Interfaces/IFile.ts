@@ -9,4 +9,6 @@ export interface FileInterface{
     fetchFileContent(fileId:string):Promise<FileEntity|null>
 
     fetchFile(directoryId:string):Promise<DirectoryEntity|null>
+
+    updateFileContent(fileId:string,content:string):Promise<FileEntity|null>
 }

@@ -92,4 +92,19 @@ export class FileRepository implements FileInterface{
             files.inTrash
          )
     }
+    async updateFileContent(fileId: string, content: string): Promise<FileEntity | null> {
+        const file=await FileModal.findByIdAndUpdate(fileId,{$set:{content}})
+        if(!file) return null
+
+        return new FileEntity(
+            file.id,
+            file.name,
+            file.directoryId,
+            file.published,
+            file.url,
+            file.content,
+            file.coverImage,
+            file.inTrash
+        )
+    }
 }

@@ -63,4 +63,23 @@ export class WorkspaceController{
             next(error)
         }
     }
+    async fetchCollaborator(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            const {workspaceId}=req.body
+            if(!workspaceId)
+            {
+                return res.status(400).json({message:"workspace id is missing"})
+            }
+            const space=await this.workspaceUsecase.findCollaborators(workspaceId)
+            if(!space)
+            {
+                return res.status(404).json({message:"Unable to find collaborators"})
+            }
+            return res.status(200).json({message:"collaborators fetched successfully",user:space})
+        } catch (error) {
+            next(error)
+        }
+    }
 }

@@ -61,7 +61,6 @@ export class FileRepository implements FileInterface{
     }
     async fetchFileContent(fileId: string): Promise<FileEntity | null> {
         let file =await FileModal.findById(fileId)
-        console.log('file content fetch:',file)
         if(!file) return null
 
         return new FileEntity(
@@ -80,9 +79,7 @@ export class FileRepository implements FileInterface{
     {
         const files=await FolderModal.findById(folderId)
         if(!files) return null
-        console.log(
-            'file:',files
-        );
+  
         
         return  new DirectoryEntity(
             files.id,
@@ -94,6 +91,13 @@ export class FileRepository implements FileInterface{
     }
     async updateFileContent(fileId: string, content: string): Promise<FileEntity | null> {
         const file=await FileModal.findByIdAndUpdate(fileId,{$set:{content}})
+        if(!file)
+        {
+            console.log('there is no file');
+            
+        }
+        console.log('this is the updated FIle content:',file);
+        
         if(!file) return null
 
         return new FileEntity(

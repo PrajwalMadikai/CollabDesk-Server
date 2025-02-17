@@ -51,4 +51,6 @@ router.post('/logout',asyncHandler(loginController.logoutUser.bind(loginControll
 
 router.post('/verify-user',asyncHandler(loginController.verifyUserLiveblocks.bind(loginController)))
 
+router.get('/fetch-user',asyncHandler(loginController.fetchUsers.bind(loginController)))
+
 export default router

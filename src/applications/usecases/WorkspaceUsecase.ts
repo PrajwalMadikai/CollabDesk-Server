@@ -56,5 +56,16 @@ export class WorkspaceUsecase{
             return { status: 500, message: 'An error occurred during adding collaborator to workspace.' }; 
         }
     }
+    async findCollaborators(workspaceId:string)
+    {
+        try {
+               const users=await this.workspaceRepo.fetchAllcollaborators(workspaceId)
+               if(!users) return null
+                return users
+        } catch (error) {
+            console.log(error);
+            return { status: 500, message: 'An error occurred during fetching collaborator.' }; 
+        }
+    }
 
 }

@@ -45,7 +45,7 @@ export class FileUsecase{
             {
                  return null
             }
-           console.log('file content:',result.content);
+           console.log('file content:',result);
            
             return result
             
@@ -61,7 +61,6 @@ export class FileUsecase{
 
             let result=await this.fileRepository.fetchFile(folderId)
             if(!result) return null
-         console.log('resukt:',result.files);
          
             return result.files
             

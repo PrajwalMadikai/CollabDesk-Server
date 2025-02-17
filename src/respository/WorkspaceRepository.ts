@@ -98,4 +98,20 @@ export class WorkspaceRepository implements workspaceInterface{
             space.trashId
         )
     }
+    async fetchAllcollaborators(workspaceId:string):Promise<workspaceEnity[]|null>
+    {
+        const spaces=await WorkspaceModal.find({_id:new mongoose.Types.ObjectId(workspaceId)})
+        if(!spaces) return null
+
+        return spaces.map((space)=> new workspaceEnity(
+            space.id,
+            space.name,
+            space.ownerId,
+            space.directories,
+            space.userDetails,
+            space.meetingRoom,
+            space.type,
+            space.trashId
+        ))
+    }
 }

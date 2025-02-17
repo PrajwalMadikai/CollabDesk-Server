@@ -28,4 +28,6 @@ export interface UserInterface{
     blockUser(userId:string,):Promise<UserEntity|null>
 
     verifyUser(userId:string):Promise<UserEntity|null>
+
+    fetchusers():Promise<UserEntity[]|null>
 }

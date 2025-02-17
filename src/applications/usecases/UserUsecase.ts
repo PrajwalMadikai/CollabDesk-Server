@@ -202,5 +202,16 @@ export class UserUsecase{
                     return null;  
                 }
             }
-            
+
+            async fetch()
+            {
+                try {
+                    let user=await this.userRepository.fetchusers()
+                    if(!user) return null
+                    return user
+                } catch (error) {
+                    console.error("Error fetch user:", error);
+                    return null;  
+                }
+            }
     }

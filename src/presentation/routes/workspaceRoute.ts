@@ -20,6 +20,7 @@ router.post('/create',authenticateToken,checkUserBlockStatus,authorizeRoles(User
 router.post('/fetch',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.getUserWorkspace(req, res, next)})
 
 router.post('/add-collaborator',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.addCollaborator(req, res, next)})
+router.post('/collaborators',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.fetchCollaborator(req, res, next)})
 
 
 export default router

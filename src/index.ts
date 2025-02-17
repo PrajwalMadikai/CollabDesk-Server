@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import { createServer } from 'http';
 import { Server } from "socket.io";
 import { SocketUsecase } from "./applications/usecases/SocketUsecase";
 import { connectDB } from "./database/connection";
@@ -12,37 +13,42 @@ import fileRoute from './presentation/routes/fileRoute';
 import userRoute from "./presentation/routes/userRoute";
 import workspaceRoute from "./presentation/routes/workspaceRoute";
 import { FileRepository } from "./respository/fileRepository";
+
 dotenv.config();
 
-
-const fileRepository=new FileRepository()
-const socketUsecase=new SocketUsecase(fileRepository)
-
-
+const fileRepository = new FileRepository()
+const socketUsecase = new SocketUsecase(fileRepository)
 
 const app = express();
 const PORT = process.env.PORT || 5713;
 
-const httpServer=require("http").createServer(app)
-const io=new Server(httpServer,{
-    cors:{
-        origin:`${process.env.CLIENT_URL}`,
-        credentials:true
+const httpServer = createServer(app);
+
+const io = new Server(httpServer, {
+    cors: {
+        origin: process.env.CLIENT_URL,
+        credentials: true,
+        methods: ["GET", "POST"],
     }
-})
-connectDB().then(()=>{
+});
 
-    io.on('connection',(socket)=>{
+connectDB().then(() => {
+    io.on('connection', (socket) => {
+        console.log('Client connected:', socket.id);
+        
+        socket.on('disconnect', () => {
+            console.log('Client disconnected:', socket.id);
+        });
 
-        socket.on('disconnect',()=>{
-        })
+        socketUsecase.executeSocket(socket);
+    });
+});
 
-        socketUsecase.executeSocket(socket)
-    })
-})
-
-app.use(cookieParser());  
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cookieParser());
+app.use(cors({ 
+    origin: process.env.CLIENT_URL, 
+    credentials: true 
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -50,8 +56,10 @@ app.use("/", userRoute);
 app.use("/workspace", workspaceRoute);
 app.use("/admin", adminRoute);
 app.use("/folder", folderRoute);
-app.use('/file',fileRoute)
+app.use('/file', fileRoute);
 
 app.use(errorHandler);
 
-app.listen(PORT, () => console.log(`Running on http://localhost:${PORT}`));
+httpServer.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});

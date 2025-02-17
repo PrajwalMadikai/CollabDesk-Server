@@ -54,7 +54,6 @@ export class FileController{
     {
         try {
             const {fileId}=req.params
-          console.log('file fetch',fileId);
           
             if(!fileId)
             {
@@ -78,7 +77,6 @@ export class FileController{
         try {
 
             const {folderId}=req.body
-             console.log('file create ',folderId);
              
             if(!folderId)
             {

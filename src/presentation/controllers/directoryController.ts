@@ -34,23 +34,23 @@ export class DirectoryController{
     {
         try{
             const { folderId } = req.params;
-            const {newName}=req.body
+            const {name}=req.body;
 
-            console.log(newName);
-            console.log(folderId);
+            console.log('editing name',name);
+            console.log('folder id',folderId);
             
 
-        if (!newName) {
+        if (!name) {
             res.status(400).json({ message: "Folder name is required" });
             return;
           }
 
-        let folder=await this.directoryUsecase.updateFoldername(folderId,newName)
+        let folder=await this.directoryUsecase.updateFoldername(folderId,name)
 
         if(!folder)
         {
-             res.status(404).json({message:"Unable to find the folder"})
-             return
+            res.status(404).json({message:"Unable to find the folder"})
+            return
         }
 
         res.status(200).json({message:"Folder updated successfully",folder})

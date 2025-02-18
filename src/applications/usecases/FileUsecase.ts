@@ -69,5 +69,18 @@ export class FileUsecase{
             return { status: 500, message: 'An error occurred during file content fetching.' }; 
         }
     }
+    async updateFileName(fileId:string,folderId:string,name:string)
+    {
+        try {
+            const result=await this.fileRepository.updateFileName(fileId,folderId,name)
+            if(!result) return null
+
+            return result
+            
+        } catch (error) {
+            console.log("error in file content fetching",error);
+            return { status: 500, message: 'An error occurred during file content fetching.' }; 
+        }
+    }
  
 }

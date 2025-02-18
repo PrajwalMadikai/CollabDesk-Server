@@ -93,4 +93,23 @@ export class FileController{
             next(error)
         }
     }
+    async updateFileName(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            const {fileId}=req.params
+            const {name,folderId}=req.body
+            if(!folderId)
+            {
+                return res.status(400).json({message:"Missing folder id"})
+            }
+            const file=await this.fileUsecase.updateFileName(fileId,folderId,name)
+            if(!file)
+            {
+                return res.status(404).json({message:"Unable to update files"})
+            }
+        } catch (error) {
+            next(error)
+        }
+    }
 }

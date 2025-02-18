@@ -111,4 +111,27 @@ export class FileRepository implements FileInterface{
             file.inTrash
         )
     }
+    async updateFileName(fileId: string, folderId: string, name: string): Promise<FileEntity | null> {
+            
+        const file=await FileModal.findByIdAndUpdate(new mongoose.Types.ObjectId(fileId),{
+            $set:{name}
+        },{new:true})
+        if(!file) return null
+
+       const folder= await FolderModal.findByIdAndUpdate(new mongoose.Types.ObjectId(folderId),{
+            $set:{files:{fileId,fileName:name}}
+        })
+        
+
+        return new FileEntity(
+            file.id,
+            file.name,
+            file.directoryId,
+            file.published,
+            file.url,
+            file.content,
+            file.coverImage,
+            file.inTrash
+        )
+    }
 }

@@ -21,4 +21,6 @@ router.post('/fetch',authenticateToken,checkUserBlockStatus,authorizeRoles(UserR
 
 router.get('/:fileId',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{fileController.contentFetch(req, res, next)})
 
+router.put('/update/:fileId',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{fileController.updateFileName(req, res, next)})
+
 export default router

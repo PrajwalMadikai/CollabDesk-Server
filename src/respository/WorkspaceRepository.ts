@@ -80,10 +80,9 @@ export class WorkspaceRepository implements workspaceInterface{
           return null
         }
 
-      let upuser=  await UserModal.updateOne({email},{
+       await UserModal.updateOne({email},{
             $push:{workSpaces:{workspaceId:space.id,workspaceName:space.name}}
-        },{new:true})
-        console.log('user in add collab:',upuser);
+           },{new:true})
         
         
 
@@ -98,12 +97,12 @@ export class WorkspaceRepository implements workspaceInterface{
             space.trashId
         )
     }
-    async fetchAllcollaborators(workspaceId:string):Promise<workspaceEnity[]|null>
+    async fetchAllcollaborators(workspaceId:string):Promise<workspaceEnity|null>
     {
-        const spaces=await WorkspaceModal.find({_id:new mongoose.Types.ObjectId(workspaceId)})
-        if(!spaces) return null
+        const space=await WorkspaceModal.findOne({_id:new mongoose.Types.ObjectId(workspaceId)})
+        if(!space) return null
 
-        return spaces.map((space)=> new workspaceEnity(
+        return new workspaceEnity(
             space.id,
             space.name,
             space.ownerId,
@@ -112,6 +111,64 @@ export class WorkspaceRepository implements workspaceInterface{
             space.meetingRoom,
             space.type,
             space.trashId
-        ))
+        )
+    }
+
+    async renameSpacename(workspaceId:string,newName:string):Promise<workspaceEnity|null>{
+
+        const space=await WorkspaceModal.findByIdAndUpdate(new mongoose.Types.ObjectId(workspaceId),{
+            $set:{name:newName}
+        },{new : true})
+        if(!space) return null
+        await UserModal.updateMany(
+            { "workSpaces.workspaceId": workspaceId },  
+            { $set: { "workSpaces.$.workspaceName": newName } }  
+        )
+        return new workspaceEnity(
+            space.id,
+            space.name,
+            space.ownerId,
+            space.directories,
+            space.userDetails,
+            space.meetingRoom,
+            space.type,
+            space.trashId
+        )
+    }
+    async removeCollaborator(email: string, workspaceId: string): Promise<workspaceEnity | null> {
+        const objectId = new mongoose.Types.ObjectId(workspaceId);
+    
+        const space = await WorkspaceModal.findByIdAndUpdate(
+            objectId,
+            {
+                $pull: { userDetails: { userEmail: email } }
+            },
+            { new: true }
+        );
+    
+        if (!space) return null;
+        console.log('space in remove collab:',space);
+        
+     const user=await UserModal.findOneAndUpdate(
+            { email: email },
+            {
+                $pull: {
+                    workSpaces: { workspaceId: workspaceId.toString() }  
+                }
+            }
+        );
+        console.log('user in remove collab:',user);
+        
+    
+        return new workspaceEnity(
+            space.id,
+            space.name,
+            space.ownerId,
+            space.directories,
+            space.userDetails,
+            space.meetingRoom,
+            space.type,
+            space.trashId
+        );
     }
 }

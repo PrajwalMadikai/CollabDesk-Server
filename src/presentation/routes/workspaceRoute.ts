@@ -22,5 +22,9 @@ router.post('/fetch',authenticateToken,checkUserBlockStatus,authorizeRoles(UserR
 router.post('/add-collaborator',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.addCollaborator(req, res, next)})
 router.post('/collaborators',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.fetchCollaborator(req, res, next)})
 
+router.post('/rename',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.renameworkspaceName(req, res, next)})
+
+router.post('/remove-collaborator',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.removeCollaborator(req, res, next)})
+
 
 export default router

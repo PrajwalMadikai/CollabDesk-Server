@@ -30,4 +30,6 @@ export interface UserInterface{
     verifyUser(userId:string):Promise<UserEntity|null>
 
     fetchusers():Promise<UserEntity[]|null>
+
+    updateuserName(userId:string,newName:string):Promise<UserEntity|null>
 }

@@ -53,4 +53,6 @@ router.post('/verify-user',asyncHandler(loginController.verifyUserLiveblocks.bin
 
 router.get('/fetch-user',asyncHandler(loginController.fetchUsers.bind(loginController)))
 
+router.put('/update-name',asyncHandler(loginController.renameUsername.bind(loginController)))
+
 export default router

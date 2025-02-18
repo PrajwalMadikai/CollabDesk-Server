@@ -15,5 +15,9 @@ export interface workspaceInterface{
 
     addCollaborator(email:string,workspaceId:string):Promise<workspaceEnity|null>
 
-    fetchAllcollaborators(workspaceId:string):Promise<workspaceEnity[]|null>
+    fetchAllcollaborators(workspaceId:string):Promise<workspaceEnity|null>
+
+    renameSpacename(workspaceId:string,newName:string):Promise<workspaceEnity|null>
+
+    removeCollaborator(email:string,workspaceId:string):Promise<workspaceEnity|null>
 }

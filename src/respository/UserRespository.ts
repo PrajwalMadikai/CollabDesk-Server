@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { UserModal } from "../database/models/userModal";
 import { AdminEntity } from "../entities/adminEntity";
 import { UserEntity } from "../entities/userEntity";
@@ -365,6 +366,27 @@ export class UserRepository implements UserInterface {
             user.isAdmin,
             user.isBlock
         ))
+    }
+
+    async updateuserName(userId:string,newName:string):Promise<UserEntity|null>{
+        const user=await UserModal.findByIdAndUpdate(new mongoose.Types.ObjectId(userId),{
+            $set:{fullname:newName}
+        })
+        if(!user) return null
+        return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workSpaces,
+            user.googleId,
+            user.avatar,
+            user.githubId,
+            user.role,
+            user.isAdmin,
+            user.isBlock
+        );
     }
     
 }

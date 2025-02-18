@@ -358,7 +358,6 @@ export class LoginController{
             if (!user) {
                 return res.status(404).json({ message: "User couldn't be found" });
             }
-           console.log('fetching user :',user);
            
             return res.status(200).json({message:'user fetched successfully',user})
         } catch (error) {
@@ -366,5 +365,25 @@ export class LoginController{
             return res.status(500).json({ message: "Internal server error" });
         }
     }
-    
+    async renameUsername(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+              const {userId,newName}=req.body
+              console.log('udating name:',newName,userId);
+              
+              if(!userId||!newName)
+              {
+                return res.status(400).json({message:"data's are missing"})
+              }
+              const user=await this.userUsecase.updateUsername(userId,newName)
+              if(!user)
+              {
+                return res.status(404).json({message:'unable to update user name'})
+              }
+              return res.status(200).json({message:'user name updated',user})
+        } catch (error) {
+            next(error);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    }
 }

@@ -214,4 +214,19 @@ export class UserUsecase{
                     return null;  
                 }
             }
+
+            async updateUsername(userId:string,newName:string)
+            {
+                try {
+
+                    const user=await this.userRepository.updateuserName(userId,newName)
+                    if(!user) return null
+
+                    return user
+                    
+                } catch (error) {
+                    console.error("Error fetch user:", error);
+                    return null;  
+                }
+            }
     }

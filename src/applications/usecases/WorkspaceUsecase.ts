@@ -49,7 +49,7 @@ export class WorkspaceUsecase{
             {
                 return null
             }
-            return user
+            return user.userDetails
             
         } catch (error) {
             console.log(error);
@@ -67,5 +67,30 @@ export class WorkspaceUsecase{
             return { status: 500, message: 'An error occurred during fetching collaborator.' }; 
         }
     }
+    async updateSpaceName(workspaceId:string,newName:string)
+    {
+        try {
+              
+           let space=await this.workspaceRepo.renameSpacename(workspaceId,newName)
+           if(!space) return null
 
+           return space
+
+        } catch (error) {
+            console.log(error);
+            return { status: 500, message: 'An error occurred during renaming workspace.' };
+        }
+    }
+
+    async removeCollaborator(email:string,workspaceId:string)
+    {
+        try {
+               const space=await this.workspaceRepo.removeCollaborator(email,workspaceId)
+               if(!space) return null
+               return space
+        } catch (error) {
+            console.log(error);
+            return { status: 500, message: 'An error occurred during renaming workspace.' };
+        }
+    }
 }

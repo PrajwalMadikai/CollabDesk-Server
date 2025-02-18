@@ -77,7 +77,50 @@ export class WorkspaceController{
             {
                 return res.status(404).json({message:"Unable to find collaborators"})
             }
+            
             return res.status(200).json({message:"collaborators fetched successfully",user:space})
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async renameworkspaceName(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            const {workspaceId,newName}=req.body
+           if(!workspaceId||!newName)
+           {
+            return res.status(400).json({message:"workspace id or new name is missing"})
+           }
+
+            const space=await this.workspaceUsecase.updateSpaceName(workspaceId,newName)
+            if(!space)
+            {
+                return res.status(404).json({message:"Unable to update workspace name"})
+            }
+
+            return res.status(200).json({message:"workspace name updated",space})
+            
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async removeCollaborator(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+             const {email,workspaceId}=req.body
+             if(!email||!workspaceId)
+             {
+                return res.status(400).json({message:"email or id is missing"})
+             }
+             const space=await this.workspaceUsecase.removeCollaborator(email,workspaceId)
+             if(!space)
+             {
+                return res.status(404).json({message:"Unable to remove collaborator"})
+             }
+             return res.status(200).json({message:"Collaborator removed!"})
         } catch (error) {
             next(error)
         }

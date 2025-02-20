@@ -13,4 +13,6 @@ export interface FileInterface{
     updateFileContent(fileId:string,content:string):Promise<FileEntity|null>
 
     updateFileName(fileId:string,folderId:string,name:string):Promise<FileEntity|null>
+
+    uploadImage(fileId:string,imageUrl:string):Promise<FileEntity|null>
 }

@@ -45,7 +45,6 @@ export class FileUsecase{
             {
                  return null
             }
-           console.log('file content:',result);
            
             return result
             
@@ -82,5 +81,19 @@ export class FileUsecase{
             return { status: 500, message: 'An error occurred during file content fetching.' }; 
         }
     }
- 
+    async uploadImage(fileId:string,imageUrl:string)
+    {
+        try {
+
+            const file=await this.fileRepository.uploadImage(fileId,imageUrl)
+            if(!file) return null;
+          console.log('file uplopa:',file);
+          
+            return file
+            
+        } catch (error) {
+            console.log("error in image uploading",error);
+            return { status: 500, message: 'An error occurred during image uploading.' }; 
+        }
+    }
 }

@@ -96,7 +96,6 @@ export class FileRepository implements FileInterface{
             console.log('there is no file');
             
         }
-        console.log('this is the updated FIle content:',file);
         
         if(!file) return null
 
@@ -134,4 +133,24 @@ export class FileRepository implements FileInterface{
             file.inTrash
         )
     }
+    async uploadImage(fileId:string,imageUrl:string):Promise<FileEntity|null>{
+
+        const file=await FileModal.findByIdAndUpdate(new mongoose.Types.ObjectId(fileId),{
+            $set:{coverImage:imageUrl}
+        })
+        if(!file) return null
+
+
+        return new FileEntity(
+            file.id,
+            file.name,
+            file.directoryId,
+            file.published,
+            file.url,
+            file.content,
+            file.coverImage,
+            file.inTrash
+        )
+    }
+
 }

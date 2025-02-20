@@ -66,7 +66,7 @@ export class FileController{
                 return res.status(404).json({message:'Unable to find the file'})
             }
 
-            return res.status(200).json({message:"File content fetched successfully",content:file})
+            return res.status(200).json({message:"File content fetched successfully",file})
             
         } catch (error) {
             next(error)
@@ -108,6 +108,33 @@ export class FileController{
             {
                 return res.status(404).json({message:"Unable to update files"})
             }
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async uploadImage(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            const {fileId}=req.params
+            const image = req.file;
+          
+            if(!fileId||!image)
+            {
+                return res.status(400).json({message:"Missing file id or image"})
+            }
+            const fileUrl = image.filename;
+
+            const file=await this.fileUsecase.uploadImage(fileId,fileUrl)
+            if(!file)
+            {
+                return res.status(404).json({message:"Unable to update files"})
+            }
+            res.status(200).json({
+                message: "Cover image uploaded successfully",
+                file,
+              });
         } catch (error) {
             next(error)
         }

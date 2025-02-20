@@ -12,7 +12,6 @@ export class SocketUsecase{
 
         socket.on('updateFile',async(data:any)=>{
             try {
-                console.log('updateFile',data);
                 
                 if (!data?.id || !data?.content) {
                     console.error("Invalid data received:", data);

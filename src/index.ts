@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import { createServer } from 'http';
+import path from "path";
 import { Server } from "socket.io";
 import { SocketUsecase } from "./applications/usecases/SocketUsecase";
 import { connectDB } from "./database/connection";
@@ -51,6 +52,8 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use("/public", express.static(path.join(__dirname, "../presentation/public")));
 
 app.use("/", userRoute);
 app.use("/workspace", workspaceRoute);

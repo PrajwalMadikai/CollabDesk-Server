@@ -124,9 +124,8 @@ export class FileController{
             {
                 return res.status(400).json({message:"Missing file id or image"})
             }
-            const fileUrl = image.filename;
 
-            const file=await this.fileUsecase.uploadImage(fileId,fileUrl)
+            const file=await this.fileUsecase.uploadImage(fileId,image.buffer)
             if(!file)
             {
                 return res.status(404).json({message:"Unable to update files"})

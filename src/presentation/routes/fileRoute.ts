@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express'
+import { CloudinaryAdapter } from '../../applications/services/CloudinaryService'
 import { MulterService } from '../../applications/services/MulterService'
 import { FileUsecase } from '../../applications/usecases/FileUsecase'
 import { UserRole } from '../../interface/roles'
@@ -11,7 +12,9 @@ const router=express.Router()
 
 const fileRepository=new FileRepository()
 const multerService=new MulterService()
-const fileUsecase=new FileUsecase(fileRepository)
+const cloudinaryService=new CloudinaryAdapter()
+
+const fileUsecase=new FileUsecase(fileRepository,cloudinaryService)
 
 const fileController=new FileController(fileUsecase)
 

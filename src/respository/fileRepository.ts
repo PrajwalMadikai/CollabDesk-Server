@@ -137,7 +137,7 @@ export class FileRepository implements FileInterface{
 
         const file=await FileModal.findByIdAndUpdate(new mongoose.Types.ObjectId(fileId),{
             $set:{coverImage:imageUrl}
-        })
+        },{new:true})
         if(!file) return null
 
 

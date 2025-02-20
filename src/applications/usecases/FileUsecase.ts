@@ -1,8 +1,10 @@
 import { FileRepository } from "../../respository/fileRepository";
+import { CloudinaryAdapter } from "../services/CloudinaryService";
 
 export class FileUsecase{
     constructor(
-        private fileRepository:FileRepository
+        private fileRepository:FileRepository,
+        private cloudinaryService:CloudinaryAdapter
     ){}
 
     async createFile(folderId:string){
@@ -81,10 +83,11 @@ export class FileUsecase{
             return { status: 500, message: 'An error occurred during file content fetching.' }; 
         }
     }
-    async uploadImage(fileId:string,imageUrl:string)
+    async uploadImage(fileId:string,image:Buffer)
     {
         try {
 
+            const imageUrl=await this.cloudinaryService.upload(image)
             const file=await this.fileRepository.uploadImage(fileId,imageUrl)
             if(!file) return null;
           console.log('file uplopa:',file);

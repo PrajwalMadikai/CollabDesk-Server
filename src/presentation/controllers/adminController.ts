@@ -106,7 +106,6 @@ export class AdminController{
     try {
 
         const refreshToken=req.cookies?.adminRefreshToken
-        console.log('admin refresh token',refreshToken);
         
     
         if(!refreshToken)

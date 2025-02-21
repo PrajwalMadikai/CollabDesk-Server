@@ -1,4 +1,5 @@
 import { AdminEntity } from "../entities/adminEntity";
+import { PaymentEntity } from "../entities/paymentEntity";
 import { UserEntity } from "../entities/userEntity";
 
 export interface UserInterface{
@@ -32,4 +33,6 @@ export interface UserInterface{
     fetchusers():Promise<UserEntity[]|null>
 
     updateuserName(userId:string,newName:string):Promise<UserEntity|null>
+
+    fetchPlanDetails():Promise<PaymentEntity[]|null>
 }

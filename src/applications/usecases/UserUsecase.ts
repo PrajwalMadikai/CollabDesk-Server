@@ -210,8 +210,8 @@ export class UserUsecase{
                     if(!user) return null
                     return user
                 } catch (error) {
-                    console.error("Error fetch user:", error);
-                    return null;  
+                    console.log(error);
+                    return { status: 500, message: 'An error occurred during fetching user' }; 
                 }
             }
 
@@ -225,8 +225,21 @@ export class UserUsecase{
                     return user
                     
                 } catch (error) {
-                    console.error("Error fetch user:", error);
-                    return null;  
+                    console.log(error);
+                    return { status: 500, message: 'An error occurred during updating user name' }; 
+                }
+            }
+            async getPlans()
+            {
+                try {
+                    const data=await this.userRepository.fetchPlanDetails()
+                    if(!data) return null
+
+                    return data
+                    
+                } catch (error) {
+                    console.log(error);
+                    return { status: 500, message: 'An error occurred during fetching plans' }; 
                 }
             }
     }

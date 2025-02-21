@@ -55,4 +55,6 @@ router.get('/fetch-user',asyncHandler(loginController.fetchUsers.bind(loginContr
 
 router.put('/update-name',asyncHandler(loginController.renameUsername.bind(loginController)))
 
+router.get('/get-plans',asyncHandler(loginController.getPaymentPlans.bind(loginController)))
+
 export default router

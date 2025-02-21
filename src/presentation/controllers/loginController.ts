@@ -386,4 +386,23 @@ export class LoginController{
             return res.status(500).json({ message: "Internal server error" });
         }
     }
+
+    async getPaymentPlans(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            let data=await this.userUsecase.getPlans()
+            if(!data)
+            {
+                return res.status(404).json({message:"Unable to fetch the payment plans."})
+            }
+            
+            return res.status(200).json({message:"Plans fetched success fully",data})
+            
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    
 }

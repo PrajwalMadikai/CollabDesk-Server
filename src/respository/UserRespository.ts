@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import { paymentModal } from "../database/models/PaymentModal";
 import { UserModal } from "../database/models/userModal";
 import { AdminEntity } from "../entities/adminEntity";
+import { PaymentEntity } from "../entities/paymentEntity";
 import { UserEntity } from "../entities/userEntity";
 import { UserInterface } from "../Repository-Interfaces/IUser";
 
@@ -388,5 +390,16 @@ export class UserRepository implements UserInterface {
             user.isBlock
         );
     }
-    
+    async fetchPlanDetails(): Promise<PaymentEntity[] | null> {
+        const plan=await paymentModal.find()
+        if(!plan) return null
+
+        return plan.map((plan)=>new PaymentEntity(
+            plan.id,
+            plan.paymentType,
+            plan.amount,
+            plan.FolderNum,
+            plan.WorkspaceNum
+        ))
+    }
 }

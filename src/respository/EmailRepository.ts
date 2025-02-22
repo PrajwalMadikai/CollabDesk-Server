@@ -9,7 +9,7 @@ interface TempUser {
     token: string;
     expiresAt: Date; 
     workSpaces?: { workspaceId: string; workspaceName: string }[];
-    paymentDetail?: { paymentType: string; startDate: Date; endDate: Date } | null;
+    paymentDetail?: { paymentType: string;amount:number|null; startDate: Date; endDate: Date } | null;
     avatar:string|null,
     isAdmin:boolean,
     isBlock:boolean
@@ -24,6 +24,7 @@ export class EmailRepository implements EmailRepositoryInterface {
                 workSpaces: data.workSpaces || [],
                 paymentDetail: data.paymentDetail || {
                     paymentType: "Non",
+                    amount:null,
                     startDate: new Date(),
                     endDate: new Date(),
                 },
@@ -56,6 +57,7 @@ export class EmailRepository implements EmailRepositoryInterface {
                 doc.paymentDetail && typeof doc.paymentDetail === "object"
                     ? {
                           paymentType: doc.paymentDetail.paymentType ?? "",
+                          amount:null,
                           startDate: doc.paymentDetail.startDate
                               ? new Date(doc.paymentDetail.startDate)
                               : new Date(),

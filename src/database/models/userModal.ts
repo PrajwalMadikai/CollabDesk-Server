@@ -14,8 +14,9 @@ const UserSchema:Schema=new Schema({
     },
     paymentDetail:{
         paymentType: String,
-         startDate:Date,
-         endDate:Date
+        amount:Number,
+        startDate:Date,
+        endDate:Date
     },
     workSpaces: [  
         {

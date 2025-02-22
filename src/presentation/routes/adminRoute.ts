@@ -19,7 +19,7 @@ const tokenService=new TokenService()
 const bcryptService=new BcryptService()
 
 const adminUsecase=new AdminUsecase(userRepository,bcryptService,tokenService)
-const paymentUsecase=new PaymentUsecase(paymentRepository)
+const paymentUsecase=new PaymentUsecase(paymentRepository,userRepository)
 
 const adminController=new AdminController(adminUsecase)
 const paymentController=new PaymentController(paymentUsecase)
@@ -46,7 +46,8 @@ router.post('/payment-plan',authenticateToken,authorizeRoles(UserRole.ADMIN),
 router.get('/fetch-plans',authenticateToken,authorizeRoles(UserRole.ADMIN),
 (req:Request,res:Response,next:NextFunction)=>{ paymentController.fetchPlans(req,res,next)})
 
-
+router.get('/payment-stats',authenticateToken,authorizeRoles(UserRole.ADMIN),
+(req:Request,res:Response,next:NextFunction)=>{ paymentController.paymentStates(req,res,next)})
 
 
 export default router

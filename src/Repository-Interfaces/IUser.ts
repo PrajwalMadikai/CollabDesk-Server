@@ -5,7 +5,7 @@ import { UserEntity } from "../entities/userEntity";
 export interface UserInterface{
     createUser(email:string,password:string,fullname:string,
                workSpaces:{ workspaceId: string; workspaceName: string }[]
-               ,paymentDetail: { paymentType: string; startDate: Date; endDate: Date },
+               ,paymentDetail: { paymentType: string;amount:number; startDate: Date; endDate: Date },
                avatar:string|null,
               ):Promise<UserEntity | { error: string }>
 
@@ -35,4 +35,6 @@ export interface UserInterface{
     updateuserName(userId:string,newName:string):Promise<UserEntity|null>
 
     fetchPlanDetails():Promise<PaymentEntity[]|null>
+
+    storePaymentDetails(email:string,paymentType:string,amount:number):Promise<UserEntity|null>
 }

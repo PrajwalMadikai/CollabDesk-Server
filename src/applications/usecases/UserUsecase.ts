@@ -22,7 +22,7 @@ export class UserUsecase{
                 password: string,
                 fullname: string,
                 workSpaces: { workspaceId: string; workspaceName: string }[]=[],
-                paymentDetail: { paymentType: string; startDate: Date; endDate: Date },
+                paymentDetail: { paymentType: string;amount:number|null; startDate: Date; endDate: Date },
                 isAdmin:boolean
             ){
                 const hashedPassword=await this.bcryptService.hashPassword(password)
@@ -65,7 +65,7 @@ export class UserUsecase{
                 tempUser.password,
                 tempUser.fullname,
                 tempUser.workSpaces || [], 
-                tempUser.paymentDetail || { paymentType: "Non", startDate: new Date(), endDate: new Date() },
+                tempUser.paymentDetail || { paymentType: "Non",amount:null, startDate: new Date(), endDate: new Date() },
                 tempUser.avatar,
                 );
             

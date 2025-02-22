@@ -8,6 +8,7 @@ export interface IUser extends Document{
     workSpaces:{ workspaceId: string, workspaceName: string }[];
     paymentDetail:{
         paymentType: string;
+        amount:number;
         startDate:Date;
         endDate:Date
     },

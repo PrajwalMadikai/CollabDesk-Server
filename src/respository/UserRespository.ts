@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { PaymentCollectionModal } from "../database/models/paymentCollectionModal";
 import { paymentModal } from "../database/models/PaymentModal";
 import { UserModal } from "../database/models/userModal";
 import { AdminEntity } from "../entities/adminEntity";
@@ -14,6 +15,7 @@ export class UserRepository implements UserInterface {
         workSpaces: { workspaceId: string; workspaceName: string }[],
         paymentDetail: {
             paymentType: string;
+            amount:number|null;
             startDate: Date;
             endDate: Date;
         },
@@ -402,4 +404,46 @@ export class UserRepository implements UserInterface {
             plan.WorkspaceNum
         ))
     }
+    async storePaymentDetails(email: string, paymentType: string, amount: number): Promise<UserEntity | null> {
+
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + 30);
+    
+        const user = await UserModal.findOneAndUpdate(
+            { email },
+            {
+                $set: {
+                    paymentDetail: {
+                        paymentType,
+                        amount:amount,
+                        startDate: startDate,
+                        endDate: endDate,
+                    },
+                },
+            },
+            { new: true } 
+        );
+    
+        if (!user) {
+            return null;
+        }
+        await PaymentCollectionModal.create({email,planType:paymentType,amount,status:'success',purchaseTime:Date.now()})
+
+        return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workSpaces,
+            user.googleId,
+            user.avatar,
+            user.githubId,
+            user.role,
+            user.isAdmin,
+            user.isBlock
+        );
+    }
+     
 }

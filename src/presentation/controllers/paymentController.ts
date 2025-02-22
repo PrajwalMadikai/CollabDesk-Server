@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { PaymentUsecase } from "../../applications/usecases/PaymentUsecase";
 
 export class PaymentController{
+
     constructor(
         private paymentUsecase:PaymentUsecase
     ){}
@@ -38,6 +39,53 @@ export class PaymentController{
             console.log('fetch:',data);
             
             return res.status(200).json({message:'Fetched successfully',data})
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async payment(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            const { userData } = req.body
+    
+             
+             if(!userData)
+             {
+                return res.status(400).json({message:'Body data are missing'})
+             }
+             const amount=userData.amount/100
+             
+             const data=await this.paymentUsecase.storePaymentDetails(userData.email,userData.paymentType,amount)
+             if(!data)
+             {
+                return res.status(404).json({message:"unable to store payment information"})
+             }
+            console.log('user payment:',data);
+            
+             return res.status(200).json({message:'payment information is stored'})            
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async paymentStates(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const { startDate, endDate } = req.query;
+            if(!startDate||!endDate)
+            {
+                return res.status(400).json({message:"Datas are missing"})
+            }
+
+            const data=await this.paymentUsecase.fetchPaymentStats(startDate as string,endDate as string)
+            if(!data)
+            {
+                return res.status(404).json({message:"Unable to fetch payment stats"})
+            }
+            return res.status(200).json({message:"successfull",data})
+            
         } catch (error) {
             next(error)
         }

@@ -23,6 +23,7 @@ export class UserEntity {
         password: string,
         paymentDetail: {
             paymentType: string;
+            amount:number
             startDate: Date;
             endDate: Date;
         },

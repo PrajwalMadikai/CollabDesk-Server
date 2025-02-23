@@ -36,7 +36,6 @@ export class PaymentController{
             {
                 return res.status(404).json({message:"There is not payment plan"})
             }
-            console.log('fetch:',data);
             
             return res.status(200).json({message:'Fetched successfully',data})
         } catch (error) {
@@ -62,9 +61,8 @@ export class PaymentController{
              {
                 return res.status(404).json({message:"unable to store payment information"})
              }
-            console.log('user payment:',data);
             
-             return res.status(200).json({message:'payment information is stored'})            
+             return res.status(200).json({message:'payment information is stored'   })            
         } catch (error) {
             next(error)
         }
@@ -78,13 +76,57 @@ export class PaymentController{
             {
                 return res.status(400).json({message:"Datas are missing"})
             }
-
+           
             const data=await this.paymentUsecase.fetchPaymentStats(startDate as string,endDate as string)
             if(!data)
             {
                 return res.status(404).json({message:"Unable to fetch payment stats"})
             }
+            
             return res.status(200).json({message:"successfull",data})
+            
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async monthlyPayments(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const { startDate, endDate } = req.query;
+            if(!startDate||!endDate)
+            {
+                return res.status(400).json({message:"Datas are missing"})
+            }
+
+            const data=await this.paymentUsecase.fetchMonthlyStats(startDate as string,endDate as string)
+            if(!data)
+            {
+                return res.status(404).json({message:"Unable to fetch monthly payment stats"})
+            }
+            return res.status(200).json({message:"monthly payment fetch successfull",data})
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async planDistribution(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            const { startDate, endDate } = req.query;
+            if(!startDate||!endDate)
+            {
+                return res.status(400).json({message:"Datas are missing"})
+            }
+
+            const data=await this.paymentUsecase.planDistribution(startDate as string,endDate as string)
+            if(!data)
+            {
+                return res.status(404).json({message:"Unable to fetch plan distribution stats"})
+            }
+            return res.status(200).json({message:"plan distribution fetch successfull",data})
             
         } catch (error) {
             next(error)

@@ -428,8 +428,9 @@ export class UserRepository implements UserInterface {
         if (!user) {
             return null;
         }
+        if(user){
         await PaymentCollectionModal.create({email,planType:paymentType,amount,status:'success',purchaseTime:Date.now()})
-
+        }
         return new UserEntity(
             user.id,
             user.fullname,

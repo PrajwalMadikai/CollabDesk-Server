@@ -15,7 +15,6 @@ const PaymentCollection=new Schema({
     },
     planType:{
         type:String,
-        enum:['base','premium']
     },
     purchaseTime:{
         type:Date,

@@ -49,5 +49,11 @@ router.get('/fetch-plans',authenticateToken,authorizeRoles(UserRole.ADMIN),
 router.get('/payment-stats',authenticateToken,authorizeRoles(UserRole.ADMIN),
 (req:Request,res:Response,next:NextFunction)=>{ paymentController.paymentStates(req,res,next)})
 
+router.get('/monthly-payments',authenticateToken,authorizeRoles(UserRole.ADMIN),
+(req:Request,res:Response,next:NextFunction)=>{ paymentController.monthlyPayments(req,res,next)})
+
+router.get('/plan-distribution',authenticateToken,authorizeRoles(UserRole.ADMIN),
+(req:Request,res:Response,next:NextFunction)=>{ paymentController.planDistribution(req,res,next)})
+
 
 export default router

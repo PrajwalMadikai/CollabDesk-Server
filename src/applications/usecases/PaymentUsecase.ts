@@ -49,42 +49,64 @@ export class PaymentUsecase{
         }
     }
     async fetchPaymentStats(startDate: string, endDate: string) {
-        try {
-          const stats = await this.paymentRepository.fetchPaymentPlans(startDate, endDate);
+      try {
+        const stats = await this.paymentRepository.fetchPaymentPlans(startDate, endDate);
     
-          if (!stats || stats.length === 0) {
-            return null;
-          }
-    
-          const currentDate = new Date();
-          const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-          const firstDayOfLastMonth = new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth() - 1,
-            1
-          );
-    
-          const [currentMonthRevenue, lastMonthRevenue] = await Promise.all([
-            this.paymentRepository.fetchRevenueByDateRange(firstDayOfMonth),
-            this.paymentRepository.fetchRevenueByDateRange(
-              firstDayOfLastMonth,
-              firstDayOfMonth
-            ),
-          ]);
-    
-          const monthlyGrowth =
-            lastMonthRevenue > 0
-              ? ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100
-              : 0;
-    
-          return {
-            totalRevenue: stats[0]?.totalRevenue || 0,
-            monthlyGrowth: parseFloat(monthlyGrowth.toFixed(2)),
-            activeSubscribers: stats[0]?.activeSubscribers || 0,
-          };
-        } catch (error) {
-          console.error("Error in payment stats use case:", error);
-          return { status: 500, message: 'An error occurred during payment data storing.' }; 
+        if (!stats || stats.length === 0) {
+          return null;
         }
+    
+        const currentDate = new Date();
+        const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const firstDayOfLastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    
+        const [currentMonthRevenue, lastMonthRevenue] = await Promise.all([
+          this.paymentRepository.fetchRevenueByDateRange(firstDayOfMonth),
+          this.paymentRepository.fetchRevenueByDateRange(firstDayOfLastMonth, firstDayOfMonth),
+        ]);
+    
+        const monthlyGrowth =
+          lastMonthRevenue > 0
+            ? ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100
+            : 0;
+    
+        return {
+          totalRevenue: stats[0]?.totalRevenue || 0,
+          monthlyGrowth: parseFloat(monthlyGrowth.toFixed(2)),
+          activeSubscribers: stats[0]?.activeSubscribers || 0,
+        };
+      } catch (error) {
+        console.error("Error in payment stats use case:", error);
+        return { status: 500, message: 'An error occurred during payment stats fetching.' };
       }
-}
+    }
+
+        async fetchMonthlyStats(startDate:string,endDate:string)
+        {
+          try {
+
+            const data=await this.paymentRepository.fetchMonthlyStats(startDate,endDate)
+            if(!data) return null
+
+            return data
+            
+          } catch (error) {
+            console.error("Error in payment stats use case:", error);
+            return { status: 500, message: 'An error occurred during montly payment data fetching.' }; 
+          }
+        }
+
+        async planDistribution(startDate:string,endDate:string)
+        {
+          try {
+
+            const data = await this.paymentRepository.fetchPlanDistribution(startDate,endDate)
+            if(!data) return null
+
+            return data
+            
+          } catch (error) {
+            
+          }
+        }
+  }

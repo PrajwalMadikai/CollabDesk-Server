@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 import { FolderModal } from "../database/models/directoryModal";
+import { FileModal } from "../database/models/fileModal";
 import { WorkspaceModal } from "../database/models/workspaceModal";
 import { DirectoryEntity } from "../entities/directoryEntity";
+import { TrashItems } from "../interface/trashItems";
 import { DirectoryInterface } from "../Repository-Interfaces/IDirectory";
 
 export class DirectoryRepository implements DirectoryInterface{
@@ -88,10 +90,34 @@ export class DirectoryRepository implements DirectoryInterface{
       )
      }
 
-     async fetchTrashItems(workspaceId:string)
+     async fetchTrashItems(workspaceId:string):Promise<TrashItems>
      {
         const workspaceID=new mongoose.Types.ObjectId(workspaceId)
+        
+        const folders = await FolderModal.find({
+         workspaceId: workspaceID
+         }).select('_id').lean();
 
-     }
+        const trashFiles = await FileModal.find({
+               directoryId: { $in: folders.map(folder => folder._id) },
+               inTrash: true
+               }).select('name _id').lean();
+
+        const trashFolders = await FolderModal.find({
+                  workspaceId: workspaceID,
+                  inTrash: true
+               }).select('name _id').lean();
+
+      return {
+         folders: trashFolders.map(folder => ({
+            _id: folder._id.toString(), 
+            name: folder.name
+        })),
+        files: trashFiles.map(file => ({
+            _id: file._id.toString(),  
+            name: file.name
+        }))
+      };
+   }
      
 }

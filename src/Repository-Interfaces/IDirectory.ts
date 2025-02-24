@@ -1,4 +1,5 @@
 import { DirectoryEntity } from "../entities/directoryEntity";
+import { TrashItems } from "../interface/trashItems";
 
 export interface DirectoryInterface{
     
@@ -9,4 +10,6 @@ export interface DirectoryInterface{
     fetchFolders(workspaceId:string):Promise<DirectoryEntity[]|null>
     
     deleteFolder(folderId:string):Promise<DirectoryEntity|null>
+
+    fetchTrashItems(workspaceId:string):Promise<TrashItems>
 }

@@ -35,9 +35,6 @@ export class DirectoryController{
             const { folderId } = req.params;
             const {name}=req.body;
 
-            console.log('editing name',name);
-            console.log('folder id',folderId);
-            
 
         if (!name) {
             res.status(400).json({ message: "Folder name is required" });
@@ -101,7 +98,7 @@ export class DirectoryController{
                 return
                }
 
-               res.json(200).json({message:"folder deleted successfully"})
+               res.status(200).json({message:"folder deleted successfully"})
                return
         } catch (error) {
             next(error)
@@ -122,7 +119,7 @@ export class DirectoryController{
                 res.status(404).json({message:"Unable to fetch trash items"})
                 return
             }
-            res.json(200).json({message:"trash items fetched successfully",result})
+            res.status(200).json({message:"trash items fetched successfully",result})
             return
         } catch (error) {
             next(error)

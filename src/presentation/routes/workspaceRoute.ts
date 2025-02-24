@@ -6,6 +6,7 @@ import { WorkspaceRepository } from '../../respository/WorkspaceRepository'
 import { WorkspaceController } from '../controllers/workspaceController'
 import { authenticateToken, authorizeRoles } from '../middleware/authMiddleware'
 import { checkUserBlockStatus } from '../middleware/checkUserBlock'
+import checkSubscription from '../middleware/redisPaymentExpireMiddleware'
 
 const router=express.Router()
 
@@ -16,15 +17,23 @@ const workspaceUsecase=new WorkspaceUsecase(workspaceRepository,userRepository)
 const workspaceController=new WorkspaceController(workspaceUsecase)
 
 
-router.post('/create',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.newWorkspace(req, res, next)})
-router.post('/fetch',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.getUserWorkspace(req, res, next)})
+router.post('/create',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),checkSubscription,
+(req:Request,res:Response,next:NextFunction)=>{workspaceController.newWorkspace(req, res, next)})
 
-router.post('/add-collaborator',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.addCollaborator(req, res, next)})
-router.post('/collaborators',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.fetchCollaborator(req, res, next)})
+router.post('/fetch',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
+(req:Request,res:Response,next:NextFunction)=>{workspaceController.getUserWorkspace(req, res, next)})
 
-router.post('/rename',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.renameworkspaceName(req, res, next)})
+router.post('/add-collaborator',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
+(req:Request,res:Response,next:NextFunction)=>{workspaceController.addCollaborator(req, res, next)})
 
-router.post('/remove-collaborator',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>{workspaceController.removeCollaborator(req, res, next)})
+router.post('/collaborators',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
+(req:Request,res:Response,next:NextFunction)=>{workspaceController.fetchCollaborator(req, res, next)})
+
+router.post('/rename',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
+(req:Request,res:Response,next:NextFunction)=>{workspaceController.renameworkspaceName(req, res, next)})
+
+router.post('/remove-collaborator',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
+(req:Request,res:Response,next:NextFunction)=>{workspaceController.removeCollaborator(req, res, next)})
 
 
 export default router

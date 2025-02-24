@@ -17,7 +17,6 @@ export class DirectoryController{
               }
 
              const result=await this.directoryUsecase.createFolder(name,workspaceId)
-             console.log('result:',result)
              if(!result)
              {
                  res.status(404).json({message:"Unable to find workspace for creating Folder!"})

@@ -5,6 +5,7 @@ import { UserModal } from "../database/models/userModal";
 import { AdminEntity } from "../entities/adminEntity";
 import { PaymentEntity } from "../entities/paymentEntity";
 import { UserEntity } from "../entities/userEntity";
+import redisClient from "../presentation/utils/redisClient";
 import { UserInterface } from "../Repository-Interfaces/IUser";
 
 export class UserRepository implements UserInterface {
@@ -428,9 +429,29 @@ export class UserRepository implements UserInterface {
         if (!user) {
             return null;
         }
-        if(user){
+        const subscriptionData = {
+            userId: user.id,
+            email: user.email,
+            paymentType: paymentType,
+            amount: amount,
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+        };
+
+        
+        const currentTime = Math.floor(Date.now() / 1000); // time in seconds for redis ttl
+        const ttlInSeconds = Math.floor(endDate.getTime() / 1000) - currentTime;
+
+        await redisClient.set(
+            `subscription:${user.id}`, 
+            JSON.stringify(subscriptionData),  
+            {
+              EX: ttlInSeconds,  
+            }
+          );
+
         await PaymentCollectionModal.create({email,planType:paymentType,amount,status:'success',purchaseTime:Date.now()})
-        }
+
         return new UserEntity(
             user.id,
             user.fullname,

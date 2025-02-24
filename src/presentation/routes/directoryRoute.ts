@@ -24,4 +24,8 @@ router.post('/fetch',authenticateToken,checkUserBlockStatus,authorizeRoles(UserR
 
 router.post('/delete/:folderId',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>directoryController.folderDelete(req,res,next))
 
+//trash folder and file fetch
+router.post('/trash-fetch',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),(req:Request,res:Response,next:NextFunction)=>directoryController.fetchTrashItems(req,res,next))
+
+
 export default router

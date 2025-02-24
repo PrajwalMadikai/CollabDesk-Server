@@ -107,5 +107,25 @@ export class DirectoryController{
             next(error)
         }
     }
-
+    async fetchTrashItems(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const {workspaceId}=req.body
+            if(!workspaceId)
+            {
+                res.status(400).json({message:"workspace id is missing"})
+                return
+            }
+            const result=await this.directoryUsecase.fetchTrash(workspaceId)
+            if(!result)
+            {
+                res.status(404).json({message:"Unable to fetch trash items"})
+                return
+            }
+            res.json(200).json({message:"trash items fetched successfully",result})
+            return
+        } catch (error) {
+            next(error)
+        }
+    }
 }

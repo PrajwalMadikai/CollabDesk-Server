@@ -9,5 +9,6 @@ export interface IFile extends Document{
     content:string,
     inTrash:boolean,
     coverImage:string,
+    deletedAt:Date|null
     
 }

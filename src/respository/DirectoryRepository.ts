@@ -23,7 +23,8 @@ export class DirectoryRepository implements DirectoryInterface{
             folder.name,
             folder.workspaceId,
             folder.files,
-            folder.inTrash
+            folder.inTrash,
+            folder.deletedAt
          )
 
       }
@@ -47,7 +48,8 @@ export class DirectoryRepository implements DirectoryInterface{
             folder.name,
             folder.workspaceId,
             folder.files,
-            folder.inTrash
+            folder.inTrash,
+            folder.deletedAt
          )
       }
 
@@ -62,7 +64,8 @@ export class DirectoryRepository implements DirectoryInterface{
                folder.name,
                folder.workspaceId,
                folder.files,
-               folder.inTrash
+               folder.inTrash,
+               folder.deletedAt
            ));
            
      }
@@ -80,8 +83,15 @@ export class DirectoryRepository implements DirectoryInterface{
          folder.name,
          folder.workspaceId,
          folder.files,
-         folder.inTrash
+         folder.inTrash,
+         folder.deletedAt
       )
+     }
+
+     async fetchTrashItems(workspaceId:string)
+     {
+        const workspaceID=new mongoose.Types.ObjectId(workspaceId)
+
      }
      
 }

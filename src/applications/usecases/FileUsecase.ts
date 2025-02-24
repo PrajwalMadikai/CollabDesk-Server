@@ -21,10 +21,10 @@ export class FileUsecase{
         }
     }
 
-    async deleteFile(fileId:string,folderId:string)
+    async movetoTrash(fileId:string,folderId:string)
     {
         try {
-              const result=await this.fileRepository.deleteFile(fileId,folderId)
+              const result=await this.fileRepository.movetoTrash(fileId,folderId)
               if(!result)
               {
                   return null

@@ -26,17 +26,27 @@ export class FileRepository implements FileInterface{
             updatedFolder.name,
             updatedFolder.workspaceId,
             updatedFolder.files,
-            updatedFolder.inTrash
+            updatedFolder.inTrash,
+            updatedFolder.deletedAt
          )
     }
 
-    async deleteFile(fileId: string, folderId: string): Promise<DirectoryEntity | null> {
+    async movetoTrash(fileId: string, folderId: string): Promise<DirectoryEntity | null> {
 
-        let file = await FileModal.deleteOne({_id:fileId});
-        
-        if(!file)
-        {
-            return null
+        const deletionDate = new Date();
+        deletionDate.setDate(deletionDate.getDate() + 7);
+
+        const file = await FileModal.findByIdAndUpdate(
+                fileId,
+                { 
+                    inTrash: true,
+                    scheduledForDeletion: deletionDate 
+                },
+                { new: true }
+            );
+
+        if (!file) {
+            return null;
         }
         let updatedFolder = await FolderModal.findByIdAndUpdate(
             folderId,
@@ -56,7 +66,8 @@ export class FileRepository implements FileInterface{
             updatedFolder.name,
             updatedFolder.workspaceId,
             updatedFolder.files,
-            updatedFolder.inTrash
+            updatedFolder.inTrash,
+            updatedFolder.deletedAt
          )
     }
     async fetchFileContent(fileId: string): Promise<FileEntity | null> {
@@ -71,7 +82,8 @@ export class FileRepository implements FileInterface{
             file.url,
             file.content,
             file.coverImage,
-            file.inTrash
+            file.inTrash,
+            file.deletedAt
         )
         
     }
@@ -86,7 +98,8 @@ export class FileRepository implements FileInterface{
             files.name,
             files.workspaceId,
             files.files,
-            files.inTrash
+            files.inTrash,
+            files.deletedAt
          )
     }
     async updateFileContent(fileId: string, content: string): Promise<FileEntity | null> {
@@ -107,7 +120,8 @@ export class FileRepository implements FileInterface{
             file.url,
             file.content,
             file.coverImage,
-            file.inTrash
+            file.inTrash,
+            file.deletedAt
         )
     }
     async updateFileName(fileId: string, folderId: string, name: string): Promise<FileEntity | null> {
@@ -130,7 +144,8 @@ export class FileRepository implements FileInterface{
             file.url,
             file.content,
             file.coverImage,
-            file.inTrash
+            file.inTrash,
+            file.deletedAt
         )
     }
     async uploadImage(fileId:string,imageUrl:string):Promise<FileEntity|null>{
@@ -149,7 +164,8 @@ export class FileRepository implements FileInterface{
             file.url,
             file.content,
             file.coverImage,
-            file.inTrash
+            file.inTrash,
+            file.deletedAt
         )
     }
 

@@ -26,16 +26,15 @@ export class FileController{
             next(error)
         }
     }
-    async deleteFile(req:Request,res:Response,next:NextFunction)
+    async movetoTrash(req:Request,res:Response,next:NextFunction)
     {
         try {
-              const {fileId}=req.params
-              const {folderId} = req.body
-              if(!folderId)
+              const {fileId,folderId} = req.body
+              if(!folderId||!fileId)
               {
                 return res.status(400).json({message:"Folder id is missing"})
               }
-              let result=await this.fileUsecase.deleteFile(fileId,folderId)
+              let result=await this.fileUsecase.movetoTrash(fileId,folderId)
 
               if(!result)
               {

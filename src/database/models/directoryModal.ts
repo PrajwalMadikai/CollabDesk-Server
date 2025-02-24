@@ -20,6 +20,10 @@ const directorySchema:Schema=new Schema({
     inTrash:{
         type:Boolean,
         default:false
+    },
+    deletedAt:{
+        type:Date,
+        default:null
     }
 })
 

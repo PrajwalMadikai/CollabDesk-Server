@@ -68,4 +68,18 @@ export class DirectoryUsecase{
             return { status: 500, message: 'An error occurred during deleting directory.' }; 
         }
     }
+    async fetchTrash(workspaceId:string)
+    {
+        try {
+
+            const data=await this.directoryRepository.fetchTrashItems(workspaceId)
+            if(!data) return null
+
+            return data
+            
+        } catch (error) {
+            console.log("error in fetching trash items",error);
+            return { status: 500, message: 'An error occurred during fetching trash items.' }; 
+        }
+    }
 }

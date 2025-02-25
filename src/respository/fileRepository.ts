@@ -6,7 +6,7 @@ import { FileEntity } from "../entities/fileEntity";
 import { FileInterface } from "../Repository-Interfaces/IFile";
 
 export class FileRepository implements FileInterface{
-   async createFile(folderId: string): Promise<DirectoryEntity | null> {
+   async createFile(folderId: string): Promise<FileEntity | null> {
          
          let file = await FileModal.create({ name:"Untitled", directoryId: new mongoose.Types.ObjectId(folderId) });
 
@@ -21,14 +21,17 @@ export class FileRepository implements FileInterface{
 
         if(!updatedFolder) return null
 
-        return  new DirectoryEntity(
-            updatedFolder.id,
-            updatedFolder.name,
-            updatedFolder.workspaceId,
-            updatedFolder.files,
-            updatedFolder.inTrash,
-            updatedFolder.deletedAt
-         )
+        return new FileEntity(
+            file.id,
+            file.name,
+            file.directoryId,
+            file.published,
+            file.url,
+            file.content,
+            file.coverImage,
+            file.inTrash,
+            file.deletedAt
+        )
     }
 
     async movetoTrash(fileId: string, folderId: string): Promise<DirectoryEntity | null> {
@@ -40,7 +43,7 @@ export class FileRepository implements FileInterface{
                 fileId,
                 { 
                     inTrash: true,
-                    scheduledForDeletion: deletionDate 
+                    deletedAt: deletionDate 
                 },
                 { new: true }
             );
@@ -168,5 +171,26 @@ export class FileRepository implements FileInterface{
             file.deletedAt
         )
     }
+   async restoreFile(fileId:string):Promise<FileEntity|null>{
+      const file =await FileModal.findByIdAndUpdate(new mongoose.Types.ObjectId(fileId),{
+        inTrash:false,
+        deletedAt:null
+      },{new:true})
 
+      if(!file) return null
+
+     let folder=await FolderModal.findByIdAndUpdate(file.directoryId,{$push:{files:{fileId:file._id,fileName:file.name}}},{new:true})
+
+      return new FileEntity(
+        file.id,
+        file.name,
+        file.directoryId,
+        file.published,
+        file.url,
+        file.content,
+        file.coverImage,
+        file.inTrash,
+        file.deletedAt
+    )
+   }
 }

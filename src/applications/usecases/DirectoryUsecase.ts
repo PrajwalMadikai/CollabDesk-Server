@@ -53,21 +53,7 @@ export class DirectoryUsecase{
             return { status: 500, message: 'An error occurred during fetchin directory.' }; 
         }
     }
-    async deleteFolder(folderId:string)
-    {
-        try {
-             
-            let deleted=await this.directoryRepository.deleteFolder(folderId)
-            if(!deleted){
-                return null
-            }
-            return deleted
-            
-        } catch (error) {
-            console.log("error in deleting directory",error);
-            return { status: 500, message: 'An error occurred during deleting directory.' }; 
-        }
-    }
+     
     async fetchTrash(workspaceId:string)
     {
         try {
@@ -80,6 +66,36 @@ export class DirectoryUsecase{
         } catch (error) {
             console.log("error in fetching trash items",error);
             return { status: 500, message: 'An error occurred during fetching trash items.' }; 
+        }
+    }
+    async moveToTrash(folderId:string,workspaceId:string)
+    {
+        try {
+
+            const data=await this.directoryRepository.moveFoldertoTrash(folderId,workspaceId)
+            if(!data) return null
+
+            return data
+            
+        } catch (error) {
+            console.log("error in moving folder to trash",error);
+            return { status: 500, message: 'An error occurred during moving folder to trash.' }; 
+        }
+    }
+
+    async restoreFolder(folderId:string)
+    {
+        try {
+
+            const data=await this.directoryRepository.restoreFolder(folderId)
+            
+            if(!data) return null
+
+            return data
+            
+        } catch (error) {
+            console.log("error in restoring folder from trash",error);
+            return { status: 500, message: 'An error occurred during restoring folder from trash.' }; 
         }
     }
 }

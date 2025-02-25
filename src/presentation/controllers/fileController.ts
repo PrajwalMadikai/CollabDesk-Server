@@ -137,4 +137,24 @@ export class FileController{
             next(error)
         }
     }
+    async fileRestore(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const {fileId}=req.body
+            if(!fileId)
+            {
+                return res.status(400).json({message:"file id missing"})
+            }
+            const data=await this.fileUsecase.restoreFile(fileId)
+            if(!data)
+            {
+                return res.status(404).json({message:"Unable to restore the file from trash"})
+            }
+            
+            return res.status(200).json({message:"File restored from trash",data})
+            
+        } catch (error) {
+            next(error)
+        }
+    }
 }

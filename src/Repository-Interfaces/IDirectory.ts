@@ -9,7 +9,9 @@ export interface DirectoryInterface{
 
     fetchFolders(workspaceId:string):Promise<DirectoryEntity[]|null>
     
-    deleteFolder(folderId:string):Promise<DirectoryEntity|null>
-
     fetchTrashItems(workspaceId:string):Promise<TrashItems>
+
+    moveFoldertoTrash(folderId:string,workspaceId:string):Promise<DirectoryEntity|null>
+
+    restoreFolder(folderId:string):Promise<DirectoryEntity|null>
 }

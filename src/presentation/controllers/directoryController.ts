@@ -81,29 +81,7 @@ export class DirectoryController{
             next(error);
         }
     }
-    async folderDelete(req:Request,res:Response,next:NextFunction)
-    {
-        try {
-               const {folderId}=req.params
-               if(!folderId)
-               {
-                 res.status(400).json({message:"Folder id is missing"})
-                 return
-               }
-               let result=await this.directoryUsecase.deleteFolder(folderId)
-
-               if(!result)
-               {
-                res.status(404).json({message:"Unable to delete folder"})
-                return
-               }
-
-               res.status(200).json({message:"folder deleted successfully"})
-               return
-        } catch (error) {
-            next(error)
-        }
-    }
+    
     async fetchTrashItems(req:Request,res:Response,next:NextFunction)
     {
         try {
@@ -120,6 +98,52 @@ export class DirectoryController{
                 return
             }
             res.status(200).json({message:"trash items fetched successfully",result})
+            return
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async movetoTrash(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            const {folderId,workspaceId}=req.body
+            if(!folderId)
+            {
+                res.status(400).json({message:"folder id is missing"})
+                return
+            }
+            const data=await this.directoryUsecase.moveToTrash(folderId,workspaceId)
+            if(!data)
+            {
+                res.status(404).json({message:"Unable to move folder to trash"})
+                return
+            }
+            res.status(200).json({message:"folder moved to trash successfully"})
+            return
+            
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async restoreFolder(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            const {folderId}=req.body
+            if(!folderId)
+            {
+                res.status(400).json({message:"folder id is missing"})
+                return
+            }
+            const data=await this.directoryUsecase.restoreFolder(folderId)
+            if(!data){
+                res.status(404).json({message:"Unable to restore the folder"})
+                return
+            }
+            res.status(200).json({message:"folder successfully",data})
             return
         } catch (error) {
             next(error)

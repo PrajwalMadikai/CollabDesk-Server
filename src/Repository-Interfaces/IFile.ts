@@ -2,7 +2,7 @@ import { DirectoryEntity } from "../entities/directoryEntity";
 import { FileEntity } from "../entities/fileEntity";
 
 export interface FileInterface{
-    createFile(folderId:string):Promise<DirectoryEntity | null>
+    createFile(folderId:string):Promise<FileEntity | null>
 
     movetoTrash(fileId:string,folderId:string):Promise<DirectoryEntity|null>
 
@@ -15,4 +15,6 @@ export interface FileInterface{
     updateFileName(fileId:string,folderId:string,name:string):Promise<FileEntity|null>
 
     uploadImage(fileId:string,imageUrl:string):Promise<FileEntity|null>
+
+    restoreFile(fileId:string):Promise<FileEntity|null>
 }

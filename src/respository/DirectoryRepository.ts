@@ -72,23 +72,7 @@ export class DirectoryRepository implements DirectoryInterface{
            
      }
 
-     async deleteFolder(folderId: string): Promise<DirectoryEntity | null> {
-      
-      let folder=await FolderModal.findByIdAndDelete(folderId)
-      if(!folder)
-      {
-         return null
-      }
-
-      return  new DirectoryEntity(
-         folder.id,
-         folder.name,
-         folder.workspaceId,
-         folder.files,
-         folder.inTrash,
-         folder.deletedAt
-      )
-     }
+     
 
      async fetchTrashItems(workspaceId:string):Promise<TrashItems>
      {
@@ -119,5 +103,53 @@ export class DirectoryRepository implements DirectoryInterface{
         }))
       };
    }
-     
+   async moveFoldertoTrash(folderId:string,workspaceId:string):Promise<DirectoryEntity|null>
+   {
+      const deletionDate = new Date();
+      deletionDate.setDate(deletionDate.getDate() + 7);
+
+      const folderID=new mongoose.Types.ObjectId(folderId)
+
+      const folder=await FolderModal.findByIdAndUpdate(folderID,{
+         inTrash:true,
+         deletedAt:deletionDate
+      },{new:true})
+
+      if(!folder) return null
+
+      await WorkspaceModal.findByIdAndUpdate(new mongoose.Types.ObjectId(workspaceId),
+                                          {$pull:{directories:{dirId:folderId}}} )
+     return  new DirectoryEntity(
+               folder.id,
+               folder.name,
+               folder.workspaceId,
+               folder.files,
+               folder.inTrash,
+               folder.deletedAt
+            )
+   }
+
+   async restoreFolder(folderId:string):Promise<DirectoryEntity|null>
+   {
+      const folder=await FolderModal.findByIdAndUpdate(new mongoose.Types.ObjectId(folderId),
+         {
+            inTrash:false,
+            deletedAt:null
+         },{new:true})
+
+         if(!folder) return null
+
+         await WorkspaceModal.findByIdAndUpdate(folder.workspaceId,{
+            $push:{directories:{dirId:folder._id,dirName:folder.name}}
+         },{new:true})
+
+      return  new DirectoryEntity(
+         folder.id,
+         folder.name,
+         folder.workspaceId,
+         folder.files,
+         folder.inTrash,
+         folder.deletedAt
+      )
+   }
 }

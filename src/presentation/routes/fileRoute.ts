@@ -8,7 +8,7 @@ import { FileController } from '../controllers/fileController'
 import { authenticateToken, authorizeRoles } from '../middleware/authMiddleware'
 import { checkUserBlockStatus } from '../middleware/checkUserBlock'
 import checkSubscription from '../middleware/redisPaymentExpireMiddleware'
-import { setupDeleteExpiredFilesCron } from '../utils/cronJobsFiles'
+import { setupDeleteExpiredFilesCron } from '../utils/cronJobs'
 
 const router=express.Router()
 
@@ -40,5 +40,7 @@ router.put('/update/:fileId',authenticateToken,checkUserBlockStatus,authorizeRol
 router.put('/uploadImage/:fileId',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
 multerService.single("image"),(req:Request,res:Response,next:NextFunction)=>{fileController.uploadImage(req, res, next)})
 
+router.post('/restore',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
+(req:Request,res:Response,next:NextFunction)=>{fileController.fileRestore(req, res, next)})
  
 export default router

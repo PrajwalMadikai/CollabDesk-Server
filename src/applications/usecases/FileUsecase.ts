@@ -90,13 +90,26 @@ export class FileUsecase{
             const imageUrl=await this.cloudinaryService.upload(image)
             const file=await this.fileRepository.uploadImage(fileId,imageUrl)
             if(!file) return null;
-          console.log('file uplopa:',file);
           
             return file
             
         } catch (error) {
             console.log("error in image uploading",error);
             return { status: 500, message: 'An error occurred during image uploading.' }; 
+        }
+    }
+    async restoreFile(fileId:string)
+    {
+        try {
+
+            const data=await this.fileRepository.restoreFile(fileId)
+            if(!data) return null
+
+            return data
+            
+        } catch (error) {
+            console.log("error in file restoring",error);
+            return { status: 500, message: 'An error occurred during file restoring.' }; 
         }
     }
 }

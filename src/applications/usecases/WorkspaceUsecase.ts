@@ -1,10 +1,12 @@
 import { UserRepository } from "../../respository/UserRespository";
 import { WorkspaceRepository } from "../../respository/WorkspaceRepository";
+import { EmailService } from "../services/EmailService";
 
 export class WorkspaceUsecase{
     constructor(
         private workspaceRepo:WorkspaceRepository,
-        private userRepository:UserRepository
+        private userRepository:UserRepository,
+        private emailService:EmailService
     ){}
 
     async createSpace(name: string, ownerId: string,){
@@ -13,12 +15,11 @@ export class WorkspaceUsecase{
         if (!space) {
             return null;   
         }
-       await this.userRepository.insertWorkspace(space.ownerId,space.name,space.id)
        
         return space
-       }catch(error)
-       {
-        return {status:500,message:"An error occurred during creating workspace"}
+       }catch(error){
+        console.log("Error in createWorkspace use case:", error);
+        throw error;  
        }
     }
     async fetchWorkspace(userId:string)
@@ -40,7 +41,7 @@ export class WorkspaceUsecase{
        } 
     }
 
-    async addUsertoWorkspace(email:string,workspaceId:string )
+    async addUsertoWorkspace(email:string,workspaceId:string,invitedEmail:string)
     {
         try {
               
@@ -49,6 +50,7 @@ export class WorkspaceUsecase{
             {
                 return null
             }
+            await this.emailService.sendCollaboratorAddedNotification(email,invitedEmail,user.name)
             return user.userDetails
             
         } catch (error) {
@@ -91,6 +93,21 @@ export class WorkspaceUsecase{
         } catch (error) {
             console.log(error);
             return { status: 500, message: 'An error occurred during renaming workspace.' };
+        }
+    }
+
+    async deleteWorkspace(workspaceId:string)
+    {
+        try {
+
+            const data=await this.workspaceRepo.deleteWorkspace(workspaceId)
+            if(!data) return null
+
+            return data
+            
+        } catch (error) {
+            console.log(error);
+            return { status: 500, message: 'An error occurred during deleting workspace.' };
         }
     }
 }

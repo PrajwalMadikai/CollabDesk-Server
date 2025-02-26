@@ -19,8 +19,12 @@ export class WorkspaceController{
                res.status(201).json({workspace:space});
 
          } catch (error:any) {
+            if (error.message.includes("Workspace limit exceeded")) {
+                return res.status(403).json({
+                    message: "Workspace limit exceeded for your subscription plan. Upgrade to create more workspaces."
+                });
+            }
             next(error)
-            console.log(error.message);
          }
     }
     async getUserWorkspace(req:Request,res:Response,next:NextFunction)
@@ -45,13 +49,13 @@ export class WorkspaceController{
     {
         try {
 
-            const {email,workspaceId}=req.body
+            const {email,workspaceId,invitedEmail}=req.body
             
             if(!email||!workspaceId)
             {
                 return res.status(400).json({message:"User email is missing"})
             }
-            const result=await this.workspaceUsecase.addUsertoWorkspace(email,workspaceId)
+            const result=await this.workspaceUsecase.addUsertoWorkspace(email,workspaceId,invitedEmail)
             if(!result)
             {
                  return res.status(404).json({message:"Unable to add collaborators"})
@@ -121,6 +125,27 @@ export class WorkspaceController{
                 return res.status(404).json({message:"Unable to remove collaborator"})
              }
              return res.status(200).json({message:"Collaborator removed!"})
+        } catch (error) {
+            next(error)
+        }
+    }
+    async deleteWorkspace(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+
+            const {workspaceId}=req.body
+            if(!workspaceId)
+            {
+                return res.status(400).json({message:'workspace id is missing'})
+            }
+            const data=await this.workspaceUsecase.deleteWorkspace(workspaceId)
+            if(!data)
+            {
+                return res.status(404).json({message:'Unable to delete workspace'})
+            }
+
+            return res.status(200).json({message:"workspace deleted",data})
+            
         } catch (error) {
             next(error)
         }

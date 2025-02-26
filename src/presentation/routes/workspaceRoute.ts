@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express'
+import { EmailService } from '../../applications/services/EmailService'
 import { WorkspaceUsecase } from '../../applications/usecases/WorkspaceUsecase'
 import { UserRole } from '../../interface/roles'
 import { UserRepository } from '../../respository/UserRespository'
@@ -12,8 +13,9 @@ const router=express.Router()
 
 const workspaceRepository=new WorkspaceRepository()
 const userRepository=new UserRepository()
+const emailService=new EmailService()
 
-const workspaceUsecase=new WorkspaceUsecase(workspaceRepository,userRepository)
+const workspaceUsecase=new WorkspaceUsecase(workspaceRepository,userRepository,emailService)
 const workspaceController=new WorkspaceController(workspaceUsecase)
 
 
@@ -34,6 +36,9 @@ router.post('/rename',authenticateToken,checkUserBlockStatus,authorizeRoles(User
 
 router.post('/remove-collaborator',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
 (req:Request,res:Response,next:NextFunction)=>{workspaceController.removeCollaborator(req, res, next)})
+
+router.post('/delete',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
+(req:Request,res:Response,next:NextFunction)=>{workspaceController.deleteWorkspace(req, res, next)})
 
 
 export default router

@@ -223,35 +223,7 @@ export class UserRepository implements UserInterface {
             users.isBlock
         ))
     }
-    async insertWorkspace(ownerId: string, name: string, wid: string): Promise<UserEntity | null> {
-       
-          const updatedUser = await UserModal.findOneAndUpdate(
-            { _id: ownerId }, 
-            { 
-              $push: { workSpaces: { workspaceId: wid, workspaceName: name } }  
-            },
-          );
-          if(!updatedUser)
-          {
-            return null
-          }
-      
-          return new UserEntity(
-            updatedUser.id,
-            updatedUser.fullname,
-            updatedUser.email,
-            updatedUser.password,
-            updatedUser.paymentDetail,
-            updatedUser.workSpaces,
-            updatedUser.googleId,
-            updatedUser.avatar,
-            updatedUser.githubId,
-            updatedUser.role,
-            updatedUser.isAdmin,
-            updatedUser.isBlock
-          ); 
- 
-      }
+     
     async updateUser(email: string, password: string): Promise<UserEntity|null> {
 
         const updatedUser=await UserModal.findOneAndUpdate(

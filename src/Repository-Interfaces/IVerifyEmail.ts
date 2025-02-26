@@ -7,7 +7,7 @@ interface TempUser {
     token: string;
     expiresAt: Date;
     workSpaces?: { workspaceId: string; workspaceName: string }[]; 
-    paymentDetail?: { paymentType: string; startDate: Date; endDate: Date } | null;  
+    paymentDetail?: { paymentType: string; startDate: Date|null; endDate: Date|null } | null;  
 }
 
 export interface EmailRepositoryInterface {

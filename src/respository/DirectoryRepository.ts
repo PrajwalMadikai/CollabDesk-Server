@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import { FolderModal } from "../database/models/directoryModal";
 import { FileModal } from "../database/models/fileModal";
+import { paymentModal } from "../database/models/PaymentModal";
+import { UserModal } from "../database/models/userModal";
 import { WorkspaceModal } from "../database/models/workspaceModal";
 import { DirectoryEntity } from "../entities/directoryEntity";
 import { TrashItems } from "../interface/trashItems";
@@ -8,28 +10,53 @@ import { DirectoryInterface } from "../Repository-Interfaces/IDirectory";
 
 export class DirectoryRepository implements DirectoryInterface{
 
-      async createFolder(name:string,workspaceId:string):Promise<DirectoryEntity|null>{
-
-         const workspaceObjectId = new mongoose.Types.ObjectId(workspaceId);
-
-        let folder=await FolderModal.create({name,workspaceId:workspaceObjectId})
-     
-         let workspace=await WorkspaceModal.findByIdAndUpdate(workspaceObjectId,{$push:{directories:{dirId:folder._id,dirName:name}}})
-         if(!workspace)
-         {
-            return null
-         }
-         
-         return  new DirectoryEntity(
-            folder.id,
-            folder.name,
-            folder.workspaceId,
-            folder.files,
-            folder.inTrash,
-            folder.deletedAt
-         )
-
+   async createFolder(name: string, workspaceId: string, userId: string): Promise<DirectoryEntity | null> {
+      const workspaceObjectId = new mongoose.Types.ObjectId(workspaceId);
+      const userObjectId = new mongoose.Types.ObjectId(userId);
+  
+      const user = await UserModal.findById(userObjectId);
+      if (!user) {
+          throw new Error("User not found");
       }
+  
+      const planType = user.paymentDetail.paymentType;
+      let folderLimit = 1; 
+  
+      if (planType !== "Non") {
+          const plan = await paymentModal.findOne({ paymentType: planType });
+          if (!plan) {
+              throw new Error("Subscription plan not found");
+          }
+          folderLimit = plan.FolderNum;
+      }
+      
+      
+      const workspace = await WorkspaceModal.findById(workspaceObjectId);
+      if (!workspace) {
+          return null;
+      }
+  
+      if (workspace.directories.length >= folderLimit) {
+          throw new Error(`Folder limit exceeded for ${planType} plan`);
+      }
+  
+      const folder = await FolderModal.create({ name, workspaceId: workspaceObjectId });
+  
+      await WorkspaceModal.findByIdAndUpdate(
+          workspaceObjectId,
+          { $push: { directories: { dirId: folder._id, dirName: name } } },
+          { new: true }
+      );
+  
+      return new DirectoryEntity(
+          folder.id,
+          folder.name,
+          folder.workspaceId,
+          folder.files,
+          folder.inTrash,
+          folder.deletedAt
+      );
+  }
       async updateName(folderId: string, newName: string): Promise<DirectoryEntity | null> {
          const folderObjectId = new mongoose.Types.ObjectId(folderId);
          let folder=await FolderModal.findByIdAndUpdate(folderObjectId,{$set:{name:newName}},{ new: true })

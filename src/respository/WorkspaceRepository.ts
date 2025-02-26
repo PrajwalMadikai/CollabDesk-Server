@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { paymentModal } from "../database/models/PaymentModal";
 import { UserModal } from "../database/models/userModal";
 import { WorkspaceModal } from "../database/models/workspaceModal";
 import { UserEntity } from "../entities/userEntity";
@@ -10,13 +11,40 @@ export class WorkspaceRepository implements workspaceInterface{
                 userDetails?: { uId: string; email: string; }[], meetingRoom?: string, 
               type?: string, trashId?: string | null): Promise<workspaceEnity|null> 
         {
+
+           const user = await UserModal.findById(ownerId);
+           
+            if (!user) {
+                throw new Error("User not found");
+            }
+        
+            const planType = user.paymentDetail.paymentType
+            let workspaceLimit = 1; 
+        
+            if (planType !== "Non") {
+                const plan = await paymentModal.findOne({ paymentType: planType });
+                if (!plan) {
+                    throw new Error("Subscription plan not found");
+                }
+                workspaceLimit = plan.WorkspaceNum;
+            }
+            if (user.workSpaces.length >= workspaceLimit) {
+                throw new Error(`Workspace limit exceeded for ${planType} plan`);
+            }    
+
+
             const exists=await WorkspaceModal.findOne({ownerId,name})
             if(exists)
             {
                 return null
             }
             const space=await WorkspaceModal.create({name,ownerId,directories,userDetails,meetingRoom,type,trashId})
-
+              await UserModal.findOneAndUpdate(
+                { _id: ownerId }, 
+                { 
+                  $push: { workSpaces: { workspaceId: space._id, workspaceName: space.name } }  
+                },
+              );
             return new workspaceEnity(
                 space.id,
                 space.name,
@@ -160,6 +188,30 @@ export class WorkspaceRepository implements workspaceInterface{
         console.log('user in remove collab:',user);
         
     
+        return new workspaceEnity(
+            space.id,
+            space.name,
+            space.ownerId,
+            space.directories,
+            space.userDetails,
+            space.meetingRoom,
+            space.type,
+            space.trashId
+        );
+    }
+
+    async deleteWorkspace(workspaceId:string):Promise<workspaceEnity|null>
+    {
+        const wId=new mongoose.Types.ObjectId(workspaceId)
+        const space=await WorkspaceModal.findByIdAndDelete({_id:wId})
+
+        if(!space) return null;
+
+        await UserModal.updateMany(
+            { workSpaces: { $elemMatch: { workspaceId: space.id } } },
+            { $pull: { workSpaces: { workspaceId: space.id } } }
+          );
+
         return new workspaceEnity(
             space.id,
             space.name,

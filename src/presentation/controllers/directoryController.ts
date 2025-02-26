@@ -6,26 +6,31 @@ export class DirectoryController{
         private directoryUsecase:DirectoryUsecase
     ){}
 
-    async createFolder(req:Request,res:Response,next:NextFunction):Promise<void>
-    {
+    async createFolder(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-             const {name,workspaceId}=req.body
-
-             if (!name || !workspaceId) {
-                 res.status(400).json({ error: "Folder name and workspace ID are required" });
-                 return
-              }
-
-             const result=await this.directoryUsecase.createFolder(name,workspaceId)
-             if(!result)
-             {
-                 res.status(404).json({message:"Unable to find workspace for creating Folder!"})
-                 return
-             }
-              res.status(200).json({message:"Folder created successfully",folder:result})
-             return
-        } catch (error) {
-            next(error)
+            const { name, workspaceId, userId } = req.body;
+    
+            if (!name || !workspaceId || !userId) {
+                res.status(400).json({ error: "Folder name, workspace ID, and user ID are required" });
+                return;
+            }
+    
+            const result = await this.directoryUsecase.createFolder(name, workspaceId, userId);
+    
+            if (!result) {
+                res.status(404).json({ message: "Unable to find workspace for creating folder!" });
+                return;
+            }
+    
+            res.status(200).json({ message: "Folder created successfully", folder: result });
+        } catch (error: any) {
+            if (error.message.includes("Folder limit exceeded")) {
+                res.status(403).json({
+                    message: "Folder limit exceeded for your subscription plan. Upgrade to create more folders."
+                });
+            } else {
+                next(error);  
+            }
         }
     }
 

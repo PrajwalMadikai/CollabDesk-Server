@@ -3,7 +3,7 @@ import { TrashItems } from "../interface/trashItems";
 
 export interface DirectoryInterface{
     
-    createFolder(name:string,workspaceId:string):Promise<DirectoryEntity|null>
+    createFolder(name:string,workspaceId:string,userId:string):Promise<DirectoryEntity|null>
 
     updateName(folderId:string,newName:string):Promise<DirectoryEntity|null>
 

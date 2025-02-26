@@ -22,8 +22,6 @@ export interface UserInterface{
 
     findAllUsers():Promise<UserEntity[]|null>
 
-    insertWorkspace(ownerId:string,name:string,wid:string):Promise<UserEntity|null>
-
     updateUser(userId:string,password:string):Promise<UserEntity|null>
 
     blockUser(userId:string,):Promise<UserEntity|null>

@@ -106,7 +106,23 @@ export class PaymentUsecase{
             return data
             
           } catch (error) {
-            
+            console.error("Error in payment plan distribution:", error);
+            return { status: 500, message: 'An error occurred during plan distribution.' }; 
           }
+        }
+
+        async deletePlan(type:string)
+        {
+           try {
+
+            const data=await this.paymentRepository.deletePlan(type)
+            if(!data)  return null
+
+            return data
+            
+           } catch (error) {
+            console.error("Error in payment plan delete:", error);
+            return { status: 500, message: 'An error occurred during plan deletion.' }; 
+           }
         }
   }

@@ -55,5 +55,8 @@ router.get('/monthly-payments',authenticateToken,authorizeRoles(UserRole.ADMIN),
 router.get('/plan-distribution',authenticateToken,authorizeRoles(UserRole.ADMIN),
 (req:Request,res:Response,next:NextFunction)=>{ paymentController.planDistribution(req,res,next)})
 
+router.delete('/payment-plan/:type',authenticateToken,authorizeRoles(UserRole.ADMIN),
+(req:Request,res:Response,next:NextFunction)=>{ paymentController.planDelete(req,res,next)})
+
 
 export default router

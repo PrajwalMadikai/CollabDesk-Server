@@ -17,4 +17,8 @@ export interface FileInterface{
     uploadImage(fileId:string,imageUrl:string):Promise<FileEntity|null>
 
     restoreFile(fileId:string):Promise<FileEntity|null>
+
+    makePublish(fileId:string):Promise<FileEntity|null>
+
+    fetchPreview(fileId:string):Promise<FileEntity|null>
 }

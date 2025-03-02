@@ -193,4 +193,42 @@ export class FileRepository implements FileInterface{
         file.deletedAt
     )
    }
+
+   async makePublish(fileId:string):Promise<FileEntity|null>{
+     
+    const file = await FileModal.findByIdAndUpdate(fileId,{
+        $set:{published:true,url:`${process.env.CLIENT_URL}/preview/${fileId}`}
+    },{new:true})
+
+    if(!file) return null
+
+    return new FileEntity(
+        file.id,
+        file.name,
+        file.directoryId,
+        file.published,
+        file.url,
+        file.content,
+        file.coverImage,
+        file.inTrash,
+        file.deletedAt
+    )
+   }
+
+   async fetchPreview(fileId:string):Promise<FileEntity|null>{
+    const file = await FileModal.findOne({_id:new mongoose.Types.ObjectId(fileId),inTrash:false})
+    if(!file) return null
+
+    return new FileEntity(
+        file.id,
+        file.name,
+        file.directoryId,
+        file.published,
+        file.url,
+        file.content,
+        file.coverImage,
+        file.inTrash,
+        file.deletedAt
+    )
+   }
 }

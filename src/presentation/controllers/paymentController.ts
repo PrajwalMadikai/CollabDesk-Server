@@ -4,7 +4,8 @@ import { PaymentUsecase } from "../../applications/usecases/PaymentUsecase";
 export class PaymentController{
 
     constructor(
-        private paymentUsecase:PaymentUsecase
+        private paymentUsecase:PaymentUsecase,
+        
     ){}
 
     async addPaymentPlan(req:Request,res:Response,next:NextFunction)
@@ -132,4 +133,28 @@ export class PaymentController{
             next(error)
         }
     }
+    async planDelete(req:Request,res:Response,next:NextFunction)
+   {
+       try {
+
+           const {type}=req.params
+
+           if(!type)
+           {
+               return res.status(400).json({message:"type data is missing"})
+           }
+
+           const data=await this.paymentUsecase.deletePlan(type)
+           if(!data)
+           {
+              return res.status(404).json({message:"Unable to delete plan"})
+           }
+
+           return res.status(200).json({message:"successfully deleted plan"})
+           
+       } catch (error) {
+           next(error)
+       }
+   }
+   
 }

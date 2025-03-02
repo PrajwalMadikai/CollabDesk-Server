@@ -22,7 +22,7 @@ export class DirectoryController{
                 return;
             }
     
-            res.status(200).json({ message: "Folder created successfully", folder: result });
+            res.status(201).json({ message: "Folder created successfully", folder: result });
         } catch (error: any) {
             if (error.message.includes("Folder limit exceeded")) {
                 res.status(403).json({

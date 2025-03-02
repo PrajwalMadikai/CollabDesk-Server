@@ -107,6 +107,7 @@ export class FileController{
             {
                 return res.status(404).json({message:"Unable to update files"})
             }
+            return res.status(200).json({message:'file is updated',file})
         } catch (error) {
             next(error)
         }
@@ -157,4 +158,44 @@ export class FileController{
             next(error)
         }
     }
+    async makeDocOnline(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const {fileId}=req.params
+            if(!fileId)
+            {
+                return res.status(400).json({message:"file id missing"})
+            }
+            const data = await this.fileUsecase.publishDoc(fileId)
+            if(!data)
+            {
+                return res.status(404).json({message:"Unable publish document"})
+            }
+
+            return res.status(200).json({message:"published document online",data})
+            
+        } catch (error) {
+            next(error)
+        }
+    }
+   async getFileReview(req:Request,res:Response,next:NextFunction)
+   {
+      try {
+
+        const {fileId}=req.params
+        if(!fileId)
+        {
+            return res.status(400).json({message:"file id missing"})
+        }
+        const file=await this.fileUsecase.fetchPreview(fileId)
+        if(!file)
+        {
+            return res.status(404).json({message:"Unable fetch preview data"})
+        }
+    
+        return res.status(200).json({message:"preview fetched successfully",file})
+      } catch (error) {
+        next(error)
+      }
+   }
 }

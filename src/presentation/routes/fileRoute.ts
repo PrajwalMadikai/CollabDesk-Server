@@ -8,7 +8,6 @@ import { FileController } from '../controllers/fileController'
 import { authenticateToken, authorizeRoles } from '../middleware/authMiddleware'
 import { checkUserBlockStatus } from '../middleware/checkUserBlock'
 import checkSubscription from '../middleware/redisPaymentExpireMiddleware'
-import { setupDeleteExpiredFilesCron } from '../utils/cronJobs'
 
 const router=express.Router()
 
@@ -20,7 +19,7 @@ const fileUsecase=new FileUsecase(fileRepository,cloudinaryService)
 
 const fileController=new FileController(fileUsecase)
 
-setupDeleteExpiredFilesCron() // cron job function for deleting files
+ 
 
 router.post('/create',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),checkSubscription
 ,(req:Request,res:Response,next:NextFunction)=>{fileController.createFiles(req, res, next)})
@@ -42,5 +41,11 @@ multerService.single("image"),(req:Request,res:Response,next:NextFunction)=>{fil
 
 router.post('/restore',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
 (req:Request,res:Response,next:NextFunction)=>{fileController.fileRestore(req, res, next)})
+ 
+router.post('/publish/:fileId',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
+(req:Request,res:Response,next:NextFunction)=>{fileController.makeDocOnline(req, res, next)})
+ 
+// unprotected route
+router.get('/preview/:fileId',(req:Request,res:Response,next:NextFunction)=>{fileController.getFileReview(req, res, next)})
  
 export default router

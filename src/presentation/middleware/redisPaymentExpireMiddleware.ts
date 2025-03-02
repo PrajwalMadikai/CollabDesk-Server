@@ -20,7 +20,8 @@ const checkSubscription = async (req:AuthenticatedRequest, res:Response, next:Ne
             if (paymentType === 'Non') {
                 return next();
             }
-
+            res.status(403).json({ message: 'Subscription expired. Please renew your subscription.' });
+            return
           
         } else {
             const parsedData = JSON.parse(subscriptionData);
@@ -28,7 +29,6 @@ const checkSubscription = async (req:AuthenticatedRequest, res:Response, next:Ne
 
             const endDate = new Date(parsedData.endDate);
             if (endDate < new Date()) {
-                console.log('date expired');
                 
                  res.status(403).json({ message: 'Subscription expired. Please renew your subscription.' });
                  return

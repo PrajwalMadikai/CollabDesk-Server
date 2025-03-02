@@ -194,4 +194,22 @@ export class PaymentRepository implements PaymentInterface{
       
         return distribution;
       }
+
+      async deletePlan(type: string): Promise<PaymentEntity | null> {
+
+        const plan = await paymentModal.findOne({ paymentType: type });
+    
+        if (!plan) {
+            return null;  
+        }
+        await paymentModal.deleteOne({ paymentType: type });
+    
+        return new PaymentEntity(
+            plan.id,
+            plan.paymentType,
+            plan.amount,
+            plan.FolderNum,
+            plan.WorkspaceNum
+        );
+    }
 }

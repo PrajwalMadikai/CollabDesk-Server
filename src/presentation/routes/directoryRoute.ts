@@ -5,7 +5,6 @@ import { DirectoryRepository } from '../../respository/DirectoryRepository'
 import { DirectoryController } from '../controllers/directoryController'
 import { authenticateToken, authorizeRoles } from '../middleware/authMiddleware'
 import { checkUserBlockStatus } from '../middleware/checkUserBlock'
-import { handleFolderRemoveCronjobs } from '../utils/cronJobs'
 
 const router=express.Router()
 
@@ -17,7 +16,7 @@ const directoryUsecase=new DirectoryUsecase(directoryRepository)
 
 const directoryController=new DirectoryController(directoryUsecase)
 
-handleFolderRemoveCronjobs()
+ 
 
 router.post('/create',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
 (req:Request,res:Response,next:NextFunction)=>directoryController.createFolder(req,res,next))

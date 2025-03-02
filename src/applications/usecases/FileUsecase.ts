@@ -112,4 +112,30 @@ export class FileUsecase{
             return { status: 500, message: 'An error occurred during file restoring.' }; 
         }
     }
+    async publishDoc(fileId:string){
+        try {
+             
+            const data = await this.fileRepository.makePublish(fileId)
+            if(!data) return null
+
+            return data
+
+        } catch (error) {
+            console.log("error in file restoring",error);
+            return { status: 500, message: 'An error occurred during file restoring.' }; 
+        }
+    }
+
+    async fetchPreview(fileId:string){
+        try {
+            const data = await this.fileRepository.fetchPreview(fileId)
+            if(!data) return null
+
+            return data
+            
+        } catch (error) {
+            console.log("error in file restoring",error);
+            return { status: 500, message: 'An error occurred during file restoring.' }; 
+        }
+    }
 }

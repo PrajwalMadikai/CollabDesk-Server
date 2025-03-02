@@ -15,6 +15,8 @@ export const setupDeleteExpiredFilesCron = () => {
 
             for (const file of expiredFiles) {
                 await FileModal.deleteOne({ _id: file._id });
+                console.log('file deleted:',file.name);
+                
             }
 
            
@@ -42,3 +44,5 @@ export const handleFolderRemoveCronjobs=()=>{
         }
     })
 }
+
+// */2 * * * *

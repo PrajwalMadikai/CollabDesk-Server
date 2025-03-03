@@ -6,7 +6,6 @@ import { createServer } from 'http';
 import path from "path";
 import { Server } from "socket.io";
 import { SocketUsecase } from "./applications/usecases/SocketUsecase";
-import { WebRTCUsecase } from "./applications/usecases/WebrtcUsecase";
 import { connectDB } from "./database/connection";
 import { errorHandler } from "./presentation/middleware/errorHandler";
 import adminRoute from "./presentation/routes/adminRoute";
@@ -34,7 +33,6 @@ const io = new Server(httpServer, {
 
 const fileRepository = new FileRepository()
 const socketUsecase = new SocketUsecase(fileRepository)
-const webRTCUsecase=new WebRTCUsecase(io)
 
 connectDB().then(() => {
     io.on('connection', (socket) => {
@@ -45,7 +43,6 @@ connectDB().then(() => {
         });
 
         socketUsecase.executeSocket(socket);
-        webRTCUsecase.executeSocket(socket);
     });
 
     setupDeleteExpiredFilesCron() // cron job function for deleting files

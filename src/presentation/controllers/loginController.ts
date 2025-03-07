@@ -151,19 +151,25 @@ export class LoginController{
                 return res.status(400).json({ error: "Invalid code format." });
             }
     
-            const FRONTEND_URL = 'http://localhost:3000';
     
             try {
-                const { user, isRegistered } = await this.githubUsecase.handleGithubAuth(code, mode);
-                
+                const { user, isRegistered,accessToken,refreshToken } = await this.githubUsecase.handleGithubAuth(code, mode);
+             
+                res.cookie("refreshToken",refreshToken, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",  
+                    maxAge: 30 * 24 * 60 * 60 * 1000,   
+                    sameSite: process.env.NODE_ENV === "production" ? 'strict' : 'lax' 
+                });
+
                 return res.redirect(
-                    `${FRONTEND_URL}/auth/github/callback?data=${encodeURIComponent(
-                        JSON.stringify({ ...user, isRegistered })
+                    `${process.env.CLIENT_URL}/auth/github/callback?data=${encodeURIComponent(
+                        JSON.stringify({ ...user, isRegistered,accessToken })
                     )}&mode=${mode}`
                 );
             } catch (error: any) {
                 return res.redirect(
-                    `${FRONTEND_URL}/auth/github/callback?error=${encodeURIComponent(error.message)}&mode=${mode}`
+                    `${process.env.CLIENT_URL}/auth/github/callback?error=${encodeURIComponent(error.message)}&mode=${mode}`
                 );
             }
         } catch (error: any) {

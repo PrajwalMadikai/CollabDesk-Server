@@ -1,6 +1,11 @@
+import { Liveblocks } from "@liveblocks/node";
 import cron from 'node-cron';
 import { FolderModal } from '../../database/models/directoryModal';
 import { FileModal } from '../../database/models/fileModal';
+
+const liveblocks=new Liveblocks({
+    secret: process.env.LIVEBLOCKS_SECRET_KEY as string
+})
 
 export const setupDeleteExpiredFilesCron = () => {
     // Run every day at midnight
@@ -15,8 +20,7 @@ export const setupDeleteExpiredFilesCron = () => {
 
             for (const file of expiredFiles) {
                 await FileModal.deleteOne({ _id: file._id });
-                console.log('file deleted:',file.name);
-                
+                await liveblocks.deleteRoom(file._id as string)
             }
 
            

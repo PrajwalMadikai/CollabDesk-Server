@@ -5,8 +5,8 @@ export class UserEntity {
     fullname: string;
     paymentDetail?: {
         paymentType: string;
-        startDate: Date;
-        endDate: Date;
+        startDate: Date|null;
+        endDate: Date|null;
     };
     workSpaces: { workspaceId: string; workspaceName: string }[];
     googleId?: string|null;

@@ -17,7 +17,7 @@ export class WorkspaceController{
                }
    
                res.status(201).json({workspace:space});
-
+               return
          } catch (error:any) {
             if (error.message.includes("Workspace limit exceeded")) {
                 return res.status(403).json({

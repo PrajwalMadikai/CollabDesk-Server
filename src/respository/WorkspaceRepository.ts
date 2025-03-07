@@ -19,7 +19,7 @@ export class WorkspaceRepository implements workspaceInterface{
             }
         
             const planType = user.paymentDetail.paymentType
-            let workspaceLimit = 1; 
+            let workspaceLimit = 2; 
         
             if (planType !== "Non") {
                 const plan = await paymentModal.findOne({ paymentType: planType });

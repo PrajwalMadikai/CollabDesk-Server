@@ -32,7 +32,7 @@ const githubService=new GithubService()
 const paymentUsecase=new PaymentUsecase(paymentRepository,userRepository)
 const userUsecase=new UserUsecase(userRepository,hashService,tokenService,emailRepository,emailService)
 const googleUsecase=new GoogleAuthUsecase(userRepository,googleService,tokenService)
-const githubUsecase=new GithubUsecase(userRepository,githubService)
+const githubUsecase=new GithubUsecase(userRepository,githubService,tokenService)
 
 const loginController=new LoginController(userUsecase,googleUsecase,githubUsecase)
 const paymentController=new PaymentController(paymentUsecase)

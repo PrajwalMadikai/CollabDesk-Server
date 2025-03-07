@@ -78,7 +78,12 @@ export class UserRepository implements UserInterface {
             avatar,
             googleId,
             workSpaces:[],
-            isBlock:false
+            isBlock:false,
+            paymentDetail:{
+                paymentType:"Non",
+                startDate:null,
+                endDate:null
+            }
         });
 
         return new UserEntity(
@@ -120,15 +125,20 @@ export class UserRepository implements UserInterface {
         );
     }
     async createGithubUser(githubId:string,data:UserEntity): Promise<UserEntity> {
+        const name=data.email.split('@')[0]
         const user=await UserModal.create({
-            fullname: data.fullname,
+            fullname: name,
             email: data.email,
             workSpaces: data.workSpaces,
-            paymentDetail: data.paymentDetail,
+            paymentDetail:{
+                paymentType:'Non',
+                startDate:null,
+                endDate:null
+            },
             avatar: data.avatar,
             githubId: githubId,
             role:data.role,
-            isBlock:data.isBlock
+            isBlock:data.isBlock,
         })
 
         return new UserEntity(

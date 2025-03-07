@@ -1,18 +1,19 @@
-import { UserEntity } from "../../entities/userEntity";
 import { UserRepository } from "../../respository/UserRespository";
 import { GithubService } from "../services/GithubService";
+import { TokenService } from "../services/TokenService";
 
 export class GithubUsecase{
     constructor(
       private  userRepository:UserRepository,
-       private githubService:GithubService
+       private githubService:GithubService,
+       private jwtService:TokenService
     ){}
 
-    async handleGithubAuth(code: string, mode: 'login' | 'signup'): Promise<{ user: UserEntity; isRegistered: boolean }> {
+    async handleGithubAuth(code: string, mode: 'login' | 'signup'){
         const accessToken = await this.githubService.exchangeCodeForToken(code);
         const profile = await this.githubService.fetchUserProfile(accessToken);
         const existingUser = await this.userRepository.getUserByGithubId(profile.id);
-    
+ 
         if (mode === 'login' && !existingUser) {
             throw new Error('Account not found. Please sign up first.');
         }
@@ -25,9 +26,13 @@ export class GithubUsecase{
             if (!existingUser) {
                 throw new Error('Account not found. Please sign up first.');
             }
+            let jwtAccessToken=await this.jwtService.generateToken({userId:existingUser.id,userEmail:existingUser.email,role:existingUser.role})
+            let jwtRefreshToken=await this.jwtService.generateRefreshToken({userId:existingUser.id,userEmail:existingUser.email,role:existingUser.role})
             return {
                 user: existingUser,
-                isRegistered: true
+                isRegistered: true,
+                accessToken: jwtAccessToken,
+                refreshToken: jwtRefreshToken
             };
         }
     
@@ -42,19 +47,25 @@ export class GithubUsecase{
                 workSpaces: [],
                 role:profile.role,
                 isAdmin: false,
-                isBlock:false
+                isBlock:false,
+                paymentDetail:{
+                    paymentType:'Non',
+                    startDate:null,
+                    endDate:null
+                }
             });
+
+            const jwtAccessToken=await this.jwtService.generateToken({userId:newUser.id,userEmail:newUser.email,role:newUser.role})
+            const jwtRefreshToken=await this.jwtService.generateRefreshToken({userId:newUser.id,userEmail:newUser.email,role:newUser.role})
     
             return {
                 user: newUser,
-                isRegistered: false
+                isRegistered: false,
+                accessToken:jwtAccessToken,
+                refreshToken:jwtRefreshToken
             };
         }
     
         throw new Error('Invalid authentication state');
     }
-    
-
- 
-
 }

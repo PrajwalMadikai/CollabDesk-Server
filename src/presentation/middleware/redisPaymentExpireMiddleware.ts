@@ -10,8 +10,8 @@ const checkSubscription = async (req:AuthenticatedRequest, res:Response, next:Ne
 
         if (!subscriptionData) {
             const user = await UserModal.findById(userId).select('paymentDetail');
-            if (!user ) {
-                 res.status(404).json({ message: 'user not found.' });
+            if (!user || !user.paymentDetail) {
+                 res.status(404).json({ message: 'user not found or user deosnt have payment detail field' });
                  return
             }
 

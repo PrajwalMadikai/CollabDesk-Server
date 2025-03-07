@@ -1,7 +1,5 @@
 
 export class GithubService{
-    
-
 
     async exchangeCodeForToken(code: string): Promise<string> {
         const clientId = process.env.GITHUB_CLIENT_ID!;
@@ -26,6 +24,7 @@ export class GithubService{
         if (!accessToken) {
             throw new Error('No access token received');
         }
+        
     
         return accessToken;
     }

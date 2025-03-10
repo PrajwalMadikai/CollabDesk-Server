@@ -38,20 +38,24 @@ const loginController=new LoginController(userUsecase,googleUsecase,githubUsecas
 const paymentController=new PaymentController(paymentUsecase)
 
 router.post('/signup', loginController.registerUser.bind(loginController));
+
 router.post('/login',asyncHandler(loginController.LoginUser.bind(loginController)))
 
 router.post('/verify-email', asyncHandler(loginController.verifyEmail.bind(loginController)));
 
 // OAuth 2.0 Authorization Grant Flow
 router.post('/google-signup',asyncHandler(loginController.googleSignUp.bind(loginController)));
+
 router.post('/google-login',asyncHandler(loginController.googleLogin.bind(loginController)));
 
 router.get('/auth/github', asyncHandler(loginController.gitHubAuth.bind(loginController)));
+
 router.get('/auth/github/callback', asyncHandler(loginController.gitHubAuth.bind(loginController)));
 
 router.post('/refreshtoken',asyncHandler(loginController.requestAccessToken.bind(loginController)))
 // reset password email verification
 router.post('/send-mail',asyncHandler(loginController.sendVerification.bind(loginController)))
+
 router.post('/email-check',asyncHandler(loginController.verifyemailResetPassword.bind(loginController)))
 
 router.post('/reset-password',asyncHandler(loginController.resetPassword.bind(loginController)))

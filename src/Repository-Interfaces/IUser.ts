@@ -35,4 +35,6 @@ export interface UserInterface{
     fetchPlanDetails():Promise<PaymentEntity[]|null>
 
     storePaymentDetails(email:string,paymentType:string,amount:number):Promise<UserEntity|null>
+
+    findUser(email:string):Promise<UserEntity|null>
 }

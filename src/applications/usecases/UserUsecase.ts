@@ -242,4 +242,17 @@ export class UserUsecase{
                     return { status: 500, message: 'An error occurred during fetching plans' }; 
                 }
             }
-    }
+
+            async isExists(email:string){
+                try {
+
+                    const user = await this.userRepository.findUser(email)
+                    if(!user) return null
+
+                    return user
+                    
+                } catch (error) {
+                    return { status: 500, message: 'An error occurred during finding user' }; 
+                }
+            }
+}

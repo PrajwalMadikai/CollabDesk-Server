@@ -268,13 +268,14 @@ export class LoginController{
       async resetPassword(req:Request,res:Response,next:NextFunction)
       {
         try{
-          const {email,password}=req.body
-          console.log('pass change:',password);
+
+            const {email,password}=req.body
           
-          if(!password)
+            if(!password)
             {
-                return res.status(404).json({message:"Password is missing!"})
+                return res.status(400).json({message:"Password is missing!"})
             }
+
             const newpassword=await this.userUsecase.resetPassword(email,password)
             if(!newpassword)
             {
@@ -293,6 +294,12 @@ export class LoginController{
      {
         try{
               const {email}=req.body
+
+              const userExists=await this.userUsecase.isExists(email)
+              if(!userExists)
+              {
+                return res.status(404).json({message:"user email is not exists!"})
+              }
 
               const emailCheck=await this.userUsecase.sendEmail(email)
               if(!emailCheck)
@@ -335,7 +342,6 @@ export class LoginController{
         try {
             const token = req.headers.authorization?.split(" ")[1];
             if (!token) {
-                console.log('token is missing')
                 return res.status(401).json({ message: "Unauthorized: No token provided" }); 
             }
            

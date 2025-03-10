@@ -449,5 +449,25 @@ export class UserRepository implements UserInterface {
             user.isBlock
         );
     }
+    async findUser(email:string):Promise<UserEntity|null>{
+        const user=await UserModal.findOne({email})
+
+        if(!user) return null
+
+        return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workSpaces,
+            user.googleId,
+            user.avatar,
+            user.githubId,
+            user.role,
+            user.isAdmin,
+            user.isBlock
+        );
+    }
      
 }

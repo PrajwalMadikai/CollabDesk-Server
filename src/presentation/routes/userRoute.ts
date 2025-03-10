@@ -1,7 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express'
+import { CloudinaryAdapter } from '../../applications/services/CloudinaryService'
 import { EmailService } from '../../applications/services/EmailService'
 import { GithubService } from '../../applications/services/GithubService'
 import { GoogleAuthService } from '../../applications/services/GoogleService'
+import { MulterService } from '../../applications/services/MulterService'
 import { TokenService } from '../../applications/services/TokenService'
 import { BcryptService } from '../../applications/services/bcryptService'
 import { GithubUsecase } from '../../applications/usecases/GithubUsecase'
@@ -28,9 +30,11 @@ const emailRepository=new EmailRepository()
 const emailService=new EmailService() 
 const googleService=new GoogleAuthService()
 const githubService=new GithubService()
+const multerService=new MulterService()
+const cloudinaryService=new CloudinaryAdapter()
 
 const paymentUsecase=new PaymentUsecase(paymentRepository,userRepository)
-const userUsecase=new UserUsecase(userRepository,hashService,tokenService,emailRepository,emailService)
+const userUsecase=new UserUsecase(userRepository,hashService,tokenService,emailRepository,emailService,cloudinaryService)
 const googleUsecase=new GoogleAuthUsecase(userRepository,googleService,tokenService)
 const githubUsecase=new GithubUsecase(userRepository,githubService,tokenService)
 
@@ -76,5 +80,7 @@ router.get('/user/:userId',asyncHandler(loginController.getUserData.bind(loginCo
 router.post('/payment-details',authenticateToken,authorizeRoles(UserRole.USER),
 (req:Request,res:Response,next:NextFunction)=>{paymentController.payment(req,res,next)})
 
+router.post('/profile-upload',authenticateToken,authorizeRoles(UserRole.USER),
+multerService.single("profileImage"),(req:Request,res:Response,next:NextFunction)=>{loginController.updateProfile(req,res,next)})
 
 export default router

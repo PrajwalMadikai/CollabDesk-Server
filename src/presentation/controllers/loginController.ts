@@ -439,4 +439,24 @@ export class LoginController{
             next(error)
         }
     }
+
+    async updateProfile(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const profileImage=req.file
+            const userId=req.body
+            if(!profileImage)
+            {
+                return res.status(400).json({message:"image is missing."})
+            }
+            const user=await this.userUsecase.updateProfile(userId,profileImage.buffer)
+            if(!user)
+            {
+                return res.status(404).json({message:"unable to update user avatar."})
+            }
+            
+        } catch (error) {
+            next(error)
+        }
+    }
 }

@@ -3,6 +3,7 @@ import { UserRole } from "../../interface/roles";
 import { EmailRepository } from "../../respository/EmailRepository";
 import { UserRepository } from "../../respository/UserRespository";
 import { BcryptService } from "../services/bcryptService";
+import { CloudinaryAdapter } from "../services/CloudinaryService";
 import { EmailService } from "../services/EmailService";
 import { TokenService } from "../services/TokenService";
 
@@ -14,7 +15,8 @@ export class UserUsecase{
             private bcryptService:BcryptService,
             private tokenService:TokenService,
             private emailVerification:EmailRepository,
-            private sendMail:EmailService
+            private sendMail:EmailService,
+            private cloudinaryService:CloudinaryAdapter
                 ){}
             
             async registerUser(
@@ -265,5 +267,19 @@ export class UserUsecase{
                 } catch (error) {
                     return { status: 500, message: 'An error occurred during fetchinh user data' }; 
                 }
+            }
+
+            async updateProfile(userId:string,image:Buffer)
+            {
+              try {
+                const imageUrl=await this.cloudinaryService.upload(image)
+                const user = await this.userRepository.updateUseravatar(userId,imageUrl)
+                if(!user) return null
+
+                return user
+                
+              } catch (error) {
+                return { status: 500, message: 'An error occurred during fetchinh user data' }; 
+              }
             }
 }

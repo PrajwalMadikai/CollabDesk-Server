@@ -70,6 +70,8 @@ router.put('/update-name',asyncHandler(loginController.renameUsername.bind(login
 
 router.get('/get-plans',asyncHandler(loginController.getPaymentPlans.bind(loginController)))
 
+router.get('/user/:userId',asyncHandler(loginController.getUserData.bind(loginController)))
+
 
 router.post('/payment-details',authenticateToken,authorizeRoles(UserRole.USER),
 (req:Request,res:Response,next:NextFunction)=>{paymentController.payment(req,res,next)})

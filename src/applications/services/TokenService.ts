@@ -67,9 +67,7 @@ export class TokenService {
 
     verifyRefreshToken(token: string): TokenPayload | TokenError {
         try {
-            console.log('Verifying refresh token');
             const decoded = jwt.verify(token, this.refreshTokenSecret) as TokenPayload;
-            console.log('Decoded refresh token:', decoded);
             
             if (!decoded.userId || !decoded.userEmail || !decoded.role) {
                 console.log('Invalid token structure:', decoded);

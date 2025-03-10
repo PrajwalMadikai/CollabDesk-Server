@@ -284,7 +284,8 @@ export class LoginController{
 
             return res.status(200).json({ message: 'password reseted successfully' });
 
-        }catch(error)
+        }
+        catch(error)
         {
             next(error)
             return res.status(500).json({ message: 'Internal Server Error' });
@@ -409,12 +410,33 @@ export class LoginController{
                 return res.status(404).json({message:"Unable to fetch the payment plans."})
             }
             
-            return res.status(200).json({message:"Plans fetched success fully",data})
+            return res.status(200).json({message:"Plans fetched successfully",data})
             
         } catch (error) {
             next(error)
         }
     }
 
-    
+    async getUserData(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const {userId}=req.params
+            
+            if(!userId)
+            {
+                return res.status(400).json({message:"userid is missing."})
+            }
+            const user=await this.userUsecase.getUser(userId)
+            if(!user)
+            {
+                return res.status(404).json({message:"unable to get user data."})
+            }
+            
+        
+            return res.status(200).json({message:"user data fetched successfully",user})
+
+        } catch (error) {
+            next(error)
+        }
+    }
 }

@@ -255,4 +255,15 @@ export class UserUsecase{
                     return { status: 500, message: 'An error occurred during finding user' }; 
                 }
             }
+            async getUser(userId:string){
+                try {
+                    const user = await this.userRepository.getUserData(userId)
+                    if(!user) return null
+
+                    return user
+                    
+                } catch (error) {
+                    return { status: 500, message: 'An error occurred during fetchinh user data' }; 
+                }
+            }
 }

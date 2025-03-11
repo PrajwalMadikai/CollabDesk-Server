@@ -18,10 +18,10 @@ export class DirectoryUsecase{
         }
     }
 
-    async updateFoldername(folderId:string,newName:string){
+    async updateFoldername(folderId:string,newName:string,email:string){
         try {
 
-            let updatedFolder=await this.directoryRepository.updateName(folderId,newName)
+            let updatedFolder=await this.directoryRepository.updateName(folderId,newName,email)
             if(!updatedFolder)
             {
                 return null
@@ -64,11 +64,11 @@ export class DirectoryUsecase{
             return { status: 500, message: 'An error occurred during fetching trash items.' }; 
         }
     }
-    async moveToTrash(folderId:string,workspaceId:string)
+    async moveToTrash(folderId:string,workspaceId:string,email:string)
     {
         try {
 
-            const data=await this.directoryRepository.moveFoldertoTrash(folderId,workspaceId)
+            const data=await this.directoryRepository.moveFoldertoTrash(folderId,workspaceId,email)
             if(!data) return null
 
             return data
@@ -79,11 +79,11 @@ export class DirectoryUsecase{
         }
     }
 
-    async restoreFolder(folderId:string)
+    async restoreFolder(folderId:string,email:string)
     {
         try {
 
-            const data=await this.directoryRepository.restoreFolder(folderId)
+            const data=await this.directoryRepository.restoreFolder(folderId,email)
             
             if(!data) return null
 

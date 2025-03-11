@@ -9,11 +9,11 @@ export class FileController{
     {
         try {
 
-            const {folderId}=req.body
+            const {folderId,email}=req.body
             if (!folderId) {
                 return res.status(400).json({ message: "Folder id is missing!" });
             }
-            let file=await this.fileUsecase.createFile(folderId)
+            let file=await this.fileUsecase.createFile(folderId,email)
             
             if(!file)
             {
@@ -97,12 +97,12 @@ export class FileController{
         try {
 
             const {fileId}=req.params
-            const {name,folderId}=req.body
+            const {name,folderId,email}=req.body
             if(!folderId)
             {
                 return res.status(400).json({message:"Missing folder id"})
             }
-            const file=await this.fileUsecase.updateFileName(fileId,folderId,name)
+            const file=await this.fileUsecase.updateFileName(fileId,folderId,name,email)
             if(!file)
             {
                 return res.status(404).json({message:"Unable to update files"})
@@ -141,12 +141,12 @@ export class FileController{
     async fileRestore(req:Request,res:Response,next:NextFunction)
     {
         try {
-            const {fileId}=req.body
+            const {fileId,email}=req.body
             if(!fileId)
             {
                 return res.status(400).json({message:"file id missing"})
             }
-            const data=await this.fileUsecase.restoreFile(fileId)
+            const data=await this.fileUsecase.restoreFile(fileId,email)
             if(!data)
             {
                 return res.status(404).json({message:"Unable to restore the file from trash"})

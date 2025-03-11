@@ -7,10 +7,10 @@ export class FileUsecase{
         private cloudinaryService:CloudinaryAdapter
     ){}
 
-    async createFile(folderId:string){
+    async createFile(folderId:string,email:string){
         try {
 
-            let result=await this.fileRepository.createFile(folderId)
+            let result=await this.fileRepository.createFile(folderId,email)
             if(!result) return null 
 
             return result
@@ -70,10 +70,10 @@ export class FileUsecase{
             return { status: 500, message: 'An error occurred during file content fetching.' }; 
         }
     }
-    async updateFileName(fileId:string,folderId:string,name:string)
+    async updateFileName(fileId:string,folderId:string,name:string,email:string)
     {
         try {
-            const result=await this.fileRepository.updateFileName(fileId,folderId,name)
+            const result=await this.fileRepository.updateFileName(fileId,folderId,name,email)
             if(!result) return null
 
             return result
@@ -98,11 +98,11 @@ export class FileUsecase{
             return { status: 500, message: 'An error occurred during image uploading.' }; 
         }
     }
-    async restoreFile(fileId:string)
+    async restoreFile(fileId:string,email:string)
     {
         try {
 
-            const data=await this.fileRepository.restoreFile(fileId)
+            const data=await this.fileRepository.restoreFile(fileId,email)
             if(!data) return null
 
             return data

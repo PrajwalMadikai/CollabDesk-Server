@@ -15,19 +15,11 @@ const workspaceSchema:Schema=new Schema({
     directories: {
         type: [{ dirId: { type: String }, dirName: { type: String } }],
         default: []
-    },    
-    meetingRoom:{
-        type:String,
-        default: null 
     },
-    type:{
-        type:String,
-        default:"Private"
-    },
-    trashId:{
-        type:String,
-        default: null 
-    }
+    activity:{
+        type:[{email:{type:String},action:{type:String},time:{type:Date}}],
+        default:[]
+    }     
 })
 
 

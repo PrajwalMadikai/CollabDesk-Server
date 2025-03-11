@@ -43,11 +43,20 @@ export class DirectoryRepository implements DirectoryInterface{
       const folder = await FolderModal.create({ name, workspaceId: workspaceObjectId });
   
       await WorkspaceModal.findByIdAndUpdate(
-          workspaceObjectId,
-          { $push: { directories: { dirId: folder._id, dirName: name } } },
-          { new: true }
-      );
-  
+         workspaceObjectId,
+         {
+           $push: {
+             directories: { dirId: folder._id, dirName: name },  
+             activity: {
+               email: user.email,  
+               action: `created a folder named "${name}"`,  
+               time: new Date(),  
+             },
+           },
+         },
+         { new: true }  
+       );
+
       return new DirectoryEntity(
           folder.id,
           folder.name,
@@ -57,13 +66,21 @@ export class DirectoryRepository implements DirectoryInterface{
           folder.deletedAt
       );
   }
-      async updateName(folderId: string, newName: string): Promise<DirectoryEntity | null> {
+      async updateName(folderId: string, newName: string,email:string): Promise<DirectoryEntity | null> {
          const folderObjectId = new mongoose.Types.ObjectId(folderId);
          let folder=await FolderModal.findByIdAndUpdate(folderObjectId,{$set:{name:newName}},{ new: true })
          if (folder) {
             await WorkspaceModal.findOneAndUpdate(
                 { "directories.dirId": folderObjectId }, 
-                { $set: { "directories.$.dirName": newName } },  
+                { $set: { "directories.$.dirName": newName },
+                  $push:{
+                     activity: {
+                        email: email,  
+                        action: `Reanamed folder name to "${newName}"`,  
+                        time: new Date(),  
+                      },
+                  }
+               },  
                 { new: true } 
             );
         }
@@ -130,7 +147,7 @@ export class DirectoryRepository implements DirectoryInterface{
         }))
       };
    }
-   async moveFoldertoTrash(folderId:string,workspaceId:string):Promise<DirectoryEntity|null>
+   async moveFoldertoTrash(folderId:string,workspaceId:string,email:string):Promise<DirectoryEntity|null>
    {
       const deletionDate = new Date();
       deletionDate.setDate(deletionDate.getDate() + 7);
@@ -144,8 +161,20 @@ export class DirectoryRepository implements DirectoryInterface{
 
       if(!folder) return null
 
-      await WorkspaceModal.findByIdAndUpdate(new mongoose.Types.ObjectId(workspaceId),
-                                          {$pull:{directories:{dirId:folderId}}} )
+      await WorkspaceModal.findByIdAndUpdate(
+         new mongoose.Types.ObjectId(workspaceId),
+         {
+           $pull: { directories: { dirId: folderId } },  
+           $push: {
+             activity: {
+               email: email, 
+               action: `moved to trash folder named "${folder.name}"`, 
+               time: new Date(), 
+             },
+           },
+         },
+         { new: true } 
+       );
      return  new DirectoryEntity(
                folder.id,
                folder.name,
@@ -156,7 +185,7 @@ export class DirectoryRepository implements DirectoryInterface{
             )
    }
 
-   async restoreFolder(folderId:string):Promise<DirectoryEntity|null>
+   async restoreFolder(folderId:string,email:string):Promise<DirectoryEntity|null>
    {
       const folder=await FolderModal.findByIdAndUpdate(new mongoose.Types.ObjectId(folderId),
          {
@@ -166,9 +195,20 @@ export class DirectoryRepository implements DirectoryInterface{
 
          if(!folder) return null
 
-         await WorkspaceModal.findByIdAndUpdate(folder.workspaceId,{
-            $push:{directories:{dirId:folder._id,dirName:folder.name}}
-         },{new:true})
+         await WorkspaceModal.findByIdAndUpdate(
+            folder.workspaceId,
+            {
+              $push: {
+                directories: { dirId: folder._id, dirName: folder.name },  
+                activity: {
+                  email: email,  
+                  action: `Restored folder named "${folder.name}" from trash`,  
+                  time: new Date(),  
+                },
+              },
+            },
+            { new: true }  
+          );
 
       return  new DirectoryEntity(
          folder.id,

@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 import { FolderModal } from "../database/models/directoryModal";
 import { FileModal } from "../database/models/fileModal";
+import { WorkspaceModal } from "../database/models/workspaceModal";
 import { DirectoryEntity } from "../entities/directoryEntity";
 import { FileEntity } from "../entities/fileEntity";
 import { FileInterface } from "../Repository-Interfaces/IFile";
 
 export class FileRepository implements FileInterface{
-   async createFile(folderId: string): Promise<FileEntity | null> {
+   async createFile(folderId: string,email:string): Promise<FileEntity | null> {
          
          let file = await FileModal.create({ name:"Untitled", directoryId: new mongoose.Types.ObjectId(folderId) });
 
@@ -17,6 +18,17 @@ export class FileRepository implements FileInterface{
             { $push: { files: { fileId: file._id, fileName: file.name } } },  
             { new: true }
         ).populate("files.fileId", "name");  
+
+        await WorkspaceModal.findOneAndUpdate({_id:updatedFolder?.workspaceId},
+            {
+                $push:{
+                    activity: {
+                        email: email,  
+                        action: `create a file named "Untitled"`,  
+                        time: new Date(),  
+                    },
+                }
+            })
         
 
         if(!updatedFolder) return null
@@ -107,11 +119,6 @@ export class FileRepository implements FileInterface{
     }
     async updateFileContent(fileId: string, content: string): Promise<FileEntity | null> {
         const file=await FileModal.findByIdAndUpdate(fileId,{$set:{content}})
-        if(!file)
-        {
-            console.log('there is no file');
-            
-        }
         
         if(!file) return null
 
@@ -127,7 +134,7 @@ export class FileRepository implements FileInterface{
             file.deletedAt
         )
     }
-    async updateFileName(fileId: string, folderId: string, name: string): Promise<FileEntity | null> {
+    async updateFileName(fileId: string, folderId: string, name: string,email:string): Promise<FileEntity | null> {
             
         const file=await FileModal.findByIdAndUpdate(new mongoose.Types.ObjectId(fileId),{
             $set:{name}
@@ -137,7 +144,16 @@ export class FileRepository implements FileInterface{
        const folder= await FolderModal.findByIdAndUpdate(new mongoose.Types.ObjectId(folderId),{
             $set:{files:{fileId,fileName:name}}
         })
-        
+        await WorkspaceModal.findOneAndUpdate({_id:folder?.workspaceId},
+            {
+                $push:{
+                    activity: {
+                        email: email,  
+                        action: `Renamed file name to "${name}"`,  
+                        time: new Date(),  
+                    },
+                }
+            })
 
         return new FileEntity(
             file.id,
@@ -171,7 +187,7 @@ export class FileRepository implements FileInterface{
             file.deletedAt
         )
     }
-   async restoreFile(fileId:string):Promise<FileEntity|null>{
+   async restoreFile(fileId:string,email:string):Promise<FileEntity|null>{
       const file =await FileModal.findByIdAndUpdate(new mongoose.Types.ObjectId(fileId),{
         inTrash:false,
         deletedAt:null
@@ -180,7 +196,16 @@ export class FileRepository implements FileInterface{
       if(!file) return null
 
      let folder=await FolderModal.findByIdAndUpdate(file.directoryId,{$push:{files:{fileId:file._id,fileName:file.name}}},{new:true})
-
+     await WorkspaceModal.findOneAndUpdate({_id:folder?.workspaceId},
+        {
+            $push:{
+                activity: {
+                    email: email,  
+                    action: `Restored file named "${file.name}"`,  
+                    time: new Date(),  
+                },
+            }
+        })
       return new FileEntity(
         file.id,
         file.name,

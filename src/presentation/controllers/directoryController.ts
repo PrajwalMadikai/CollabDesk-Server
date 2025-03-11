@@ -38,7 +38,7 @@ export class DirectoryController{
     {
         try{
             const { folderId } = req.params;
-            const {name}=req.body;
+            const {name,email}=req.body;
 
 
         if (!name) {
@@ -46,7 +46,7 @@ export class DirectoryController{
             return;
           }
 
-        let folder=await this.directoryUsecase.updateFoldername(folderId,name)
+        let folder=await this.directoryUsecase.updateFoldername(folderId,name,email)
 
         if(!folder)
         {
@@ -113,13 +113,13 @@ export class DirectoryController{
     {
         try {
 
-            const {folderId,workspaceId}=req.body
+            const {folderId,workspaceId,email}=req.body
             if(!folderId)
             {
                 res.status(400).json({message:"folder id is missing"})
                 return
             }
-            const data=await this.directoryUsecase.moveToTrash(folderId,workspaceId)
+            const data=await this.directoryUsecase.moveToTrash(folderId,workspaceId,email)
             if(!data)
             {
                 res.status(404).json({message:"Unable to move folder to trash"})
@@ -137,13 +137,13 @@ export class DirectoryController{
     {
         try {
 
-            const {folderId}=req.body
+            const {folderId,email}=req.body
             if(!folderId)
             {
                 res.status(400).json({message:"folder id is missing"})
                 return
             }
-            const data=await this.directoryUsecase.restoreFolder(folderId)
+            const data=await this.directoryUsecase.restoreFolder(folderId,email)
             if(!data){
                 res.status(404).json({message:"Unable to restore the folder"})
                 return

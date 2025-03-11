@@ -83,4 +83,7 @@ router.post('/payment-details',authenticateToken,authorizeRoles(UserRole.USER),
 router.post('/profile-upload',authenticateToken,authorizeRoles(UserRole.USER),
 multerService.single("profileImage"),(req:Request,res:Response,next:NextFunction)=>{loginController.updateProfile(req,res,next)})
 
+router.put('/change-password',authenticateToken,authorizeRoles(UserRole.USER),
+(req:Request,res:Response,next:NextFunction)=>{loginController.changePassword(req,res,next)})
+
 export default router

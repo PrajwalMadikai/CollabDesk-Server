@@ -443,17 +443,47 @@ export class LoginController{
     async updateProfile(req:Request,res:Response,next:NextFunction)
     {
         try {
-            const profileImage=req.file
-            const userId=req.body
-            if(!profileImage)
-            {
-                return res.status(400).json({message:"image is missing."})
+            const profileImage = req.file;
+            const userId = req.body.userId;
+            if (!profileImage) {
+                return res.status(400).json({ message: "File upload failed. Please select a valid image." });
             }
+              
+            if (!userId) {
+                return res.status(400).json({ message: "User ID is missing." });
+            }
+
             const user=await this.userUsecase.updateProfile(userId,profileImage.buffer)
+
             if(!user)
             {
                 return res.status(404).json({message:"unable to update user avatar."})
             }
+            return res.status(200).json({message:"Avatar updated",user})
+            
+        } catch (error) {
+            next(error)
+        }
+    }
+    async changePassword(req:Request,res:Response,next:NextFunction)
+    {
+        try {
+            const {userId,password}=req.body
+            if (!password) {
+                return res.status(400).json({ message: "password is missing." });
+            }
+              
+            if (!userId) {
+                return res.status(400).json({ message: "User ID is missing." });
+            }
+
+            const user=await this.userUsecase.updateUserPassword(userId,password)
+
+            if(!user)
+            {
+                return res.status(404).json({message:"unable to update user password."})
+            }
+            return res.status(200).json({message:"password updated",user})
             
         } catch (error) {
             next(error)

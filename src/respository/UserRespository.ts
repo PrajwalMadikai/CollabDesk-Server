@@ -488,12 +488,39 @@ export class UserRepository implements UserInterface {
           );
     }
     async updateUseravatar(userId:string,imageUrl:string):Promise<UserEntity|null>{
-        const user=await UserModal.findById(userId,{
-            $set:{avatar:imageUrl}
-        },{new:true})
-        console.log('user update:',user);
+        
+        const user = await UserModal.findOneAndUpdate(
+            { _id: new mongoose.Types.ObjectId(userId) },
+            { $set: { avatar: imageUrl } },
+            { new: true }
+          );
+
         
         if(!user) return null
+
+        return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workSpaces,
+            user.avatar, 
+            user.googleId, 
+            user.githubId,
+            user.role,
+            user.isAdmin,
+            user.isBlock
+          );
+    }
+    async changePassword(userId:string,password:string):Promise<UserEntity|null>{
+        const user=await UserModal.findOneAndUpdate({_id:new mongoose.Types.ObjectId(userId)},
+          {
+            $set:{password}
+          },{new:true})
+          
+       if(!user) return null
+
         return new UserEntity(
             user.id,
             user.fullname,

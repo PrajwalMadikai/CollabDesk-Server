@@ -37,4 +37,6 @@ export interface UserInterface{
     storePaymentDetails(email:string,paymentType:string,amount:number):Promise<UserEntity|null>
 
     findUser(email:string):Promise<UserEntity|null>
+
+    changePassword(userId:string,password:string):Promise<UserEntity|null>
 }

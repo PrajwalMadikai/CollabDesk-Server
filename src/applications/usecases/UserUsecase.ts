@@ -279,7 +279,23 @@ export class UserUsecase{
                 return user
                 
               } catch (error) {
-                return { status: 500, message: 'An error occurred during fetchinh user data' }; 
+                return { status: 500, message: 'An error occurred during fetching user data' }; 
               }
             }
+            async updateUserPassword(userId:string,password:string)
+            {
+                try {
+
+                    const newPassword=await this.bcryptService.hashPassword(password)
+                    if(!newPassword) return null
+                    const user=await this.userRepository.changePassword(userId,newPassword)
+                    if(!user) return null
+
+                    return user
+                    
+                } catch (error) {
+                    return { status: 500, message: 'An error occurred during updating user password' }; 
+                }
+
+            } 
 }

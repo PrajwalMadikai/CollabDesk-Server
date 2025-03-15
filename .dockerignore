@@ -26,7 +26,3 @@ build/
 # Ignore OS-specific files
 .DS_Store
 Thumbs.db
-
-# Ignore local development files
-.dockerignore
-README.md

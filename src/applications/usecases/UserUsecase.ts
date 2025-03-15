@@ -27,6 +27,7 @@ export class UserUsecase{
                 paymentDetail: { paymentType: string;amount:number|null; startDate: Date; endDate: Date },
                 isAdmin:boolean
             ){
+                try{
                 const hashedPassword=await this.bcryptService.hashPassword(password)
 
                 const hashtoken=crypto.randomBytes(32).toString('hex')
@@ -49,9 +50,9 @@ export class UserUsecase{
                 await this.sendMail.sendVerificationEmail(email, fullname, hashtoken);
 
                 return {status:200, message: "Verification email sent. Please check your inbox." };
-
-                
-                
+            }catch(error){
+                return { status: 500, message: 'An error occurred during creating user.' }; 
+             }
             }       
 
             async verifyEmail(email: string, emailToken: string) {

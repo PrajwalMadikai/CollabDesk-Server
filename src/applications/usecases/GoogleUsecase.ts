@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { GoogleAuthService } from "../../applications/services/GoogleService";
 import { UserEntity } from "../../entities/userEntity";
+import { USERMESSAGES } from '../../presentation/messages/userMessages';
 import { UserRepository } from "../../respository/UserRespository";
 import { TokenService } from '../services/TokenService';
 dotenv.config()
@@ -90,7 +91,7 @@ export class GoogleAuthUsecase {
             user: user || googleUser,  
             accessToken,
             refreshToken,
-            message: user ? 'User authenticated successfully.' : 'User created successfully.'
+            message: user ?  USERMESSAGES.SUCCESS.GOOGLE_AUTH : USERMESSAGES.SUCCESS.GOOGLE_SIGNUP
         };
     }
 
@@ -112,7 +113,6 @@ export class GoogleAuthUsecase {
         }
     
         const { sub: googleId, email, name: fullName, picture: avatar } = payload;
-        console.log("Google user payload:", { googleId, email, fullName, avatar });
     
         if (!googleId || !email || !fullName) {
             return { status: 400, message: "Missing Google user information." };

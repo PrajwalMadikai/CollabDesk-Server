@@ -1,153 +1,137 @@
 import { NextFunction, Request, Response } from "express";
 import { WorkspaceUsecase } from "../../applications/usecases/WorkspaceUsecase";
+import { WORKSPACE_MESSAGES } from "../messages/workspaceMessages";
 
-export class WorkspaceController{
-    constructor(
-        private workspaceUsecase:WorkspaceUsecase
-    ){}
-    async newWorkspace(req:Request,res:Response,next:NextFunction)
-    {
-         try {
-               const{spaceName,userId}=req.body
-               
-               const space=await this.workspaceUsecase.createSpace(spaceName,userId)
+export class WorkspaceController {
+  constructor(private workspaceUsecase: WorkspaceUsecase) {}
 
-               if (!space) {
-                return res.status(409).json({ message: "Workspace name already exists" });
-               }
-   
-               res.status(201).json({workspace:space});
-               return
-         } catch (error:any) {
-            if (error.message.includes("Workspace limit exceeded")) {
-                return res.status(403).json({
-                    message: "Workspace limit exceeded for your subscription plan. Upgrade to create more workspaces."
-                });
-            }
-            next(error)
-         }
+  async newWorkspace(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { spaceName, userId } = req.body;
+
+      const space = await this.workspaceUsecase.createSpace(spaceName, userId);
+
+      if (!space) {
+        return res.status(409).json({ message: WORKSPACE_MESSAGES.ERROR.WORKSPACE_EXISTS });
+      }
+
+      res.status(201).json({ message: WORKSPACE_MESSAGES.SUCCESS.WORKSPACE_CREATED, workspace: space });
+      return;
+    } catch (error: any) {
+      if (error.message.includes("Workspace limit exceeded")) {
+        return res.status(403).json({ message: WORKSPACE_MESSAGES.ERROR.WORKSPACE_LIMIT_EXCEEDED });
+      }
+      next(error);
     }
-    async getUserWorkspace(req:Request,res:Response,next:NextFunction)
-    {
-        try {
-            const {userId}=req.body
-           
-            
-            let result=await this.workspaceUsecase.fetchWorkspace(userId)
-            if(!result)
-            {
-                return res.status(404).json({message:"couldn't find user"})
-            }
-            return res.status(200).json({message:'user workspace fetched',workspace:result})
-            
-        } catch (error:any) {
-            next(error)
-        }
+  }
+
+  async getUserWorkspace(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId } = req.body;
+
+      let result = await this.workspaceUsecase.fetchWorkspace(userId);
+      if (!result) {
+        return res.status(404).json({ message: WORKSPACE_MESSAGES.ERROR.USER_NOT_FOUND });
+      }
+
+      return res.status(200).json({ message: WORKSPACE_MESSAGES.SUCCESS.WORKSPACE_FETCHED, workspace: result });
+    } catch (error: any) {
+      next(error);
     }
+  }
 
-    async addCollaborator(req:Request,res:Response,next:NextFunction)
-    {
-        try {
+  async addCollaborator(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email, workspaceId, invitedEmail } = req.body;
 
-            const {email,workspaceId,invitedEmail}=req.body
-            
-            if(!email||!workspaceId)
-            {
-                return res.status(400).json({message:"User email is missing"})
-            }
-            const result=await this.workspaceUsecase.addUsertoWorkspace(email,workspaceId,invitedEmail)
-            if(!result)
-            {
-                 return res.status(404).json({message:"Unable to add collaborators"})
-            }
+      if (!email || !workspaceId) {
+        return res.status(400).json({ message: WORKSPACE_MESSAGES.ERROR.MISSING_FIELDS });
+      }
 
-            return res.status(200).json({message:"collaborator added successfully",user:result})
-            
-        } catch (error) {
-            next(error)
-        }
+      const result = await this.workspaceUsecase.addUsertoWorkspace(email, workspaceId, invitedEmail);
+      if (!result) {
+        return res.status(404).json({ message: WORKSPACE_MESSAGES.ERROR.COLLABORATOR_ADD_FAILED });
+      }
+
+      return res.status(200).json({ message: WORKSPACE_MESSAGES.SUCCESS.COLLABORATOR_ADDED, user: result });
+    } catch (error: any) {
+      next(error);
     }
-    async fetchCollaborator(req:Request,res:Response,next:NextFunction)
-    {
-        try {
+  }
 
-            const {workspaceId}=req.body
-            if(!workspaceId)
-            {
-                return res.status(400).json({message:"workspace id is missing"})
-            }
-            const space=await this.workspaceUsecase.findCollaborators(workspaceId)
-            if(!space)
-            {
-                return res.status(404).json({message:"Unable to find collaborators"})
-            }
-            
-            return res.status(200).json({message:"collaborators fetched successfully",user:space})
-        } catch (error) {
-            next(error)
-        }
+  async fetchCollaborator(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { workspaceId } = req.body;
+
+      if (!workspaceId) {
+        return res.status(400).json({ message: WORKSPACE_MESSAGES.ERROR.MISSING_FIELDS });
+      }
+
+      const space = await this.workspaceUsecase.findCollaborators(workspaceId);
+      if (!space) {
+        return res.status(404).json({ message: WORKSPACE_MESSAGES.ERROR.WORKSPACE_NOT_FOUND });
+      }
+
+      return res.status(200).json({ message: WORKSPACE_MESSAGES.SUCCESS.COLLABORATORS_FETCHED, user: space });
+    } catch (error: any) {
+      next(error);
     }
+  }
 
-    async renameworkspaceName(req:Request,res:Response,next:NextFunction)
-    {
-        try {
+  async renameworkspaceName(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { workspaceId, newName } = req.body;
 
-            const {workspaceId,newName}=req.body
-           if(!workspaceId||!newName)
-           {
-            return res.status(400).json({message:"workspace id or new name is missing"})
-           }
+      if (!workspaceId || !newName) {
+        return res.status(400).json({ message: WORKSPACE_MESSAGES.ERROR.MISSING_FIELDS });
+      }
 
-            const space=await this.workspaceUsecase.updateSpaceName(workspaceId,newName)
-            if(!space)
-            {
-                return res.status(404).json({message:"Unable to update workspace name"})
-            }
+      const space = await this.workspaceUsecase.updateSpaceName(workspaceId, newName);
+      if (!space) {
+        return res.status(404).json({ message: WORKSPACE_MESSAGES.ERROR.WORKSPACE_RENAME_FAILED });
+      }
 
-            return res.status(200).json({message:"workspace name updated",space})
-            
-        } catch (error) {
-            next(error)
-        }
+      return res.status(200).json({ message: WORKSPACE_MESSAGES.SUCCESS.WORKSPACE_RENAMED, space });
+    } catch (error: any) {
+      next(error);
     }
+  }
 
-    async removeCollaborator(req:Request,res:Response,next:NextFunction)
-    {
-        try {
-             const {email,workspaceId}=req.body
-             if(!email||!workspaceId)
-             {
-                return res.status(400).json({message:"email or id is missing"})
-             }
-             const space=await this.workspaceUsecase.removeCollaborator(email,workspaceId)
-             if(!space)
-             {
-                return res.status(404).json({message:"Unable to remove collaborator"})
-             }
-             return res.status(200).json({message:"Collaborator removed!"})
-        } catch (error) {
-            next(error)
-        }
+  async removeCollaborator(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email, workspaceId } = req.body;
+
+      if (!email || !workspaceId) {
+        return res.status(400).json({ message: WORKSPACE_MESSAGES.ERROR.MISSING_FIELDS });
+      }
+
+      const space = await this.workspaceUsecase.removeCollaborator(email, workspaceId);
+      if (!space) {
+        return res.status(404).json({ message: WORKSPACE_MESSAGES.ERROR.COLLABORATOR_REMOVE_FAILED });
+      }
+
+      return res.status(200).json({ message: WORKSPACE_MESSAGES.SUCCESS.COLLABORATOR_REMOVED });
+    } catch (error: any) {
+      next(error);
     }
-    async deleteWorkspace(req:Request,res:Response,next:NextFunction)
-    {
-        try {
+  }
 
-            const {workspaceId}=req.body
-            if(!workspaceId)
-            {
-                return res.status(400).json({message:'workspace id is missing'})
-            }
-            const data=await this.workspaceUsecase.deleteWorkspace(workspaceId)
-            if(!data)
-            {
-                return res.status(404).json({message:'Unable to delete workspace'})
-            }
+  async deleteWorkspace(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { workspaceId } = req.body;
 
-            return res.status(200).json({message:"workspace deleted",data})
-            
-        } catch (error) {
-            next(error)
-        }
+      if (!workspaceId) {
+        return res.status(400).json({ message: WORKSPACE_MESSAGES.ERROR.MISSING_FIELDS });
+      }
+
+      const data = await this.workspaceUsecase.deleteWorkspace(workspaceId);
+      if (!data) {
+        return res.status(404).json({ message: WORKSPACE_MESSAGES.ERROR.WORKSPACE_DELETE_FAILED });
+      }
+
+      return res.status(200).json({ message: WORKSPACE_MESSAGES.SUCCESS.WORKSPACE_DELETED, data });
+    } catch (error: any) {
+      next(error);
     }
+  }
 }

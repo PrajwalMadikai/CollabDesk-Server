@@ -95,7 +95,7 @@ export class EmailRepository implements EmailRepositoryInterface {
    
     async createEmailSpace(email: string, token: string): Promise<void> {
         try {
-            const temp=await TokenModal.create({email,token,expiresAt:new Date(Date.now() + 3600000)})
+            await TokenModal.create({email,token,expiresAt:new Date(Date.now() + 3600000)})
 
         } catch (error) {
             console.error("Error creating Temp User:", error);

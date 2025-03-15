@@ -15,8 +15,7 @@ services:
     depends_on:
       - redis
     volumes:
-      - .:/app
-       
+      - .:/app  
 
   redis:
     image: redis:alpine
@@ -28,6 +27,3 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-volumes:
-  node_modules:

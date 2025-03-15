@@ -1,157 +1,131 @@
 import { NextFunction, Request, Response } from 'express';
 import { DirectoryUsecase } from "../../applications/usecases/DirectoryUsecase";
+import { DIRECTORY_MESSAGES } from '../messages/directoryMessages';
 
-export class DirectoryController{
-    constructor(
-        private directoryUsecase:DirectoryUsecase
-    ){}
+export class DirectoryController {
+  constructor(private directoryUsecase: DirectoryUsecase) {}
 
-    async createFolder(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const { name, workspaceId, userId } = req.body;
-    
-            if (!name || !workspaceId || !userId) {
-                res.status(400).json({ error: "Folder name, workspace ID, and user ID are required" });
-                return;
-            }
-    
-            const result = await this.directoryUsecase.createFolder(name, workspaceId, userId);
-    
-            if (!result) {
-                res.status(404).json({ message: "Unable to find workspace for creating folder!" });
-                return;
-            }
-    
-            res.status(201).json({ message: "Folder created successfully", folder: result });
-        } catch (error: any) {
-            if (error.message.includes("Folder limit exceeded")) {
-                res.status(403).json({
-                    message: "Folder limit exceeded for your subscription plan. Upgrade to create more folders."
-                });
-            } else {
-                next(error);  
-            }
-        }
+  async createFolder(req: Request, res: Response, next: NextFunction)  {
+    try {
+      const { name, workspaceId, userId } = req.body;
+
+      if (!name || !workspaceId || !userId) {
+        return res.status(400).json({ error: DIRECTORY_MESSAGES.ERROR.MISSING_FOLDER_NAME });
+      }
+
+      const result = await this.directoryUsecase.createFolder(name, workspaceId, userId);
+
+      if (!result) {
+        return res.status(404).json({ message: DIRECTORY_MESSAGES.ERROR.UNABLE_TO_CREATE_FOLDER });
+      }
+
+      return res.status(201).json({ message: DIRECTORY_MESSAGES.SUCCESS.FOLDER_CREATED, folder: result });
+    } catch (error: any) {
+      if (error.message.includes("Folder limit exceeded")) {
+        return res.status(403).json({ message: DIRECTORY_MESSAGES.ERROR.FOLDER_LIMIT_EXCEEDED });
+      }
+      next(error);
     }
+  }
 
-    async updateFolder(req:Request,res:Response,next:NextFunction):Promise<void>
-    {
-        try{
-            const { folderId } = req.params;
-            const {name,email}=req.body;
+  async updateFolder(req: Request, res: Response, next: NextFunction)  {
+    try {
+      const { folderId } = req.params;
+      const { name, email } = req.body;
 
+      if (!name) {
+        return res.status(400).json({ message: DIRECTORY_MESSAGES.ERROR.MISSING_FOLDER_NAME });
+      }
 
-        if (!name) {
-            res.status(400).json({ message: "Folder name is required" });
-            return;
-          }
+      const folder = await this.directoryUsecase.updateFoldername(folderId, name, email);
 
-        let folder=await this.directoryUsecase.updateFoldername(folderId,name,email)
+      if (!folder) {
+        return res.status(404).json({ message: DIRECTORY_MESSAGES.ERROR.UNABLE_TO_UPDATE_FOLDER });
+      }
 
-        if(!folder)
-        {
-            res.status(404).json({message:"Unable to find the folder"})
-            return
-        }
-
-        res.status(200).json({message:"Folder updated successfully",folder})
-        return
-        }
-        catch(error)
-        {
-            next(error)
-        }
+      return res.status(200).json({ message: DIRECTORY_MESSAGES.SUCCESS.FOLDER_UPDATED, folder });
+    } catch (error) {
+      next(error);
     }
+  }
 
-    async fetchFolder(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { workspaceId } = req.body;
-    
-            if (!workspaceId) {
-                res.status(400).json({ message: "workspace id is missing" });
-                return;
-            }
-    
-            let folders = await this.directoryUsecase.fetchFolders(workspaceId);
-    
-            if (!folders) {
-                res.status(404).json({ message: "Unable to fetch directories" });
-                return;
-            }
-    
-            res.status(200).json({ message: "Folders fetched successfully", folders });
-            return;
-    
-        } catch (error) {
-            next(error);
-        }
+  async fetchFolder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { workspaceId } = req.body;
+
+      if (!workspaceId) {
+        return res.status(400).json({ message: DIRECTORY_MESSAGES.ERROR.MISSING_WORKSPACE_ID });
+      }
+
+      const folders = await this.directoryUsecase.fetchFolders(workspaceId);
+
+      if (!folders) {
+        return res.status(404).json({ message: DIRECTORY_MESSAGES.ERROR.UNABLE_TO_FETCH_FOLDERS });
+      }
+
+      return res.status(200).json({ message: DIRECTORY_MESSAGES.SUCCESS.FOLDERS_FETCHED, folders });
+    } catch (error) {
+      next(error);
     }
-    
-    async fetchTrashItems(req:Request,res:Response,next:NextFunction)
-    {
-        try {
-            const {workspaceId}=req.body
-            if(!workspaceId)
-            {
-                res.status(400).json({message:"workspace id is missing"})
-                return
-            }
-            const result=await this.directoryUsecase.fetchTrash(workspaceId)
-            if(!result)
-            {
-                res.status(404).json({message:"Unable to fetch trash items"})
-                return
-            }
-            res.status(200).json({message:"trash items fetched successfully",result})
-            return
-        } catch (error) {
-            next(error)
-        }
+  }
+
+  async fetchTrashItems(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { workspaceId } = req.body;
+
+      if (!workspaceId) {
+        return res.status(400).json({ message: DIRECTORY_MESSAGES.ERROR.MISSING_WORKSPACE_ID });
+      }
+
+      const result = await this.directoryUsecase.fetchTrash(workspaceId);
+
+      if (!result) {
+        return res.status(404).json({ message: DIRECTORY_MESSAGES.ERROR.UNABLE_TO_FETCH_TRASH_ITEMS });
+      }
+
+      return res.status(200).json({ message: DIRECTORY_MESSAGES.SUCCESS.TRASH_ITEMS_FETCHED, result });
+    } catch (error) {
+      next(error);
     }
+  }
 
-    async movetoTrash(req:Request,res:Response,next:NextFunction)
-    {
-        try {
+  async movetoTrash(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { folderId, workspaceId, email } = req.body;
 
-            const {folderId,workspaceId,email}=req.body
-            if(!folderId)
-            {
-                res.status(400).json({message:"folder id is missing"})
-                return
-            }
-            const data=await this.directoryUsecase.moveToTrash(folderId,workspaceId,email)
-            if(!data)
-            {
-                res.status(404).json({message:"Unable to move folder to trash"})
-                return
-            }
-            res.status(200).json({message:"folder moved to trash successfully"})
-            return
-            
-        } catch (error) {
-            next(error)
-        }
+      if (!folderId) {
+        return res.status(400).json({ message: DIRECTORY_MESSAGES.ERROR.MISSING_FOLDER_ID });
+      }
+
+      const data = await this.directoryUsecase.moveToTrash(folderId, workspaceId, email);
+
+      if (!data) {
+        return res.status(404).json({ message: DIRECTORY_MESSAGES.ERROR.UNABLE_TO_MOVE_TO_TRASH });
+      }
+
+      return res.status(200).json({ message: DIRECTORY_MESSAGES.SUCCESS.FOLDER_MOVED_TO_TRASH });
+    } catch (error) {
+      next(error);
     }
+  }
 
-    async restoreFolder(req:Request,res:Response,next:NextFunction)
-    {
-        try {
+  async restoreFolder(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { folderId, email } = req.body;
 
-            const {folderId,email}=req.body
-            if(!folderId)
-            {
-                res.status(400).json({message:"folder id is missing"})
-                return
-            }
-            const data=await this.directoryUsecase.restoreFolder(folderId,email)
-            if(!data){
-                res.status(404).json({message:"Unable to restore the folder"})
-                return
-            }
-            res.status(200).json({message:"folder successfully",data})
-            return
-        } catch (error) {
-            next(error)
-        }
+      if (!folderId) {
+        return res.status(400).json({ message: DIRECTORY_MESSAGES.ERROR.MISSING_FOLDER_ID });
+      }
+
+      const data = await this.directoryUsecase.restoreFolder(folderId, email);
+
+      if (!data) {
+        return res.status(404).json({ message: DIRECTORY_MESSAGES.ERROR.UNABLE_TO_RESTORE_FOLDER });
+      }
+
+      return res.status(200).json({ message: DIRECTORY_MESSAGES.SUCCESS.FOLDER_RESTORED, data });
+    } catch (error) {
+      next(error);
     }
+  }
 }

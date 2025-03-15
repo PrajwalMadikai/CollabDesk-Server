@@ -7,9 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx tsc && nodemon dist/index.js",
     "dev": "nodemon --watch src --exec \"tsc && node dist/index.js\"",
-    "prebuild": "mkdir -p dist/presentation/public",
-    "build": "npx tsc",
-    "postbuild": "ncp ./src/presentation/public ./dist/presentation/public"
+    "build": "npx tsc"
   },
   "keywords": [],
   "author": "",

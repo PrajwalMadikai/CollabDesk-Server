@@ -1,0 +1,32 @@
+# Ignore version control files
+.git
+.gitignore
+
+# Ignore environment files
+.env
+.env.*
+!.env.example
+
+# Ignore dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore test and build artifacts
+coverage/
+dist/
+build/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore local development files
+.dockerignore
+README.md

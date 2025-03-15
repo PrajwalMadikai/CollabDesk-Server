@@ -134,4 +134,26 @@ export class WorkspaceController {
       next(error);
     }
   }
+  async userActivity(req:Request,res:Response,next:NextFunction)
+  {
+    try {
+        const {workspaceId}=req.body
+            
+        if(!workspaceId)
+        {
+            return res.status(400).json({message:WORKSPACE_MESSAGES.ERROR.WORKSPACE_ID})
+        }
+
+        let data= await this.workspaceUsecase.workspaceUserActivity(workspaceId)
+        if(!data)
+        {
+            return res.status(404).json({message:WORKSPACE_MESSAGES.ERROR.WORKSPACE_ACTIVITY})
+        }
+
+        return res.status(200).json({message:WORKSPACE_MESSAGES.SUCCESS.WORKSPACE_DATA_FETCHED,data})
+        
+    } catch (error) {
+        next(error)
+    }
+  }
 }

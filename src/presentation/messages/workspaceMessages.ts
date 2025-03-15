@@ -7,6 +7,7 @@ export const WORKSPACE_MESSAGES = {
       WORKSPACE_RENAMED: "Workspace name updated successfully",
       COLLABORATOR_REMOVED: "Collaborator removed successfully",
       WORKSPACE_DELETED: "Workspace deleted successfully",
+      WORKSPACE_DATA_FETCHED:"Workspace data fetched successfully"
     },
     ERROR: {
       WORKSPACE_EXISTS: "Workspace name already exists",
@@ -18,5 +19,7 @@ export const WORKSPACE_MESSAGES = {
       COLLABORATOR_REMOVE_FAILED: "Unable to remove collaborator",
       WORKSPACE_DELETE_FAILED: "Unable to delete workspace",
       WORKSPACE_RENAME_FAILED: "Unable to update workspace name",
+      WORKSPACE_ID:"WorkspaceId is missing",
+      WORKSPACE_ACTIVITY:"Unable to fetch workspace activity data"
     },
   };

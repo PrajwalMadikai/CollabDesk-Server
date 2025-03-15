@@ -4,18 +4,14 @@ export class workspaceEnity{
     ownerId:string;
     directories:{Did:string,Dname:string}[];
     userDetails:{uId:string,email:string}[];
-    meetingRoom:string;
-    type:string;
-    trashId:string|null
+    activity:{email:string,action:string,time:Date}[]
     constructor(
         id:string,
         name:string,
         ownerId:string,
         directories:{Did:string,Dname:string}[],
         userDetails:{uId:string,email:string}[],
-        meetingRoom:string,
-        type:string,
-        trashId:string|null,
+        activity:{email:string,action:string,time:Date}[]
     )
     {
        
@@ -24,8 +20,6 @@ export class workspaceEnity{
        this.ownerId=ownerId;
        this.directories=directories;
        this.userDetails=userDetails;
-       this.meetingRoom=meetingRoom;
-       this.type=type;
-       this.trashId=trashId;
+       this.activity=activity
     }
 }

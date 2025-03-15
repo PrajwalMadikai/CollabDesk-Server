@@ -10,12 +10,9 @@ const router=express.Router()
 
 const directoryRepository=new DirectoryRepository()
 
-
 const directoryUsecase=new DirectoryUsecase(directoryRepository)
 
-
 const directoryController=new DirectoryController(directoryUsecase)
-
  
 
 router.post('/create',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),

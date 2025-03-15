@@ -45,16 +45,14 @@ export class WorkspaceRepository implements workspaceInterface{
                   $push: { workSpaces: { workspaceId: space._id, workspaceName: space.name } }  
                 },
               );
-            return new workspaceEnity(
+              return new workspaceEnity(
                 space.id,
                 space.name,
                 space.ownerId,
                 space.directories,
                 space.userDetails,
-                space.meetingRoom,
-                space.type,
-                space.trashId
-            )
+                space.activity
+            );
         }
     async userWorkspace(userId: string): Promise<UserEntity | null> {
         const user=await UserModal.findById(userId)
@@ -94,8 +92,6 @@ export class WorkspaceRepository implements workspaceInterface{
                                                      userDetails:{$elemMatch:{userEmail:email}}})
          if(alreadyExist)
          {
-            console.log('user is at the workspace');
-            
             return null
          }
        
@@ -114,16 +110,14 @@ export class WorkspaceRepository implements workspaceInterface{
         
         
 
-        return new workspaceEnity(
+           return new workspaceEnity(
             space.id,
             space.name,
             space.ownerId,
             space.directories,
             space.userDetails,
-            space.meetingRoom,
-            space.type,
-            space.trashId
-        )
+            space.activity
+        );
     }
     async fetchAllcollaborators(workspaceId:string):Promise<workspaceEnity|null>
     {
@@ -136,10 +130,8 @@ export class WorkspaceRepository implements workspaceInterface{
             space.ownerId,
             space.directories,
             space.userDetails,
-            space.meetingRoom,
-            space.type,
-            space.trashId
-        )
+            space.activity
+        );
     }
 
     async renameSpacename(workspaceId:string,newName:string):Promise<workspaceEnity|null>{
@@ -158,10 +150,8 @@ export class WorkspaceRepository implements workspaceInterface{
             space.ownerId,
             space.directories,
             space.userDetails,
-            space.meetingRoom,
-            space.type,
-            space.trashId
-        )
+            space.activity
+        );
     }
     async removeCollaborator(email: string, workspaceId: string): Promise<workspaceEnity | null> {
         const objectId = new mongoose.Types.ObjectId(workspaceId);
@@ -175,9 +165,8 @@ export class WorkspaceRepository implements workspaceInterface{
         );
     
         if (!space) return null;
-        console.log('space in remove collab:',space);
         
-     const user=await UserModal.findOneAndUpdate(
+        await UserModal.findOneAndUpdate(
             { email: email },
             {
                 $pull: {
@@ -185,7 +174,6 @@ export class WorkspaceRepository implements workspaceInterface{
                 }
             }
         );
-        console.log('user in remove collab:',user);
         
     
         return new workspaceEnity(
@@ -194,9 +182,7 @@ export class WorkspaceRepository implements workspaceInterface{
             space.ownerId,
             space.directories,
             space.userDetails,
-            space.meetingRoom,
-            space.type,
-            space.trashId
+            space.activity
         );
     }
 
@@ -212,15 +198,28 @@ export class WorkspaceRepository implements workspaceInterface{
             { $pull: { workSpaces: { workspaceId: space.id } } }
           );
 
+          return new workspaceEnity(
+            space.id,
+            space.name,
+            space.ownerId,
+            space.directories,
+            space.userDetails,
+            space.activity
+        );
+    }
+    async fetchActivity(workspaceId:string):Promise<workspaceEnity|null>{
+        const space = await WorkspaceModal.findOne({_id:new mongoose.Types.ObjectId(workspaceId)})
+        console.log('fetch:',space)
+
+        if(!space) return null
+
         return new workspaceEnity(
             space.id,
             space.name,
             space.ownerId,
             space.directories,
             space.userDetails,
-            space.meetingRoom,
-            space.type,
-            space.trashId
+            space.activity
         );
     }
 }

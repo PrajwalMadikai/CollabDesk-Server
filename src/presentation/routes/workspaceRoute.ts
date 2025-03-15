@@ -41,4 +41,8 @@ router.post('/delete',authenticateToken,checkUserBlockStatus,authorizeRoles(User
 (req:Request,res:Response,next:NextFunction)=>{workspaceController.deleteWorkspace(req, res, next)})
 
 
+router.post('/user-logs',authenticateToken,checkUserBlockStatus,authorizeRoles(UserRole.USER),
+(req:Request,res:Response,next:NextFunction)=>{workspaceController.userActivity(req, res, next)})
+
+
 export default router

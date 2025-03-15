@@ -106,8 +106,20 @@ export class WorkspaceUsecase{
             return data
             
         } catch (error) {
-            console.log(error);
             return { status: 500, message: 'An error occurred during deleting workspace.' };
+        }
+    }
+    async workspaceUserActivity(workspaceId:string)
+    {
+        try {
+            const data = await this.workspaceRepo.fetchActivity(workspaceId)
+
+            if(!data) return null
+
+            return data
+            
+        } catch (error) {
+            return { status: 500, message: 'An error occurred during fetching workspace.' };
         }
     }
 }

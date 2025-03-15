@@ -20,4 +20,6 @@ export interface workspaceInterface{
     renameSpacename(workspaceId:string,newName:string):Promise<workspaceEnity|null>
 
     removeCollaborator(email:string,workspaceId:string):Promise<workspaceEnity|null>
+    
+    fetchActivity(workspaceId:string):Promise<workspaceEnity|null>
 }

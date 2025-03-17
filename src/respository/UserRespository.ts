@@ -536,4 +536,25 @@ export class UserRepository implements UserInterface {
             user.isBlock
           );
     }
+    async checkPassword(userId:string):Promise<UserEntity|null>
+    {
+        const user = await UserModal.findById(new mongoose.Types.ObjectId(userId))
+        if(!user) return null
+
+        return new UserEntity(
+            user.id,
+            user.fullname,
+            user.email,
+            user.password,
+            user.paymentDetail,
+            user.workSpaces,
+            user.avatar, 
+            user.googleId, 
+            user.githubId,
+            user.role,
+            user.isAdmin,
+            user.isBlock
+          );
+    }
+
 }

@@ -299,4 +299,24 @@ export class UserUsecase{
                 }
 
             } 
+            async checkPasssame(userId:string,password:string)
+            {
+                try {
+                    const user=await this.userRepository.checkPassword(userId)
+
+                    if(!user) return null
+                    
+                    if (!user.password || typeof user.password !== 'string') {
+                        return { status: 400, message: 'User password is missing or invalid' };
+                    }
+                    const comparePass=await this.bcryptService.comparePassword(password,user?.password)
+                    if(!comparePass) return false
+
+                    return true
+
+                    
+                } catch (error) {
+                    return { status: 500, message: 'An error occurred during checking user password' }; 
+                }
+            }
 }

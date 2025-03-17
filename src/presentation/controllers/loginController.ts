@@ -441,9 +441,17 @@ export class LoginController{
     async changePassword(req:Request,res:Response,next:NextFunction)
     {
         try {
-            const {userId,password}=req.body
+            const {userId,password,currentPassword}=req.body
+
+            const samePassword=await this.userUsecase.checkPasssame(userId,currentPassword)
+
+            if(!samePassword)
+            {
+                return res.status(404).json({message:USERMESSAGES.ERROR.PASSWORD_INCORRECT})
+            }
+
             if (!password) {
-                return res.status(400).json({ message: "password is missing." });
+                return res.status(400).json({ message:"Password is missing." });
             }
               
             if (!userId) {

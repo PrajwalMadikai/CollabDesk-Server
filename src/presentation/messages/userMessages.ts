@@ -41,7 +41,8 @@ export const USERMESSAGES = {
     INVALID_REFRESH_TOKEN: "Invalid or expired refresh token.",
     RESET_PASSWORD_FAILED: "Failed to reset password.",
     RESET_USER_NOT_FOUND: "Couldn't find the user data for password reset.",
-    MISSING_FIELDS:"Email or Password missing."
+    MISSING_FIELDS:"Email or Password missing.",
+    PASSWORD_INCORRECT:"Incorrect Password!"
   },
   INFO: {
     NO_USERS_FOUND: "No users found.",

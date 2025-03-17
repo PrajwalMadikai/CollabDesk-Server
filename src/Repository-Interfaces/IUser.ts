@@ -39,4 +39,6 @@ export interface UserInterface{
     findUser(email:string):Promise<UserEntity|null>
 
     changePassword(userId:string,password:string):Promise<UserEntity|null>
+
+    checkPassword(userId:string):Promise<UserEntity|null>
 }

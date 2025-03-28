@@ -35,4 +35,6 @@ const fileSchema:Schema=new Schema({
     }
 })
 
+fileSchema.index({ directoryId: 1 });
+
 export const FileModal=mongoose.model<IFile>("File",fileSchema)

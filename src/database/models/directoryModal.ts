@@ -27,4 +27,6 @@ const directorySchema:Schema=new Schema({
     }
 })
 
+directorySchema.index({ workspaceId: 1 });
+
 export const FolderModal=mongoose.model<IDirectory>('Directory',directorySchema)

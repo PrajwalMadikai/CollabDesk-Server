@@ -3,7 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import { createServer } from 'http';
-import path from "path";
 import { Server } from "socket.io";
 import { SocketUsecase } from "./applications/usecases/SocketUsecase";
 import { connectDB } from "./database/connection";
@@ -27,7 +26,7 @@ const io = new Server(httpServer, {
     cors: {
         origin: process.env.CLIENT_URL,
         credentials: true,
-        methods: ["GET", "POST"],
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
     }
 });
 
@@ -36,7 +35,7 @@ const socketUsecase = new SocketUsecase(fileRepository)
 
 connectDB().then(() => {
     io.on('connection', (socket) => {
-        
+
         socket.on('disconnect', () => {
         });
 
@@ -49,14 +48,12 @@ connectDB().then(() => {
 });
 
 app.use(cookieParser());
-app.use(cors({ 
-    origin: process.env.CLIENT_URL, 
-    credentials: true 
+app.use(cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use("/public", express.static(path.join(__dirname, "../presentation/public")));
 
 
 app.use("/", userRoute);

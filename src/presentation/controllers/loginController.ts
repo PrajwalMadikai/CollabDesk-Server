@@ -126,8 +126,8 @@ export class LoginController{
                 const state = req.query.state ? JSON.parse(decodeURIComponent(req.query.state as string)) : {};
                 const mode = state.mode || 'login';
                 
-                const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-                const redirectUri = `http://localhost:5713/auth/github/callback`;
+                const GITHUB_CLIENT_ID = process.env.GHUB_CLIENT_ID;
+                const redirectUri = `${process.env.BACKEND_URL}/auth/github/callback`;
                 const stateParam = encodeURIComponent(JSON.stringify({ mode }));
                 
                 return res.redirect(

@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   app:
     build:
@@ -13,10 +12,10 @@ services:
     env_file:
       - .env
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     volumes:
-      - .:/app  
-
+      - .:/app
   redis:
     image: redis:alpine
     container_name: redis

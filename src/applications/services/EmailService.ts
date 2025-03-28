@@ -16,7 +16,7 @@ export class EmailService {
   }
 
   async sendVerificationEmail(email: string, fullname: string, token: string) {
-    const verificationUrl = `http://localhost:3000/verify-email?email=${encodeURIComponent(
+    const verificationUrl = `${process.env.CLIENT_URL}/verify-email?email=${encodeURIComponent(
       email
     )}&token=${encodeURIComponent(token)}`;
 
@@ -64,7 +64,7 @@ export class EmailService {
   }
 
   async sendResetVerification(email: string,token: string) {
-    const verificationUrl = `http://localhost:3000/email-check?email=${encodeURIComponent(
+    const verificationUrl = `${process.env.CLIENT_URL}/email-check?email=${encodeURIComponent(
       email
     )}&token=${encodeURIComponent(token)}`;
 

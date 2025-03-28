@@ -2,8 +2,8 @@
 export class GithubService{
 
     async exchangeCodeForToken(code: string): Promise<string> {
-        const clientId = process.env.GITHUB_CLIENT_ID!;
-        const clientSecret = process.env.GITHUB_CLIENT_SECRET!;
+        const clientId = process.env.GHUB_CLIENT_ID!;
+        const clientSecret = process.env.GHUB_CLIENT_SECRET!;
     
         const response = await fetch('https://github.com/login/oauth/access_token', {
             method: 'POST',

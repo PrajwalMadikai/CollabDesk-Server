@@ -14,8 +14,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    volumes:
-      - .:/app
+    # volumes:
+    #   - .:/app
   redis:
     image: redis:alpine
     container_name: redis

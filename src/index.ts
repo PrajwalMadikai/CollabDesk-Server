@@ -23,38 +23,38 @@ const PORT = process.env.PORT || 5713;
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
-    cors: {
-        origin: process.env.CLIENT_URL,
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    }
+  cors: {
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  },
 });
 
-const fileRepository = new FileRepository()
-const socketUsecase = new SocketUsecase(fileRepository)
+const fileRepository = new FileRepository();
+const socketUsecase = new SocketUsecase(fileRepository);
+
+socketUsecase.setIo(io);
 
 connectDB().then(() => {
-    io.on('connection', (socket) => {
-
-        socket.on('disconnect', () => {
-        });
-
-        socketUsecase.executeSocket(socket);
+  io.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+      console.log(`Socket disconnected: ${socket.id}`);
     });
 
-    setupDeleteExpiredFilesCron() // cron job function for deleting files
-    handleFolderRemoveCronjobs()// cron job function for deleting folders
+    socketUsecase.executeSocket(socket);
+  });
 
+  setupDeleteExpiredFilesCron(); // Cron job function for deleting files
+  handleFolderRemoveCronjobs(); // Cron job function for deleting folders
 });
 
 app.use(cookieParser());
 app.use(cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true
+  origin: process.env.CLIENT_URL,
+  credentials: true,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 app.use("/", userRoute);
 app.use("/workspace", workspaceRoute);
@@ -65,5 +65,5 @@ app.use('/file', fileRoute);
 app.use(errorHandler);
 
 httpServer.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

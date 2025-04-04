@@ -23,7 +23,14 @@ jobs:
         run: |
           docker save my-app:latest > my-app.tar
 
-      # Step 4: Transfer the Docker image to the EC2 instance
+      # Step 4: Debug SSH Key
+      - name: Debug SSH Key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} -p ${{ secrets.EC2_PORT || 22 }} "echo Connection Successful"
+
+      # Step 5: Transfer the Docker image to EC2
       - name: Transfer Docker image to EC2
         uses: appleboy/scp-action@master
         with:
@@ -34,7 +41,7 @@ jobs:
           source: "my-app.tar"
           target: "/home/${{ secrets.EC2_USER }}/my-app.tar"
 
-      # Step 5: Deploy to EC2 via SSH
+      # Step 6: Deploy to EC2 via SSH
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:

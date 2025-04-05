@@ -66,7 +66,7 @@ CollabDesk Backend is a robust backend system designed to power collaborative wo
 
 4. Start the server:
    ```bash
-   npm run dev
+   npm start
    ```
 
 ---

@@ -32,7 +32,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT || 22 }}
           source: "my-app.tar"
-          target: "/home/${{ secrets.EC2_USER }}/app/my-app.tar"
+          target: "/home/ubuntu/my-app.tar"  # Transfer directly to /home/ubuntu/my-app.tar
 
       # Step 5: Deploy to EC2 via SSH
       - name: Deploy to EC2
@@ -45,33 +45,33 @@ jobs:
           script: |
             set -e  # Exit immediately if any command fails
 
-            # Navigate to the app directory or create it if it doesn't exist
-            cd /home/${{ secrets.EC2_USER }}/app || mkdir -p /home/${{ secrets.EC2_USER }}/app && cd $_
+            # Navigate to the home directory
+            cd /home/ubuntu
 
-            # Create a subdirectory for the repository
-            mkdir -p repo
-            cd repo
+            # Debugging: List directory contents
+            echo "Directory contents before loading Docker image:"
+            ls -l /home/ubuntu/
 
-            # Clone or pull the latest code
-            if [ -d ".git" ]; then
-              echo "Repository already exists. Pulling latest changes..."
-              git pull origin main
-            else
-              echo "Cloning repository..."
-              git clone https://github.com/PrajwalMadikai/CollabDesk-Server.git .
+            # Ensure the tar file exists
+            if [ ! -f "/home/ubuntu/my-app.tar" ]; then
+              echo "Error: /home/ubuntu/my-app.tar does not exist!"
+              exit 1
             fi
 
             # Load the Docker image
-            docker load < /home/${{ secrets.EC2_USER }}/app/my-app.tar
+            echo "Loading Docker image from /home/ubuntu/my-app.tar..."
+            docker load < /home/ubuntu/my-app.tar
 
             # Stop and remove the existing container (if running)
             CONTAINER_ID=$(docker ps -q --filter "ancestor=my-app:latest")
             if [ ! -z "$CONTAINER_ID" ]; then
+              echo "Stopping and removing existing container..."
               docker stop $CONTAINER_ID
               docker rm $CONTAINER_ID
             fi
 
             # Run the new container
+            echo "Starting new container..."
             docker run -d \
               --name my-app-container \
               -p 8080:80 \
@@ -81,4 +81,5 @@ jobs:
               my-app:latest
 
             # Restart Nginx to apply changes
+            echo "Restarting Nginx..."
             sudo systemctl restart nginx

@@ -50,6 +50,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT || 22 }}
           script: |
+            set -e
             # Load the Docker image
             docker load < /home/${{ secrets.EC2_USER }}/my-app.tar
 

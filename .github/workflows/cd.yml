@@ -1,80 +1,44 @@
-name: CD - Deploy to Production (EC2 with Docker and Nginx)
+# Step 5: Deploy to EC2 via SSH
+- name: Deploy to EC2
+  uses: appleboy/ssh-action@master
+  with:
+    host: ${{ secrets.EC2_HOST }}
+    username: ${{ secrets.EC2_USER }}
+    key: ${{ secrets.EC2_SSH_KEY }}
+    port: ${{ secrets.EC2_PORT || 22 }}
+    script: |
+      set -e  # Exit immediately if any command fails
 
-on:
-  push:
-    branches: [main]
+      # Navigate to the app directory or create it if it doesn't exist
+      cd /home/${{ secrets.EC2_USER }}/app || mkdir -p /home/${{ secrets.EC2_USER }}/app && cd $_
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+      # Clone or pull the latest code
+      if [ -d ".git" ]; then
+        echo "Repository already exists. Pulling latest changes..."
+        git pull origin main
+      else
+        echo "Cloning repository..."
+        git clone https://github.com/PrajwalMadikai/CollabDesk-Server.git .
+      fi
 
-    steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # Load the Docker image
+      docker load < /home/${{ secrets.EC2_USER }}/app/my-app.tar
 
-      # Step 2: Build the Docker image
-      - name: Build Docker image
-        run: |
-          docker build -t my-app:latest .
+      # Stop and remove the existing container (if running)
+      CONTAINER_ID=$(docker ps -q --filter "ancestor=my-app:latest")
+      if [ ! -z "$CONTAINER_ID" ]; then
+        docker stop $CONTAINER_ID
+        docker rm $CONTAINER_ID
+      fi
 
-      # Step 3: Save the Docker image as a tar file
-      - name: Save Docker image
-        run: |
-          docker save my-app:latest > my-app.tar
+      # Run the new container
+      docker run -d \
+        --name my-app-container \
+        -p 8080:80 \
+        -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
+        -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
+        -e MONGO_URI=${{ secrets.MONGO_URI }} \
+        my-app:latest
 
-      # Step 4: Transfer the Docker image to EC2
-      - name: Transfer Docker image to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: ${{ secrets.EC2_PORT || 22 }}
-          source: "my-app.tar"
-          target: "/home/${{ secrets.EC2_USER }}/app/my-app.tar"
-
-      # Step 5: Deploy to EC2 via SSH
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: ${{ secrets.EC2_PORT || 22 }}
-          script: |
-            set -e  # Exit immediately if any command fails
-
-            # Navigate to the app directory or create it if it doesn't exist
-            cd /home/${{ secrets.EC2_USER }}/app || mkdir -p /home/${{ secrets.EC2_USER }}/app && cd $_
-
-            # Clone or pull the latest code
-            if [ -d ".git" ]; then
-              echo "Repository already exists. Pulling latest changes..."
-              git pull origin main
-            else
-              echo "Cloning repository..."
-              git clone https://github.com/PrajwalMadikai/CollabDesk-Server.git .
-            fi
-
-            # Load the Docker image
-            docker load < /home/${{ secrets.EC2_USER }}/app/my-app.tar
-
-            # Stop and remove the existing container (if running)
-            CONTAINER_ID=$(docker ps -q --filter "ancestor=my-app:latest")
-            if [ ! -z "$CONTAINER_ID" ]; then
-              docker stop $CONTAINER_ID
-              docker rm $CONTAINER_ID
-            fi
-
-            # Run the new container
-            docker run -d \
-              --name my-app-container \
-              -p 8080:80 \
-              -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
-              -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
-              -e MONGO_URI=${{ secrets.MONGO_URI }} \
-              my-app:latest
-
-            # Restart Nginx to apply changes
-            sudo systemctl restart nginx
+      # Restart Nginx to apply changes
+      sudo systemctl restart nginx

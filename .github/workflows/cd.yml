@@ -32,7 +32,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT || 22 }}
           source: "my-app.tar"
-          target: "/home/ubuntu/my-app.tar"  # Transfer directly to /home/ubuntu/my-app.tar
+          target: "/home/ubuntu/app/my-app.tar"  # Transfer to /home/ubuntu/app/my-app.tar
 
       # Step 5: Deploy to EC2 via SSH
       - name: Deploy to EC2
@@ -45,22 +45,22 @@ jobs:
           script: |
             set -e  # Exit immediately if any command fails
 
-            # Navigate to the home directory
-            cd /home/ubuntu
+            # Navigate to the app directory or create it if it doesn't exist
+            cd /home/ubuntu/app || mkdir -p /home/ubuntu/app && cd $_
 
             # Debugging: List directory contents
             echo "Directory contents before loading Docker image:"
-            ls -l /home/ubuntu/
+            ls -l /home/ubuntu/app/
 
             # Ensure the tar file exists
-            if [ ! -f "/home/ubuntu/my-app.tar" ]; then
-              echo "Error: /home/ubuntu/my-app.tar does not exist!"
+            if [ ! -f "/home/ubuntu/app/my-app.tar" ]; then
+              echo "Error: /home/ubuntu/app/my-app.tar does not exist!"
               exit 1
             fi
 
             # Load the Docker image
-            echo "Loading Docker image from /home/ubuntu/my-app.tar..."
-            docker load < /home/ubuntu/my-app.tar
+            echo "Loading Docker image from /home/ubuntu/app/my-app.tar..."
+            docker load < /home/ubuntu/app/my-app.tar
 
             # Stop and remove the existing container (if running)
             CONTAINER_ID=$(docker ps -q --filter "ancestor=my-app:latest")

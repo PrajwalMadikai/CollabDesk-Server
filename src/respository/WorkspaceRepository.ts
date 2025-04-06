@@ -28,7 +28,8 @@ export class WorkspaceRepository implements workspaceInterface {
             workspaceLimit = plan.WorkspaceNum;
         }
         if (user.workSpaces.length >= workspaceLimit) {
-            throw new Error(`Workspace limit exceeded for ${planType} plan`);
+
+            throw new Error(`Workspace limit exceeded for ${planType} plan!`);
         }
 
 

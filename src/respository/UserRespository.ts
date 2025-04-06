@@ -440,6 +440,7 @@ export class UserRepository implements UserInterface {
         );
     }
     async findUser(email: string): Promise<UserEntity | null> {
+        
         const user = await UserModal.findOne({ email })
 
         if (!user) return null
@@ -460,8 +461,9 @@ export class UserRepository implements UserInterface {
         );
     }
     async getUserData(userId: string): Promise<UserEntity | null> {
+
         const user = await UserModal.findOne({ _id: new mongoose.Types.ObjectId(userId) })
-        
+
         if (!user) return null
 
         return new UserEntity(

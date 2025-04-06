@@ -23,14 +23,7 @@ jobs:
         run: |
           docker save my-app:latest > my-app.tar
 
-      # Step 4: Debug SSH Key
-      - name: Debug SSH Key
-        run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
-          chmod 600 key.pem
-          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} -p ${{ secrets.EC2_PORT || 22 }} "echo Connection Successful"
-
-      # Step 5: Transfer the Docker image to EC2
+      # Step 4: Transfer the Docker image to EC2
       - name: Transfer Docker image to EC2
         uses: appleboy/scp-action@master
         with:
@@ -39,9 +32,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT || 22 }}
           source: "my-app.tar"
-          target: "/home/${{ secrets.EC2_USER }}/my-app.tar"
+          target: "/home/${{ secrets.EC2_USER }}/app/my-app.tar"
 
-      # Step 6: Deploy to EC2 via SSH
+      # Step 5: Deploy to EC2 via SSH
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
@@ -50,9 +43,22 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT || 22 }}
           script: |
-            set -e
+            set -e  # Exit immediately if any command fails
+
+            # Navigate to the app directory or create it if it doesn't exist
+            cd /home/${{ secrets.EC2_USER }}/app || mkdir -p /home/${{ secrets.EC2_USER }}/app && cd $_
+
+            # Clone or pull the latest code
+            if [ -d ".git" ]; then
+              echo "Repository already exists. Pulling latest changes..."
+              git pull origin main
+            else
+              echo "Cloning repository..."
+              git clone https://github.com/your-repo-url.git .
+            fi
+
             # Load the Docker image
-            docker load < /home/${{ secrets.EC2_USER }}/my-app.tar
+            docker load < /home/${{ secrets.EC2_USER }}/app/my-app.tar
 
             # Stop and remove the existing container (if running)
             CONTAINER_ID=$(docker ps -q --filter "ancestor=my-app:latest")

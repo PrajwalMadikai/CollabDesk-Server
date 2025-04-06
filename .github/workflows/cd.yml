@@ -48,6 +48,10 @@ jobs:
             # Navigate to the app directory or create it if it doesn't exist
             cd /home/${{ secrets.EC2_USER }}/app || mkdir -p /home/${{ secrets.EC2_USER }}/app && cd $_
 
+            # Create a subdirectory for the repository
+            mkdir -p repo
+            cd repo
+
             # Clone or pull the latest code
             if [ -d ".git" ]; then
               echo "Repository already exists. Pulling latest changes..."

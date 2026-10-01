@@ -1,0 +1,25 @@
+export const FILE_MESSAGES = {
+    SUCCESS: {
+      FILE_CREATED: "File created successfully",
+      FILE_DELETED: "File deleted successfully",
+      FILE_CONTENT_FETCHED: "File content fetched successfully",
+      FILES_FETCHED: "Files fetched successfully",
+      FILE_UPDATED: "File updated successfully",
+      IMAGE_UPLOADED: "Cover image uploaded successfully",
+      FILE_RESTORED: "File restored from trash",
+      DOC_PUBLISHED: "Document published online",
+      PREVIEW_FETCHED: "Preview fetched successfully",
+    },
+    ERROR: {
+      MISSING_FOLDER_ID: "Folder id is missing!",
+      UNABLE_TO_CREATE_FILE: "Unable to create file",
+      MISSING_FILE_ID: "File id is missing",
+      UNABLE_TO_DELETE_FILE: "Unable to delete the file",
+      UNABLE_TO_FIND_FILE: "Unable to find the file",
+      UNABLE_TO_UPDATE_FILE: "Unable to update files",
+      MISSING_IMAGE: "Missing file id or image",
+      UNABLE_TO_RESTORE_FILE: "Unable to restore the file from trash",
+      UNABLE_TO_PUBLISH_DOC: "Unable to publish document",
+      UNABLE_TO_FETCH_PREVIEW: "Unable to fetch preview data",
+    },
+  };

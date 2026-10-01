@@ -1,3 +1,42 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Environment files (DO NOT COMMIT SECRETS)
 .env
-node_modules
-dist/
+.env.local
+.env.development
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Docker-related files
+docker-compose.override.yml
+.dockerignore
+docker/
+*.tar
+
+# Kubernetes-related files
+k8s-secrets.yaml  # Avoid committing Kubernetes Secrets!
+k8s-configs.yaml
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+ 
